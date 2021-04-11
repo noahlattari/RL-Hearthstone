@@ -25,7 +25,7 @@ class Player:
 
     def reroll(self):
         if self.gold >= Player.REROLL_COST:
-            self.gold -= 1
+            self.gold -= PLAYER.REROLL_COST
             self.tavern.getRoll()
 
     def upgradeTavern(self):
