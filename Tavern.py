@@ -5,7 +5,6 @@ class Tavern:
 
     def __init__(self):
         self.pool = Pool.Pool()
-        self.round = 1
         self.tier = 1
         self.roll = []
 
