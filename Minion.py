@@ -1,15 +1,15 @@
 
 class Minion:
 
-    def __init__(self, name, tier, attack, health, type):
+    def __init__(self, name, attack, health, type, tier):
         self.name = name
-        self.tier = tier
         self.attack = attack
         self.health = health
         self.type = type
+        self.tier = tier
 
     def __repr__(self):
-        return f"{attack}/{health} {name}"
+        return f"{self.attack}/{self.health} {self.name}"
 
     def __str__(self):
-        return f"{attack}/{health} {name}"
+        return f"{self.attack}/{self.health} {self.name}"
