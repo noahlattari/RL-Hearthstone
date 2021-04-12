@@ -10,6 +10,7 @@ class Tavern:
 
     def tierUp(self):
         self.tier += 1
+        #call pool to init next tier's minions
     
     def getRoll(self):
         self.roll = self.pool.dummyRoll(self.tier)
