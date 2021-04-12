@@ -33,7 +33,7 @@ class Player:
         #if we do then we need to invoke the tavern's upgrade function
         cost = Player.UPGRADE_COST[self.tavern.tier + 1] - self.discount
         if cost <= 0:
-            cost = 1
+            cost = 0
         if self.gold >= cost:
             self.tavern.tierUp()
             self.tieredUp = True
