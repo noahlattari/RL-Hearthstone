@@ -164,8 +164,8 @@ class Player:
                 if curr_minion.name == "Virmen Sensei":
                     virmenSenseiBC(self.board)
 
-                if curr_minion.name == "Menagerie Mug" or "Menagerie Jug": #also basically just jug
-                    mugAndJugBC(self.board)
+                if curr_minion.name == "Menagerie Mug" or "Menagerie Jug":
+                    mugAndJugBC(self.board, curr_minion)
                     
                 if curr_minion.name == "Khadgar":
                     if curr_minion.gold:
@@ -191,7 +191,7 @@ class Player:
     ### Battlecries ###
     #TODO: Write unit tests for battlecries
     
-    def mugAndJugBC(self):
+    def mugAndJugBC(self, board, curr_minion):
         attack_buff = 1
         health_buff = 1
         if curr_minion.gold:
