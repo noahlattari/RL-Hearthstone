@@ -25,7 +25,7 @@ class Pool:
         self.tier1["Scavenging Hyena"] = addM(Pool.TIER_COUNT[1], 2, 2, "Beast", 1)
 
         self.tier2["Kindly Grandmother"] = addM(Pool.TIER_COUNT[2], 1, 1, "Beast", 2, death_rattle=True)
-        self.tier2["Rabid Saurolist"] = addM(Pool.TIER_COUNT[2], 3, 2, "Beast", 2)
+        self.tier2["Rabid Saurolisk"] = addM(Pool.TIER_COUNT[2], 3, 2, "Beast", 2)
 
         self.tier3["Houndmaster"] = addM(Pool.TIER_COUNT[3], 4, 3, "Beast", 3)
         self.tier3["Monstrous Macaw"] = addM(Pool.TIER_COUNT[3], 5, 3, "Beast", 3)
@@ -79,7 +79,7 @@ class Pool:
         return dummy
 
     #helper function for adding minions
-    def addM(self, count, attack, health, type, minion_tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False, death_rattle=False):
+    def addM(self, count, attack, health, minion_type, minion_tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False, death_rattle=False):
         minion_dict = {"count": count, "attack": attack, "type": minion_type}
         if(taunt):
             minion_dict["taunt"] = True

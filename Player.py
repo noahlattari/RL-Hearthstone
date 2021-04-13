@@ -130,7 +130,7 @@ class Player:
                 if wrath_weaver_count == 0:
                     wrath_weaver = False
 
-            if sold_minion.name == "Wrath Weaver":
+            if sold_minion.name == "Rabid Saurolisk":
                 rabid_saurolisk_count -= 1
                 if rabid_saurolisk_count == 0:
                     rabid_saurolisk = False
@@ -151,10 +151,10 @@ class Player:
 
                 ### Beast ###
                 if curr_minion.name == "Alleycat":
-                    alleyCatBC(board)
+                    self.alleyCatBC(self.board)
 
                 if curr_minion.name == "Houndmaster":
-                    houndmasterBC(board)
+                    self.houndmasterBC(self.board, curr_minion)
 
                 if curr_minion.name == "Rabid Saurolisk":
                     self.rabid_saurolisk = True
@@ -162,25 +162,25 @@ class Player:
 
                 if curr_minion.death_rattle:
                     if self.rabid_saurolisk:
-                        rabidSauroliskEffect()
+                        self.rabidSauroliskEffect()
 
                 ### Demon ###
                 if curr_minion.minion_type == "Demon":
                     if self.wrath_weaver:
-                        wrathWeaverEffect()
+                        self.wrathWeaverEffect()
 
                 ### Neutral ###
                 if curr_minion.name == "Defender of Argus":
-                    defenderOfArgusBC(self.board, minion_index)
+                    self.defenderOfArgusBC(self.board, minion_index, curr_minion)
                 
                 if curr_minion.name == "Crystalweaver":
-                    crystalweaverBC(self.board)
+                    self.crystalweaverBC(self.board, curr_minion)
 
                 if curr_minion.name == "Virmen Sensei":
-                    virmenSenseiBC(self.board)
+                    self.virmenSenseiBC(self.board, curr_minion)
 
                 if curr_minion.name == "Menagerie Mug" or "Menagerie Jug":
-                    mugAndJugBC(self.board, curr_minion)
+                    self.mugAndJugBC(self.board, curr_minion)
                     
                 if curr_minion.name == "Khadgar":
                     if curr_minion.gold:
@@ -223,7 +223,7 @@ class Player:
                 else:
                     m.buff(1,2)
 
-    def defenderOfArgusBC(self, board, minion_index):
+    def defenderOfArgusBC(self, board, minion_index, curr_minion):
         attack_buff = 1
         health_buff = 1
         if curr_minion.gold:
@@ -236,7 +236,7 @@ class Player:
             board[minion_index+1].giveTaunt()
             board[minion_index+1].buff(attack_buff, health_buff)
     
-    def crystalweaverBC(self, board):
+    def crystalweaverBC(self, board, curr_minion):
         attack_buff = 1
         health_buff = 1
         if curr_minion.gold:
@@ -246,21 +246,21 @@ class Player:
             if m.minion_type == "Demon":
                 m.buff(attack_buff, health_buff)
     
-    def virmenSenseiBC(self, board):
+    def virmenSenseiBC(self, board, curr_minion):
         attack_buff = 2
         health_buff = 2
         if curr_minion.gold:
             attack_buff += 2
             health_buff += 2
-        buffFriendly(board, attack_buff, health_buff, minion_type="Beast")
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Beast")
 
-    def houndmasterBC(self, board):
+    def houndmasterBC(self, board, curr_minion):
         attack_buff = 2
         health_buff = 2
         if curr_minion.gold:
             attack_buff += 2
             health_buff += 2
-        buffFriendly(board, attack_buff, health_buff, minion_type="Beast", taunt=True)
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Beast", taunt=True)
 
     #WIP
     def alleyCatBC(self, board):
@@ -290,8 +290,8 @@ class Player:
         #empty minion_map evaluates to False
         while(minion_map and count < 3):
             #pick a random type
-            random_type = minion_map[minion_map.keys()[random.randint(0,len(minion_map))]
-            type_list = minion_map.pop(random_type);
+            random_type = minion_map[minion_map.keys()[random.randint(0,len(minion_map))]]
+            type_list = minion_map.pop(random_type)
             random_minion = type_list[random.randint(0, len(type_list))]
             random_minion.buff(attack_buff, health_buff)
             count += 1
