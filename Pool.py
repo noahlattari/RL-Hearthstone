@@ -61,7 +61,7 @@ class Pool:
         return dummy
 
     #helper function for adding minions
-    def addM(count, attack, health, type, minion_tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False):
+    def addM(self, count, attack, health, type, minion_tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False):
         minion_dict = {"count": count, "attack": attack, "type": minion_type}
         if(taunt):
             minion_dict["taunt": True]

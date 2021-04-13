@@ -156,67 +156,17 @@ class Player:
 
                 ### Neutral ###
                 if curr_minion.name == "Defender of Argus":
-                    attack_buff = 1
-                    health_buff = 1
-                    if curr_minion.gold:
-                        attack_buff += 1
-                        health_buff += 1
-                    if minion_index > 0:
-                        self.board[minion_index-1].giveTaunt()
-                        self.board[minion_index-1].buff(attack_buff, health_buff)
-                    if minion_index < len(self.hand) - 1:
-                        self.board[minion_index+1].giveTaunt()
-                        self.board[minion_index-1].buff(attack_buff, health_buff)
+                    defenderOfArgusBC(self.board, minion_index)
                 
                 if curr_minion.name == "Crystalweaver":
-                    attack_buff = 1
-                    health_buff = 1
-                    if curr_minion.gold:
-                        attack_buff += 1
-                        health_buff += 1
-                    for m in self.board:
-                        if m.minion_type == "Demon":
-                            m.buff(attack_buff, health_buff)
+                    crystalweaverBC(self.board)
 
                 if curr_minion.name == "Virmen Sensei":
-                    attack_buff = 2
-                    health_buff = 2
-                    if curr_minion.gold:
-                        attack_buff += 2
-                        health_buff += 2
-                    for m in self.board:
-                        if m.minion_type == "Beast":
-                            m.buff(attack_buff, health_buff)
+                    virmenSenseiBC(self.board)
 
-                #TODO: test
                 if curr_minion.name == "Menagerie Mug" or "Menagerie Jug": #also basically just jug
-                    attack_buff = 1
-                    health_buff = 1
-                    if curr_minion.gold:
-                        attack_buff += 1
-                        health_buff += 1
-                    if curr_minion.name == "Menagerie Jug":
-                        attack_buff *= 2
-                        health_buff *= 2
+                    mugAndJugBC(self.board)
                     
-                    minion_map = {}
-                    count = 0
-                    for m in self.board:
-                        if m.minion_type in minion_map:
-                            minion_map[m.minion_type].append(m)
-                        else:
-                            minion_type_list = []
-                            minion_type_list.append(m)
-                            minion_map[m.minion_type] = minion_type_list
-                    
-                    #empty minion_map evaluates to False
-                    while(minion_map and count < 3):
-                        #pick a random type
-                        random_type = minion_map[minion_map.keys()[random.randint(0,len(minion_map))]
-                        type_list = minion_map.pop(random_type);
-                        random_minion = type_list[random.randint(0, len(type_list))]
-                        random_minion.buff(attack_buff, health_buff)
-
                 if curr_minion.name == "Khadgar":
                     if curr_minion.gold:
                         self.khadgar_gold = True
@@ -238,6 +188,66 @@ class Player:
                     self.wrath_weaver_count += 1
                 
     
+    ### Battlecries ###
+    #TODO: Write unit tests for battlecries
     
+    def mugAndJugBC(self):
+        attack_buff = 1
+        health_buff = 1
+        if curr_minion.gold:
+            attack_buff += 1
+            health_buff += 1
+        if curr_minion.name == "Menagerie Jug":
+            attack_buff *= 2
+            health_buff *= 2
+        
+        minion_map = {}
+        for m in board:
+            if m.minion_type in minion_map:
+                minion_map[m.minion_type].append(m)
+            else:
+                minion_type_list = []
+                minion_type_list.append(m)
+                minion_map[m.minion_type] = minion_type_list
+        
+        count = 0
+        #empty minion_map evaluates to False
+        while(minion_map and count < 3):
+            #pick a random type
+            random_type = minion_map[minion_map.keys()[random.randint(0,len(minion_map))]
+            type_list = minion_map.pop(random_type);
+            random_minion = type_list[random.randint(0, len(type_list))]
+            random_minion.buff(attack_buff, health_buff)
 
+    def defenderOfArgusBC(self, board, minion_index):
+        attack_buff = 1
+        health_buff = 1
+        if curr_minion.gold:
+            attack_buff += 1
+            health_buff += 1
+        if minion_index > 0:
+            board[minion_index-1].giveTaunt()
+            board[minion_index-1].buff(attack_buff, health_buff)
+        if minion_index < len(self.hand) - 1:
+            board[minion_index+1].giveTaunt()
+            board[minion_index+1].buff(attack_buff, health_buff)
     
+    def crystalweaverBC(self, board):
+        attack_buff = 1
+        health_buff = 1
+        if curr_minion.gold:
+            attack_buff += 1
+            health_buff += 1
+        for m in board:
+            if m.minion_type == "Demon":
+                m.buff(attack_buff, health_buff)
+    
+    def virmenSenseiBC(self, board):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        for m in board:
+            if m.minion_type == "Beast":
+                m.buff(attack_buff, health_buff)
