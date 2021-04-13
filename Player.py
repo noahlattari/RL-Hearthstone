@@ -25,7 +25,7 @@ class Player:
 
     def reroll(self):
         if self.gold >= Player.REROLL_COST:
-            self.gold -= PLAYER.REROLL_COST #- reroll discount
+            self.gold -= Player.REROLL_COST #- reroll discount
             self.tavern.getRoll()
 
     def upgradeTavern(self):
@@ -76,7 +76,7 @@ class Player:
 
     def resetGold(self):
         if Player.STARTING_GOLD + self.round > Player.MAX_GOLD:
-            self.gold = MAX_GOLD
+            self.gold = Player.MAX_GOLD
         else:
             self.gold = Player.STARTING_GOLD + self.round
     
