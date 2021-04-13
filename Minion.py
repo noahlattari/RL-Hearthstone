@@ -33,6 +33,6 @@ class Minion:
         self.attack += attack
         self.health += health
     
-    #WIP
+    #WIP :(
     def becomeGold(self):
         self.gold = True
