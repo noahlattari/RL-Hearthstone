@@ -20,7 +20,7 @@ class Player:
         self.discount = 0
         self.tieredUp = False
 
-    def freezeTavern():
+    def freezeTavern(self):
         self.freeze = True
 
     def reroll(self):
