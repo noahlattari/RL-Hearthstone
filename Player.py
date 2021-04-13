@@ -40,6 +40,10 @@ class Player:
         self.wrath_weaver = False
         self.wrath_weaver_count = 0
 
+        # Rabid Saurolisk: see rabidSaurolistEffect()
+        self.rabid_saurolisk = False
+        self.rabid_saurolisk_count = 0
+
     def freezeTavern(self):
         self.freeze = True
 
@@ -91,15 +95,6 @@ class Player:
             self.discount = 0
         else:
             self.discount += 1
-
-    def wrathWeaverEffect(self):
-        for m in self.board:
-            if m.name == "Wrath Weaver":
-                self.health -= 1
-                if m.gold:
-                    m.buff(4,4)
-                else:
-                    m.buff(2,2)
     
     def sell(self, minion_index):
         #check if minion (by index) is in board
@@ -135,6 +130,11 @@ class Player:
                 if wrath_weaver_count == 0:
                     wrath_weaver = False
 
+            if sold_minion.name == "Wrath Weaver":
+                rabid_saurolisk_count -= 1
+                if rabid_saurolisk_count == 0:
+                    rabid_saurolisk = False
+
     #TODO: refactor most conditionals to functions
     def play(self, minion_index, pos):
 
@@ -150,8 +150,19 @@ class Player:
                     self.board.append(curr_minion)
 
                 ### Beast ###
+                if curr_minion.name == "Alleycat":
+                    alleyCatBC(board)
+
                 if curr_minion.name == "Houndmaster":
                     houndmasterBC(board)
+
+                if curr_minion.name == "Rabid Saurolisk":
+                    self.rabid_saurolisk = True
+                    self.rabid_saurolisk_count += 1
+
+                if curr_minion.death_rattle:
+                    if self.rabid_saurolisk:
+                        rabidSauroliskEffect()
 
                 ### Demon ###
                 if curr_minion.minion_type == "Demon":
@@ -193,36 +204,24 @@ class Player:
                 
     
     ### Battlecries ###
-    #TODO: Write unit tests for battlecries
-    
-    def mugAndJugBC(self, board, curr_minion):
-        attack_buff = 1
-        health_buff = 1
-        if curr_minion.gold:
-            attack_buff += 1
-            health_buff += 1
-        if curr_minion.name == "Menagerie Jug":
-            attack_buff *= 2
-            health_buff *= 2
-        
-        minion_map = {}
-        for m in board:
-            if m.minion_type in minion_map:
-                minion_map[m.minion_type].append(m)
-            else:
-                minion_type_list = []
-                minion_type_list.append(m)
-                minion_map[m.minion_type] = minion_type_list
-        
-        count = 0
-        #empty minion_map evaluates to False
-        while(minion_map and count < 3):
-            #pick a random type
-            random_type = minion_map[minion_map.keys()[random.randint(0,len(minion_map))]
-            type_list = minion_map.pop(random_type);
-            random_minion = type_list[random.randint(0, len(type_list))]
-            random_minion.buff(attack_buff, health_buff)
-            count += 1
+    #TODO: Write unit tests for battlecries / effects
+
+    def wrathWeaverEffect(self):
+        for m in self.board:
+            if m.name == "Wrath Weaver":
+                self.health -= 1
+                if m.gold:
+                    m.buff(4,4)
+                else:
+                    m.buff(2,2)
+
+    def rabidSauroliskEffect(self):
+        for m in self.board:
+            if m.name == "Rabid Saurolisk":
+                if m.gold:
+                    m.buff(2,4)
+                else:
+                    m.buff(1,2)
 
     def defenderOfArgusBC(self, board, minion_index):
         attack_buff = 1
@@ -263,6 +262,40 @@ class Player:
             health_buff += 2
         buffFriendly(board, attack_buff, health_buff, minion_type="Beast", taunt=True)
 
+    #WIP
+    def alleyCatBC(self, board):
+        self.pool
+        return
+
+    def mugAndJugBC(self, board, curr_minion):
+        attack_buff = 1
+        health_buff = 1
+        if curr_minion.gold:
+            attack_buff += 1
+            health_buff += 1
+        if curr_minion.name == "Menagerie Jug":
+            attack_buff *= 2
+            health_buff *= 2
+
+        minion_map = {}
+        for m in board:
+            if m.minion_type in minion_map:
+                minion_map[m.minion_type].append(m)
+            else:
+                minion_type_list = []
+                minion_type_list.append(m)
+                minion_map[m.minion_type] = minion_type_list
+
+        count = 0
+        #empty minion_map evaluates to False
+        while(minion_map and count < 3):
+            #pick a random type
+            random_type = minion_map[minion_map.keys()[random.randint(0,len(minion_map))]
+            type_list = minion_map.pop(random_type);
+            random_minion = type_list[random.randint(0, len(type_list))]
+            random_minion.buff(attack_buff, health_buff)
+            count += 1
+
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
     def buffFriendly(self, board, attack, health, minion_type=None, taunt=False): #add more cases as necessary eg. windfury, divine_shield, etc
@@ -278,3 +311,4 @@ class Player:
             random_friend.buff(attack, health)
             if taunt:
                 random_friend.giveTaunt()
+
