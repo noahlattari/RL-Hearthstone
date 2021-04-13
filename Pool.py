@@ -15,49 +15,49 @@ class Pool:
         self.tokens = {}
 
         ### Beast ###
-        self.tokens["Rat"] = addM(0, 1, 1, "Beast", 1, token=True)
-        self.tokens["Tabbycat"] = addM(0, 1, 1, "Beast", 1, token=True)
-        self.tokens["Hyena"] = addM(0, 2, 2, "Beast", 1, token=True)
-        self.tokens["Spider"] = addM(0, 1, 1, "Beast", 1, token=True)
-        self.tokens["Big Bad Wolf"] = addM(0, 3, 2, 1, token=True)
+        self.tokens["Rat"] = self.addM(0, 1, 1, "Beast", 1, token=True)
+        self.tokens["Tabbycat"] = self.addM(0, 1, 1, "Beast", 1, token=True)
+        self.tokens["Hyena"] = self.addM(0, 2, 2, "Beast", 1, token=True)
+        self.tokens["Spider"] = self.addM(0, 1, 1, "Beast", 1, token=True)
+        self.tokens["Big Bad Wolf"] = self.addM(0, 3, 2, 1, token=True)
 
-        self.tier1["Alleycat"] = addM(Pool.TIER_COUNT[1], 1, 1, "Beast", 1)
-        self.tier1["Scavenging Hyena"] = addM(Pool.TIER_COUNT[1], 2, 2, "Beast", 1)
+        self.tier1["Alleycat"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Beast", 1)
+        self.tier1["Scavenging Hyena"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Beast", 1)
 
-        self.tier2["Kindly Grandmother"] = addM(Pool.TIER_COUNT[2], 1, 1, "Beast", 2, death_rattle=True)
-        self.tier2["Rabid Saurolisk"] = addM(Pool.TIER_COUNT[2], 3, 2, "Beast", 2)
+        self.tier2["Kindly Grandmother"] = self.addM(Pool.TIER_COUNT[2], 1, 1, "Beast", 2, death_rattle=True)
+        self.tier2["Rabid Saurolisk"] = self.addM(Pool.TIER_COUNT[2], 3, 2, "Beast", 2)
 
-        self.tier3["Houndmaster"] = addM(Pool.TIER_COUNT[3], 4, 3, "Beast", 3)
-        self.tier3["Monstrous Macaw"] = addM(Pool.TIER_COUNT[3], 5, 3, "Beast", 3)
-        self.tier3["Infested Wolf"] = addM(Pool.TIER_COUNT[3], 3, 3, "Beast", 3, death_rattle=True)
-        self.tier3["Rat Pack"] = addM(Pool.TIER_COUNT[3], 2, 2, "Beast", 3, death_rattle=True)
+        self.tier3["Houndmaster"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Beast", 3)
+        self.tier3["Monstrous Macaw"] = self.addM(Pool.TIER_COUNT[3], 5, 3, "Beast", 3)
+        self.tier3["Infested Wolf"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Beast", 3, death_rattle=True)
+        self.tier3["Rat Pack"] = self.addM(Pool.TIER_COUNT[3], 2, 2, "Beast", 3, death_rattle=True)
 
-        self.tier4["Cave Hydra"] = addM(Pool.TIER_COUNT[4], 2, 4, "Beast", 1)
-        self.tier4["Savannah Highmane"] = addM(Pool.TIER_COUNT[4], 6, 5, "Beast", 1, death_rattle=True)
+        self.tier4["Cave Hydra"] = self.addM(Pool.TIER_COUNT[4], 2, 4, "Beast", 1)
+        self.tier4["Savannah Highmane"] = self.addM(Pool.TIER_COUNT[4], 6, 5, "Beast", 1, death_rattle=True)
 
         ### Neutral ###
-        self.tier1["Wrath Weaver"] = addM(Pool.TIER_COUNT[1], 1, 3, "Neutral", 1)
-        self.tier1["Acolyte of C'Thun"] = addM(Pool.TIER_COUNT[1], 2, 2, "Neutral", 1, taunt=True)
+        self.tier1["Wrath Weaver"] = self.addM(Pool.TIER_COUNT[1], 1, 3, "Neutral", 1)
+        self.tier1["Acolyte of C'Thun"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Neutral", 1, taunt=True)
         
-        self.tier2["Spawn of N'Zoth"] = addM(Pool.TIER_COUNT[2], 2, 2, "Neutral", 2, death_rattle=True)
-        self.tier2["Pack Leader"] = addM(Pool.TIER_COUNT[2], 3, 3, "Neutral", 2)
-        self.tier2["Selfless Hero"] = addM(Pool.TIER_COUNT[1], 2, 1, "Neutral", 2, death_rattle=True)
-        self.tier2["Waxrider Togwaggle"] = addM(Pool.TIER_COUNT[2], 1, 5, "Neutral", 2)
-        self.tier2["Tormented Ritualist"] = addM(Pool.TIER_COUNT[2], 2, 3, "Neutral", 2, taunt=True)
-        self.tier2["Unstable Ghoul"] = addM(Pool.TIER_COUNT[2], 1, 3, "Neutral", 2, taunt=True, death_rattle=True)
-        self.tier2["Menagerie Mug"] = addM(Pool.TIER_COUNT[2], 2, 2, "Neutral", 2)
+        self.tier2["Spawn of N'Zoth"] = self.addM(Pool.TIER_COUNT[2], 2, 2, "Neutral", 2, death_rattle=True)
+        self.tier2["Pack Leader"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Neutral", 2)
+        self.tier2["Selfless Hero"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Neutral", 2, death_rattle=True)
+        self.tier2["Waxrider Togwaggle"] = self.addM(Pool.TIER_COUNT[2], 1, 5, "Neutral", 2)
+        self.tier2["Tormented Ritualist"] = self.addM(Pool.TIER_COUNT[2], 2, 3, "Neutral", 2, taunt=True)
+        self.tier2["Unstable Ghoul"] = self.addM(Pool.TIER_COUNT[2], 1, 3, "Neutral", 2, taunt=True, death_rattle=True)
+        self.tier2["Menagerie Mug"] = self.addM(Pool.TIER_COUNT[2], 2, 2, "Neutral", 2)
         
-        self.tier3["Crystalweaver"] = addM(Pool.TIER_COUNT[3], 5, 4, "Neutral", 3)
-        self.tier3["Soul Juggler"] = addM(Pool.TIER_COUNT[3], 3, 3, "Neutral", 3)
-        self.tier3["Khadgar"] = addM(Pool.TIER_COUNT[3], 2, 2, "Neutral", 3)
+        self.tier3["Crystalweaver"] = self.addM(Pool.TIER_COUNT[3], 5, 4, "Neutral", 3)
+        self.tier3["Soul Juggler"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Neutral", 3)
+        self.tier3["Khadgar"] = self.addM(Pool.TIER_COUNT[3], 2, 2, "Neutral", 3)
 
-        self.tier4["Virmen Sensei"] = addM(Pool.TIER_COUNT[4], 4, 5, "Neutral", 4)
-        self.tier4["Menagerie Jug"] = addM(Pool.TIER_COUNT[4], 3, 3, "Neutral", 3)
-        self.tier4["Majordomo Executus"] = addM(Pool.TIER_COUNT[4], 6, 3, "Neutral", 4)
-        self.tier4["Menagerie Jug"] = addM(Pool.TIER_COUNT[4], 3, 3, "Neutral", 3)
-        self.tier4["Qiraji Harbinger"] = addM(Pool.TIER_COUNT[4], 5, 5, "Neutral", 4)
-        self.tier4["Bolvar, Fireblood"] = addM(Pool.TIER_COUNT[4], 1, 7, "Neutral", 4, divine_shield=True)
-        self.tier4["Defender of Argus"] = addM(Pool.TIER_COUNT[4], 2, 3, "Neutral", 4)
+        self.tier4["Virmen Sensei"] = self.addM(Pool.TIER_COUNT[4], 4, 5, "Neutral", 4)
+        self.tier4["Menagerie Jug"] = self.addM(Pool.TIER_COUNT[4], 3, 3, "Neutral", 3)
+        self.tier4["Majordomo Executus"] = self.addM(Pool.TIER_COUNT[4], 6, 3, "Neutral", 4)
+        self.tier4["Menagerie Jug"] = self.addM(Pool.TIER_COUNT[4], 3, 3, "Neutral", 3)
+        self.tier4["Qiraji Harbinger"] = self.addM(Pool.TIER_COUNT[4], 5, 5, "Neutral", 4)
+        self.tier4["Bolvar, Fireblood"] = self.addM(Pool.TIER_COUNT[4], 1, 7, "Neutral", 4, divine_shield=True)
+        self.tier4["Defender of Argus"] = self.addM(Pool.TIER_COUNT[4], 2, 3, "Neutral", 4)
 
         ### Mech ###
 
