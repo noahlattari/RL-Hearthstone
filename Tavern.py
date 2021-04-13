@@ -14,6 +14,7 @@ class Tavern:
     def getRoll(self):
         self.roll = self.pool.dummyRoll(self.tier)
         #roll = list of minions from the pool, tier determines what's in the roll
+        #TODO: interaction between tavern and pool: +/- the minion stock. Also instantiating the minion in the roll 
     
     def buy(self, minion_index):
         #check if minion (by index) is in roll

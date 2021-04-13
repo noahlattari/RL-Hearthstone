@@ -11,6 +11,7 @@ class Player:
     REROLL_COST = 1
 
     def __init__(self, pool):
+        self.pool = pool
         self.tavern = Tavern.Tavern(pool)
         self.gold = Player.STARTING_GOLD
         self.health = 40
@@ -22,14 +23,20 @@ class Player:
         self.tieredUp = False
 
         # minion specific variables
+        # Khadgar: Your cards that summon minions summon twice as many (thrice when gold)
+        # Stacks multiplicatively eg. 2 Khadgars makes it 4 times as many, 3 makes it 6 times as many, etc.
         self.khadgar = False
         self.khadgar_gold = False
         self.khadgar_count = 0
         self.khadgar_gold_count = 0
 
+        # Pack Leader: Whenever you summon a Beast, give it +2 Attack (+4 when gold) for each Pack Leader on the board
         self.pack_leader = False
         self.pack_leader_gold = False
+        self.pack_leader_count = 0
+        self.pack_leader_gold_count = 0
 
+        # Wrath Weaver: see wrathWeaverEffect()
         self.wrath_weaver = False
         self.wrath_weaver_count = 0
 
@@ -51,14 +58,6 @@ class Player:
             self.tavern.tierUp()
             self.tieredUp = True
             self.gold -= cost
-
-    def sell(self, minion_index):
-        #check if minion (by index) is in board
-        if 0 <= minion_index < len(self.board):
-            #remove minion from board 
-            self.board.pop(minion_index)
-            self.gold += 1
-        #TODO: return this minion to the pool, when you sell a token they just die
 
     def buy(self, minion_index):
         #check if we can fit it in our hand
@@ -93,7 +92,52 @@ class Player:
         else:
             self.discount += 1
 
+    def wrathWeaverEffect(self):
+        for m in self.board:
+            if m.name == "Wrath Weaver":
+                self.health -= 1
+                if m.gold:
+                    m.buff(4,4)
+                else:
+                    m.buff(2,2)
+    
+    def sell(self, minion_index):
+        #check if minion (by index) is in board
+        if 0 <= minion_index < len(self.board):
+            #remove minion from board 
+            sold_minion = self.board.pop(minion_index)
+            self.gold += 1
+            #TODO: return this minion to the pool, when you sell a token they just die
+
+            # Handling removal of specific minions
+            if sold_minion.name == "Khadgar":
+                if sold_minion.gold:
+                    khadgar_gold_count -= 1
+                    if khadgar_gold_count == 0:
+                        khadgar_gold = False
+                else:
+                    khadgar_count -= 1
+                    if khadgar_count == 0:
+                        khadgar = False
+
+            if sold_minion.name == "Pack Leader":
+                if sold_minion.gold:
+                    pack_leader_gold_count -= 1
+                    if pack_leader_gold_count == 0:
+                        pack_leader_gold = False
+                else:
+                    pack_leader_count -= 1
+                    if pack_leader_count == 0:
+                        pack_leader = False
+
+            if sold_minion.name == "Wrath Weaver":
+                wrath_weaver_count -= 1
+                if wrath_weaver_count == 0:
+                    wrath_weaver = False
+
+    #TODO: refactor most conditionals to functions
     def play(self, minion_index, pos):
+
         #check if minion (by index) is in hand
         if 0 <= minion_index < len(self.hand):
             if len(self.board) < Player.MAX_BOARD:
@@ -107,8 +151,8 @@ class Player:
 
                 ### Demon ###
                 if curr_minion.minion_type == "Demon":
-                    if wrath_weaver
-                    wrathWeaverEffect()
+                    if self.wrath_weaver:
+                        wrathWeaverEffect()
 
                 ### Neutral ###
                 if curr_minion.name == "Defender of Argus":
@@ -144,24 +188,56 @@ class Player:
                         if m.minion_type == "Beast":
                             m.buff(attack_buff, health_buff)
 
-                if curr_minion.name == "Menagerie Mug": #also basically just jug
+                #TODO: test
+                if curr_minion.name == "Menagerie Mug" or "Menagerie Jug": #also basically just jug
                     attack_buff = 1
                     health_buff = 1
                     if curr_minion.gold:
                         attack_buff += 1
                         health_buff += 1
-                    #TODO: finish menagerie mug / jug
+                    if curr_minion.name == "Menagerie Jug":
+                        attack_buff *= 2
+                        health_buff *= 2
+                    
+                    minion_map = {}
+                    count = 0
+                    for m in self.board:
+                        if m.minion_type in minion_map:
+                            minion_map[m.minion_type].append(m)
+                        else:
+                            minion_type_list = []
+                            minion_type_list.append(m)
+                            minion_map[m.minion_type] = minion_type_list
+                    
+                    #empty minion_map evaluates to False
+                    while(minion_map and count < 3):
+                        #pick a random type
+                        random_type = minion_map[minion_map.keys()[random.randint(0,len(minion_map))]
+                        type_list = minion_map.pop(random_type);
+                        random_minion = type_list[random.randint(0, len(type_list))]
+                        random_minion.buff(attack_buff, health_buff)
 
-                #TODO: add "battlecries for boolean boys"
+                if curr_minion.name == "Khadgar":
+                    if curr_minion.gold:
+                        self.khadgar_gold = True
+                        self.khadgar_gold_count += 1
+                    else:
+                        self.khadgar = True
+                        self.khadgar_count += 1
+                        
+                if curr_minion.name == "Pack Leader":
+                    if curr_minion.gold:
+                        self.pack_leader_gold = True
+                        self.pack_leader_gold_count += 1
+                    else:
+                        self.pack_leader = True
+                        self.pack_leader_count += 1
                 
-
-        def wrathWeaverEffect(self):
-            #TODO: finish the effect
-
-            #check wrath weaver booleans
-
-            #iterate through board
-            #for every wrath weaver deal 1 damage to health
-            #buff wrath weaver by 2/2, 4/4 if gold
+                if curr_minion.name == "Wrath Weaver":
+                    self.wrath_weaver = True
+                    self.wrath_weaver_count += 1
+                
+    
+    
 
     
