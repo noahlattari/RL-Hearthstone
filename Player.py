@@ -107,33 +107,33 @@ class Player:
             # Handling removal of specific minions
             if sold_minion.name == "Khadgar":
                 if sold_minion.gold:
-                    khadgar_gold_count -= 1
-                    if khadgar_gold_count == 0:
-                        khadgar_gold = False
+                    self.khadgar_gold_count -= 1
+                    if self.khadgar_gold_count == 0:
+                        self.khadgar_gold = False
                 else:
-                    khadgar_count -= 1
-                    if khadgar_count == 0:
-                        khadgar = False
+                    self.khadgar_count -= 1
+                    if self.khadgar_count == 0:
+                        self.khadgar = False
 
             if sold_minion.name == "Pack Leader":
                 if sold_minion.gold:
-                    pack_leader_gold_count -= 1
-                    if pack_leader_gold_count == 0:
-                        pack_leader_gold = False
+                    self.pack_leader_gold_count -= 1
+                    if self.pack_leader_gold_count == 0:
+                        self.pack_leader_gold = False
                 else:
-                    pack_leader_count -= 1
-                    if pack_leader_count == 0:
-                        pack_leader = False
+                    self.pack_leader_count -= 1
+                    if self.pack_leader_count == 0:
+                        self.pack_leader = False
 
             if sold_minion.name == "Wrath Weaver":
-                wrath_weaver_count -= 1
-                if wrath_weaver_count == 0:
-                    wrath_weaver = False
+                self.wrath_weaver_count -= 1
+                if self.wrath_weaver_count == 0:
+                    self.wrath_weaver = False
 
             if sold_minion.name == "Rabid Saurolisk":
-                rabid_saurolisk_count -= 1
-                if rabid_saurolisk_count == 0:
-                    rabid_saurolisk = False
+                self.rabid_saurolisk_count -= 1
+                if self.rabid_saurolisk_count == 0:
+                    self.rabid_saurolisk = False
 
     #TODO: refactor most conditionals to functions
     def play(self, minion_index, pos):
