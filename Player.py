@@ -149,6 +149,10 @@ class Player:
                 else:
                     self.board.append(curr_minion)
 
+                ### Beast ###
+                if curr_minion.name == "Houndmaster":
+                    houndmasterBC(board)
+
                 ### Demon ###
                 if curr_minion.minion_type == "Demon":
                     if self.wrath_weaver:
@@ -218,6 +222,7 @@ class Player:
             type_list = minion_map.pop(random_type);
             random_minion = type_list[random.randint(0, len(type_list))]
             random_minion.buff(attack_buff, health_buff)
+            count += 1
 
     def defenderOfArgusBC(self, board, minion_index):
         attack_buff = 1
@@ -248,6 +253,24 @@ class Player:
         if curr_minion.gold:
             attack_buff += 2
             health_buff += 2
-        for m in board:
-            if m.minion_type == "Beast":
-                m.buff(attack_buff, health_buff)
+        buffFriendly(board, "Beast", attack_buff, health_buff)
+
+    def houndmasterBC(self, board):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        buffFriendly(board, "Beast", attack_buff, health_buff, taunt=True)
+
+    #helper function for "give a friendly minion..." effects
+    def buffFriendly(self, board, minion_type, attack, health, taunt=False): #add more cases as necessary eg. windfury, divine_shield, etc
+        #randomly buffs a friendly minion, can be specified by type
+        type_specific_list = [m for m in board if m.minion_type == minion_type]
+
+        #fails if type_specific_list is empty
+        if type_specific_list:
+            random_friend = type_specific_list[random.randint(0, len(type_specific_list))]
+            random_friend.buff(attack, health)
+            if taunt:
+                random_friend.giveTaunt()

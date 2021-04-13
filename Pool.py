@@ -12,9 +12,18 @@ class Pool:
         tier4 = {}
         tier5 = {}
         tier6 = {}
+        tokens = {}
 
         ### Beast ###
+        self.tokens["Rat"] = addM(0, 1, 1, "Beast", 1, token=True)
+
         self.tier1["Alleycat"] = addM(Pool.TIER_COUNT[1], 1, 1, "Beast", 1)
+        self.tier1["Scavenging Hyena"] = addM(Pool.TIER_COUNT[1], 2, 2, "Beast", 1)
+
+        self.tier3["Houndmaster"] = addM(Pool.TIER_COUNT[3], 4, 3, "Beast", 3)
+        self.tier3["Monstrous Macaw"] = addM(Pool.TIER_COUNT[3], 5, 3, "Beast", 3)
+
+        self.tier4["Cave Hydra"] = addM(Pool.TIER_COUNT[4], 2, 4, "Beast", 1)
 
 
         ### Neutral ###
@@ -74,4 +83,6 @@ class Pool:
         if(magnetic):
             minion_dict["magnetic": True]
         return minion_dict
+
+    #TODO: create a helper function to initialize and return Minion objects (for when we pass them to the tavern)
         
