@@ -45,6 +45,7 @@ class Player:
             #remove minion from board 
             self.board.pop(minion)
             self.gold += 1
+        #TODO: return this minion to the pool, when you sell a token they just die
 
     def buy(self, minion):
         #check if we can fit it in our hand
