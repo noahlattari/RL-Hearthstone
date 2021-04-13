@@ -1,7 +1,7 @@
 
 class Minion:
 
-    def __init__(self, name, attack, health, minion_type, tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False, death_rattle=False gold=False, token=False):
+    def __init__(self, name, attack, health, minion_type, tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False, death_rattle=False, gold=False, token=False):
         self.name = name
         self.attack = attack
         self.health = health
