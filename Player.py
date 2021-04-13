@@ -253,7 +253,7 @@ class Player:
         if curr_minion.gold:
             attack_buff += 2
             health_buff += 2
-        buffFriendly(board, "Beast", attack_buff, health_buff)
+        buffFriendly(board, attack_buff, health_buff, minion_type="Beast")
 
     def houndmasterBC(self, board):
         attack_buff = 2
@@ -261,12 +261,16 @@ class Player:
         if curr_minion.gold:
             attack_buff += 2
             health_buff += 2
-        buffFriendly(board, "Beast", attack_buff, health_buff, taunt=True)
+        buffFriendly(board, attack_buff, health_buff, minion_type="Beast", taunt=True)
 
     #helper function for "give a friendly minion..." effects
-    def buffFriendly(self, board, minion_type, attack, health, taunt=False): #add more cases as necessary eg. windfury, divine_shield, etc
-        #randomly buffs a friendly minion, can be specified by type
-        type_specific_list = [m for m in board if m.minion_type == minion_type]
+    #randomly buffs a friendly minion, can be specified by type
+    def buffFriendly(self, board, attack, health, minion_type=None, taunt=False): #add more cases as necessary eg. windfury, divine_shield, etc
+        
+        if minion_type is not None:
+            type_specific_list = [m for m in board if m.minion_type == minion_type]
+        else:
+            type_specific_list = board
 
         #fails if type_specific_list is empty
         if type_specific_list:
