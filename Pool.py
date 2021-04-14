@@ -19,7 +19,8 @@ class Pool:
         self.tokens["Tabbycat"] = self.addM(0, 1, 1, "Beast", 1, token=True)
         self.tokens["Hyena"] = self.addM(0, 2, 2, "Beast", 1, token=True)
         self.tokens["Spider"] = self.addM(0, 1, 1, "Beast", 1, token=True)
-        self.tokens["Big Bad Wolf"] = self.addM(0, 3, 2, 1, token=True)
+
+        self.tokens["Big Bad Wolf"] = self.addM(0, 3, 2, "Beast", 1, token=True)
 
         self.tier1["Alleycat"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Beast", 1)
         self.tier1["Scavenging Hyena"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Beast", 1)
@@ -60,6 +61,26 @@ class Pool:
         self.tier4["Defender of Argus"] = self.addM(Pool.TIER_COUNT[4], 2, 3, "Neutral", 4)
 
         ### Mech ###
+        self.tokens["Guard Bot"] = self.addM(0, 2, 3, "Mech", 1, taunt=True)
+        self.tokens["Robosaur"] = self.addM(0, 8, 8, "Mech", 1)
+        self.tokens["Microbot"] = self.addM(0, 1, 1, "Mech", 1)
+        self.tokens["Damaged Golem"] = self.addM(0, 2, 1, "Mech", 1)
+
+        self.tier1["Micro Mummy"] = self.addM(Pool.TIER_COUNT[1], 1, 2, "Mech", 1, reborn=True)
+
+        self.tier2["Kaboom Bot"] = self.addM(Pool.TIER_COUNT[2], 2, 2, "Mech", 2, death_rattle=True)
+        self.tier2["Metaltooth Leaper"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Mech", 2)
+        self.tier2["Harvest Golem"] = self.addM(Pool.TIER_COUNT[2], 2, 3, "Mech", 2, death_rattle=True)
+
+        self.tier3["Replicating Menace"] = self.addM(Pool.TIER_COUNT[3], 3, 1, "Mech", 3, magnetic=True, microbots=True, death_rattle=True)
+        self.tier3["Iron Sensei"] = self.addM(Pool.TIER_COUNT[3], 2, 2, "Mech", 3)
+        self.tier3["Pilotted Shredder"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Mech", 3, death_rattle=True)
+        self.tier3["Screwjank Clunker"] = self.addM(Pool.TIER_COUNT[3], 2, 5, "Mech", 3)
+        self.tier3["Deflect-o-Bot"] = self.addM(Pool.TIER_COUNT[3], 3, 2, "Mech", 3, divine_shield=True)
+
+        self.tier4["Annoy-o-Module"] = self.addM(Pool.TIER_COUNT[4], 2, 4, "Mech", 4, taunt=True, divine_shield=True, magnetic=True)
+        self.tier4["Security Rover"] = self.addM(Pool.TIER_COUNT[4], 2, 6, "Mech", 4)
+        self.tier4["Mechano-Egg"] = self.addM(Pool.TIER_COUNT[4], 0, 5, "Mech", 4, death_rattle=True)
 
         ### Elemental ###
         self.tier1["Sellemental"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Elemental", 1)
@@ -84,6 +105,17 @@ class Pool:
         ### Pirate ###
 
         ### Dragon ###
+        self.tier1["Dragonspawn Lieutenant"] = self.addM(Pool.TIER_COUNT[1], 2, 3, "Dragon", 1, taunt=True)
+
+        self.tier2["Glyph Guardian"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Dragon", 2)
+        self.tier2["Steward of Time"] = self.addM(Pool.TIER_COUNT[2], 3, 4, "Dragon", 2)
+        
+        self.tier3["Twilight Emissary"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Dragon", 3, taunt=True)
+        self.tier3["Bronze Warden"] = self.addM(Pool.TIER_COUNT[3], 2, 1, "Dragon", 3, divine_shield=True, reborn=True)
+
+        self.tier4["Cobalt Scalebane"] = self.addM(Pool.TIER_COUNT[4], 5, 5, "Dragon", 4)
+        self.tier4["Drakonid Enforcer"] = self.addM(Pool.TIER_COUNT[4], 3, 6, "Dragon", 4)
+        self.tier4["Herald of Flame"] = self.addM(Pool.TIER_COUNT[4], 6, 6, "Dragon", 4)
 
         ### Murloc ###
 
@@ -95,8 +127,8 @@ class Pool:
         return dummy
 
     #helper function for adding minions
-    def addM(self, count, attack, health, minion_type, minion_tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False, death_rattle=False):
-        minion_dict = {"count": count, "attack": attack, "type": minion_type}
+    def addM(self, count, attack, health, minion_type, minion_tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False, microbots=False, golden_microbots=False, reborn=False, death_rattle=False, token=False):
+        minion_dict = {"count": count, "attack": attack, "health": health, "type": minion_type, "tier": minion_tier}
         if(taunt):
             minion_dict["taunt"] = True
         if(divine_shield):
@@ -109,13 +141,32 @@ class Pool:
             minion_dict["magnetic"] = True
         if(death_rattle):
             minion_dict["death_rattle"] = True
+        if(token):
+            minion_dict["token"] = True
+        if(microbots):
+            minion_dict["microbots"] = True
+        if(golden_microbots):
+            minion_dict["golden_microbots"] = True
+        if(reborn):
+            minion_dict["reborn"] = True
+
         return minion_dict
 
     #TODO: create a helper function to initialize and return Minion objects (for when we pass them to the tavern)
     #also create one for tokens
 
-    def summonToken(self, minion_name):
-        minion_stats = self.tokens[minion_name]
-        #return a minion using the minion_stats
+    def summonToken(self, token_name):
+        minion_stats = self.tokens[token_name]
+        attack = minion_stats["attack"]
+        health = minion_stats["health"]
+        minion_type = minion_stats["type"]
+        tier = minion_stats["tier"]
+        
+        #can add more cases for other attributes as necessary
+        is_taunt = minion_stats["Taunt"]
+        if is_taunt is None:
+            is_taunt = False
+            
+        return Minion.Minion(token_name, attack, health, minion_type, tier, taunt=is_taunt, token=True)
     
             

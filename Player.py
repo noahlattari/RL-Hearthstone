@@ -128,6 +128,16 @@ class Player:
         self.round += 1
         #make a function for determining the upgrade discount
 
+    #call this function at the end of the turn
+    def roundEnd(self):
+        for m in self.board:
+            if m.name == "Micro Mummy":
+                self.microMummyEffect(self.board, m)
+            if m.name == "Iron Sensei":
+                self.ironSenseiEffect(self.board, m)
+            if m.name == "Cobalt Scalebane":
+                self.cobaltScalebaneEffect(self.board, m)
+
     def resetGold(self):
         if Player.STARTING_GOLD + self.round > Player.MAX_GOLD:
             self.gold = Player.MAX_GOLD
@@ -180,6 +190,7 @@ class Player:
                 if self.rabid_saurolisk_count == 0:
                     self.rabid_saurolisk = False
 
+
             if sold_minion.name == "Sellemental":
                 #When you sell a sellemental, get a water_droplet
                 self.sellemental_count -= 1
@@ -196,6 +207,10 @@ class Player:
                 if self.party_elemental_count == 0:
                     self.party_elemental = False
 
+            if sold_minion.name == "Steward of Time":
+                self.stewardOfTimeEffect(self.tavern.roll, sold_minion)
+
+
     #TODO: refactor most conditionals to functions
     def play(self, minion_index, pos):
 
@@ -205,14 +220,15 @@ class Player:
                 curr_minion = self.hand.pop(minion_index)
 
                 #use pos variable to determine where to put curr_minion
-                if 0 <= pos < len(self.hand):
+                if 0 <= pos < len(self.board):
                     self.board.insert(pos, curr_minion)
                 else:
+                    pos = len(self.board)
                     self.board.append(curr_minion)
 
                 ### Beast ###
                 if curr_minion.name == "Alleycat":
-                    self.alleyCatBC(self.board)
+                    self.alleyCatBC(self.board, pos)
 
                 if curr_minion.name == "Houndmaster":
                     self.houndmasterBC(self.board, curr_minion)
@@ -224,6 +240,13 @@ class Player:
                 if curr_minion.death_rattle:
                     if self.rabid_saurolisk:
                         self.rabidSauroliskEffect()
+
+                #TODO: Pack leader buff
+                if curr_minion.minion_type == "Beast":
+                    if self.pack_leader_gold:
+                        curr_minion.buff(4 * self.pack_leader_gold_count, 0)
+                    if self.pack_leader:
+                        curr_minion.buff(2 * self.pack_leader_count, 0)
 
                 ### Demon ###
 
@@ -274,6 +297,7 @@ class Player:
                     self.wrath_weaver = True
                     self.wrath_weaver_count += 1
 
+
                 if curr_minion.name == "Refreshing Anomaly":
                     self.refreshing_anomaly = True
 
@@ -292,6 +316,18 @@ class Player:
 
                 if curr_minion.name == "Arcane Assistant":
                     self.arcaneAssistantBC(self.board)
+
+                ### Mech ###
+                if curr_minion.name == "Screwjank Clunker":
+                    self.screwjankClunkerBC(self.board, curr_minion)
+                
+                if curr_minion.name == "Metaltooth Leaper":
+                    self.metaltoothLeaperBC(self.board, curr_minion)
+
+                ### Dragon ###
+                if curr_minion.name == "Twilight Emissary":
+                    self.twilightEmissaryBC(self.board, curr_minion)
+
     
     ### Battlecries ###
     #TODO: Write unit tests for battlecries / effects
@@ -383,10 +419,8 @@ class Player:
             health_buff += 2
         self.buffFriendly(board, attack_buff, health_buff, minion_type="Beast", taunt=True)
 
-    #WIP
-    def alleyCatBC(self, board):
-        self.pool
-        return
+    def alleyCatBC(self, board, pos):
+        self.summonToken(board, pos, "Tabbycat")
 
     def mugAndJugBC(self, board, curr_minion):
         attack_buff = 1
@@ -417,6 +451,59 @@ class Player:
             random_minion.buff(attack_buff, health_buff)
             count += 1
 
+    def screwjankClunkerBC(self, board, curr_minion):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Mech")
+
+    def metaltoothLeaperBC(self, board, curr_minion):
+        attack_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+        for m in board:
+            if m.minion_type == "Mech":
+                m.buff(attack_buff, 0)
+
+    def microMummyEffect(self, board, curr_minion):
+        attack_buff = 1
+        if curr_minion.gold:
+            attack_buff += 1
+        self.buffFriendly(board, attack_buff, 0)
+
+    def ironSenseiEffect(self, board, curr_minion):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Mech")
+
+    def twilightEmissaryBC(self, board, curr_minion):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Dragon")
+
+    def cobaltScalebaneEffect(self, board, curr_minion):
+        attack_buff = 3
+        if curr_minion.gold:
+            attack_buff += 3
+        self.buffFriendly(board, attack_buff, 0, minion_type="Dragon")
+
+    def stewardOfTimeEffect(self, roll, curr_minion):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        for m in roll:
+            m.buff(attack_buff, health_buff)
+
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
     def buffFriendly(self, board, attack, health, minion_type=None, taunt=False): #add more cases as necessary eg. windfury, divine_shield, etc
@@ -432,4 +519,11 @@ class Player:
             random_friend.buff(attack, health)
             if taunt:
                 random_friend.giveTaunt()
+
+    #helper function for summoning tokens WIP
+    def summonToken(self, board, pos, token_name):
+        if len(board) < Player.MAX_BOARD:
+            curr_token = self.pool.summonToken(token_name)
+            board.insert(pos+1, curr_token)
+        
 
