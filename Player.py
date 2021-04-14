@@ -203,7 +203,13 @@ class Player:
                 if curr_minion.name == "Wrath Weaver":
                     self.wrath_weaver = True
                     self.wrath_weaver_count += 1
+
+                ### Mech ###
+                if curr_minion.name == "Screwjank Clunker":
+                    self.screwjankClunkerBC(self.board, curr_minion)
                 
+                if curr_minion.name == "Metaltooth Leaper":
+                    self.metaltoothLeaperBC(self.board, curr_minion)
     
     ### Battlecries ###
     #TODO: Write unit tests for battlecries / effects
@@ -297,6 +303,22 @@ class Player:
             random_minion = type_list[random.randint(0, len(type_list))]
             random_minion.buff(attack_buff, health_buff)
             count += 1
+
+    def screwjankClunkerBC(self, board, curr_minion):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Mech")
+
+    def metaltoothLeaperBC(self, board, curr_minion):
+        attack_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+        for m in board:
+            if m.minion_type == "Mech":
+                m.buff(attack_buff, 0)
 
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
