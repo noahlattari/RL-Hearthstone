@@ -617,10 +617,16 @@ class Player:
 
     #helper function for summoning tokens WIP
     def summonToken(self, board, pos, token_name, gold=False):
-        if len(board) < Player.MAX_BOARD:
-            #need to handle khadgar edge case
-
-            curr_token = self.pool.summonToken(token_name, gold)
-            board.insert(pos+1, curr_token)
+        summon_multiplier = 1
+        if self.khadgar:
+            summon_multiplier *= (self.khadgar_count * 2)
+        if self.khadgar_gold:
+            summon_multiplier *= (self.khadgar_gold_count * 3)
+        for i in range(summon_multiplier):
+            if len(board) < Player.MAX_BOARD:
+                curr_token = self.pool.summonToken(token_name, gold)
+                board.insert(pos+1, curr_token)
+            else: 
+                break #if the board is full no point in looping
         
 
