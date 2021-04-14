@@ -9,6 +9,18 @@ import Minion
 #def test_sell():
 #etc ...
 
+def test_houndmaster():
+    return
+
+def test_rabid_saurolisk():
+    return
+
+def test_pack_leader(): 
+    return
+
+def test_wrath_weaver():
+    return
+
 def test_alleycat():
     pool = Pool.Pool()
     player = Player.Player(pool)

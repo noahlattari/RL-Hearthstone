@@ -239,7 +239,7 @@ class Player:
 
             if sold_minion.name == "Southsea Captain":
                 self.southsea_captain = False
-                southseaCaptainEffect(self)
+                self.southseaCaptainEffect(self.board)
 
 
     #TODO: refactor most conditionals to functions
@@ -361,7 +361,7 @@ class Player:
                 ### Pirate
                 if curr_minion.minion_type == "Pirate":
                     if self.salty_looter:
-                        self.saltyLooterBC(self, curr_minion)
+                        self.saltyLooterBC(curr_minion)
 
                 if curr_minion.name == "Southsea Captain":
                     self.southsea_captain = True
@@ -375,7 +375,7 @@ class Player:
 
                 if curr_minion.name == "Deck Swabbie":
                     self.deck_swabbie = True
-                    deckSwabbieBC(self)
+                    self.deckSwabbieBC()
 
 
     
@@ -383,28 +383,29 @@ class Player:
     #TODO: Write unit tests for battlecries / effects
     def deckSwabbieBC(self):
         #reduce upgrade cost of tavern by 1???? WIP
+        return
         
     def saltyLooterBC(self, curr_minion):
         curr_minion.buff(1, 1)
 
-    def bloodsailCannoneerBC(self):
+    def bloodsailCannoneerBC(self, board):
         attack_buff = 3
         health_buff = 3
         if self.bloodsail_cannoneer_gold:
             attack_buff += 3
             health_buff += 3
-        for m in self.board:
+        for m in board:
             if m.type == "Pirate":
                 m.buff(attack_buff, health_buff)
         
-    def southseaCaptainEffect(self):
+    def southseaCaptainEffect(self, board):
         if self.southsea_captain:
             attack_buff = 1
             health_buff = 1
             if self.southsea_captain_gold:
                 attack_buff += 1
                 health_buff += 1
-            for m in self.board:
+            for m in board:
                 if m.type == "Pirate":
                     m.buff(attack_buff, health_buff)
         else: #When card is sold, remove the buffs
@@ -413,7 +414,7 @@ class Player:
             if self.southsea_captain_gold:
                 attack_buff -= 1
                 health_buff -= 1
-            for m in self.board:
+            for m in board:
                 if m.type == "Pirate":
                     m.buff(attack_buff, health_buff)
 
@@ -617,6 +618,8 @@ class Player:
     #helper function for summoning tokens WIP
     def summonToken(self, board, pos, token_name, gold=False):
         if len(board) < Player.MAX_BOARD:
+            #need to handle khadgar edge case
+
             curr_token = self.pool.summonToken(token_name, gold)
             board.insert(pos+1, curr_token)
         
