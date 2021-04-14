@@ -259,7 +259,7 @@ class Player:
 
                 ### Beast ###
                 if curr_minion.name == "Alleycat":
-                    self.alleyCatBC(self.board, pos)
+                    self.alleyCatBC(self.board, pos, curr_minion)
 
                 if curr_minion.name == "Houndmaster":
                     self.houndmasterBC(self.board, curr_minion)
@@ -293,7 +293,7 @@ class Player:
                 if curr_minion.name == "Nathrezim Overseer":
                     self.nathrezim_overseer = True
                     self.nathrezimOverseerBC(self.board)
-                    
+                
                 ### Neutral ###
                 if curr_minion.name == "Defender of Argus":
                     self.defenderOfArgusBC(self.board, minion_index, curr_minion)
@@ -303,10 +303,10 @@ class Player:
 
                 if curr_minion.name == "Virmen Sensei":
                     self.virmenSenseiBC(self.board, curr_minion)
-
-                if curr_minion.name == "Menagerie Mug" or "Menagerie Jug":
+                
+                if curr_minion.name == "Menagerie Mug" or curr_minion.name == "Menagerie Jug":
                     self.mugAndJugBC(self.board, curr_minion)
-                    
+                
                 if curr_minion.name == "Khadgar":
                     if curr_minion.gold:
                         self.khadgar_gold = True
@@ -330,8 +330,8 @@ class Player:
 
                 if curr_minion.name == "Refreshing Anomaly":
                     self.refreshing_anomaly = True
-
-                #Elemental
+                
+                ### Elemental ###
                 #If you have a party elemental and play an elemental, buff an elemental
                 if curr_minion.minion_type == "Elemental":
                     if self.party_elemental:
@@ -346,18 +346,18 @@ class Player:
 
                 if curr_minion.name == "Arcane Assistant":
                     self.arcaneAssistantBC(self.board)
-
+                
                 ### Mech ###
                 if curr_minion.name == "Screwjank Clunker":
                     self.screwjankClunkerBC(self.board, curr_minion)
                 
                 if curr_minion.name == "Metaltooth Leaper":
                     self.metaltoothLeaperBC(self.board, curr_minion)
-
+                
                 ### Dragon ###
                 if curr_minion.name == "Twilight Emissary":
                     self.twilightEmissaryBC(self.board, curr_minion)
-
+                    
                 ### Pirate
                 if curr_minion.minion_type == "Pirate":
                     if self.salty_looter:
@@ -376,6 +376,7 @@ class Player:
                 if curr_minion.name == "Deck Swabbie":
                     self.deck_swabbie = True
                     deckSwabbieBC(self)
+
 
     
     ### Battlecries ###
@@ -506,8 +507,11 @@ class Player:
             health_buff += 2
         self.buffFriendly(board, attack_buff, health_buff, minion_type="Beast", taunt=True)
 
-    def alleyCatBC(self, board, pos):
-        self.summonToken(board, pos, "Tabbycat")
+    def alleyCatBC(self, board, pos, curr_minion):
+        gold = False
+        if curr_minion.gold:
+            gold = True
+        self.summonToken(board, pos, "Tabbycat", gold)
 
     def mugAndJugBC(self, board, curr_minion):
         attack_buff = 1
@@ -536,7 +540,6 @@ class Player:
             #pick a random type
             minion_map_keys = list(minion_map.keys())
             random_type = minion_map_keys[random.randint(0,len(minion_map)-1)]
-            print(random_type)
             type_list = minion_map.pop(random_type)
             random_minion = type_list[random.randint(0, len(type_list)-1)]
             random_minion.buff(attack_buff, health_buff)
@@ -599,7 +602,6 @@ class Player:
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
     def buffFriendly(self, board, attack, health, minion_type=None, taunt=False): #add more cases as necessary eg. windfury, divine_shield, etc
-        
         if minion_type is not None:
             type_specific_list = [m for m in board if m.minion_type == minion_type]
         else:
@@ -613,9 +615,9 @@ class Player:
                 random_friend.giveTaunt()
 
     #helper function for summoning tokens WIP
-    def summonToken(self, board, pos, token_name):
+    def summonToken(self, board, pos, token_name, gold=False):
         if len(board) < Player.MAX_BOARD:
-            curr_token = self.pool.summonToken(token_name)
+            curr_token = self.pool.summonToken(token_name, gold)
             board.insert(pos+1, curr_token)
         
 

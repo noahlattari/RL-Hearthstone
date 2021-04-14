@@ -163,18 +163,24 @@ class Pool:
     #TODO: create a helper function to initialize and return Minion objects (for when we pass them to the tavern)
     #also create one for tokens
 
-    def summonToken(self, token_name):
-        minion_stats = self.tokens[token_name]
-        attack = minion_stats["attack"]
-        health = minion_stats["health"]
-        minion_type = minion_stats["type"]
-        tier = minion_stats["tier"]
+    def summonToken(self, token_name, gold=False):
+        token_stats = self.tokens[token_name]
+        attack = token_stats["attack"]
+        health = token_stats["health"]
+        token_type = token_stats["type"]
+        tier = token_stats["tier"]
         
         #can add more cases for other attributes as necessary
-        is_taunt = minion_stats["Taunt"]
+        is_taunt = token_stats.get("Taunt")
         if is_taunt is None:
             is_taunt = False
-            
-        return Minion.Minion(token_name, attack, health, minion_type, tier, taunt=is_taunt, token=True)
+        
+        token_is_gold = False
+        if gold:
+            attack *= 2
+            health *= 2
+            token_is_gold = True
+        
+        return Minion.Minion(token_name, attack, health, token_type, tier, taunt=is_taunt, token=True, gold=token_is_gold)
     
             
