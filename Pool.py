@@ -62,9 +62,25 @@ class Pool:
         ### Mech ###
 
         ### Elemental ###
-
+        self.tier1["Sellemental"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Elemental", 1)
+        self.tier1["Water Drople"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Elemental", 1)
+        self.tier1["Refreshing Anomaly"] = self.addM(Pool.TIER_COUNT[1], 1, 3, "Elemental", 1)
+        self.tier2["Party Elemental"] = self.addM(Pool.TIER_COUNT[2], 3, 2, "Elemental", 2)
+        self.tier2["Molten Rock"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Elemental", 2, taunt=True)
+        self.tier3["Stasis Elemental"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Elemental", 3)
+        self.tier3["Arcane Assistant"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Elemental", 3)
+        self.tier3["Crackling Cyclone"] = self.addM(Pool.TIER_COUNT[3], 4, 1, "Elemental", 3, divine_shield=True, windfury=True)
+        
         ### Demon ###
-
+        self.tier1["Imp"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Demon", 1)
+        self.tier1["Fiendish Servant"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Demon", 1, death_rattle=True)
+        self.tier1["Vulgar Homunculus"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Demon", 1, taunt=True)
+        self.tier2["Nathrezim Overseer"] = self.addM(Pool.TIER_COUNT[2], 2, 3, "Demon", 2)
+        self.tier2["Imprisoner"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Demon", 2, taunt=True, death_rattle=True)
+        self.tier3["Imp Gang Boss"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Demon", 1)
+        self.tier3["Soul Devourer"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Demon", 3)
+        self.tier4["Ring Matron"] = self.addM(Pool.TIER_COUNT[4], 6, 4, "Demon", 4, taunt=True, death_rattle=True)
+        self.tier4["Siegebreaker"] = self.addM(Pool.TIER_COUNT[4], 5, 8, "Demon", 4, taunt=True)
         ### Pirate ###
 
         ### Dragon ###

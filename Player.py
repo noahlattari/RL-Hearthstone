@@ -44,13 +44,58 @@ class Player:
         self.rabid_saurolisk = False
         self.rabid_saurolisk_count = 0
 
+        #Sellemental/Water Droplet
+        self.sellemental_count = 0
+        self.water_droplet = False
+
+        #Stasis Elemental: see stasisElementalBC()
+        self.stasis_elemental = False
+        self.stasis_elemental_count = 0
+
+        #Party Elemental: see partyElementalEffect()
+        self.party_elemental = False
+        self.party_elemental_gold = False
+        self.party_elemental_count = 0
+        self.party_elemental_gold_count = 0
+
+        #Refreshing Anomaly: effects reroll
+        self.refreshing_anomaly = False
+        self.refreshing_anomaly_gold = False
+        self.anomaly_gold_counter = 2
+
+        #Nathrezim Overseer: see nathrezimOverseerBC()
+        self.nathrezim_overseer = False
+        self.nathrezim_overseer_gold = False
+           
+
     def freezeTavern(self):
         self.freeze = True
 
     def reroll(self):
-        if self.gold >= Player.REROLL_COST:
-            self.gold -= Player.REROLL_COST #- reroll discount
-            self.tavern.getRoll()
+        #refreshing anomaly gives a free reroll, refreshing anomoly gold gives two rerolls
+        
+        #if normal anomoly has been plaued
+        if self.refreshing_anomaly:
+            Player.REROLL_COST = 0
+            self.refreshing_anomaly = False
+            if self.gold >= Player.REROLL_COST:
+                self.gold -= Player.REROLL_COST #- reroll discount
+                self.tavern.getRoll(stasis_elemental=False)
+            Player.REROLL_COST = 1
+        if self.refreshing_anomaly_gold:
+            if self.anomaly_gold_counter != 0:
+                Player.REROLL_COST = 0
+                if self.gold >= Player.REROLL_COST:
+                    self.gold -= Player.REROLL_COST
+                    self.tavern.getRoll(stasis_elemental=False)
+                self.anomaly_gold_counter -= 1
+            else:
+                Player.REROLL_COST = 1
+                self.refreshing_anomaly_gold = False
+        else:
+            if self.gold >= Player.REROLL_COST:
+                self.gold -= Player.REROLL_COST
+                self.tavern.getRoll(stasis_elemental=False)
 
     def upgradeTavern(self):
         #check if we have enough money see upgrade_cost constant
@@ -135,6 +180,22 @@ class Player:
                 if self.rabid_saurolisk_count == 0:
                     self.rabid_saurolisk = False
 
+            if sold_minion.name == "Sellemental":
+                #When you sell a sellemental, get a water_droplet
+                self.sellemental_count -= 1
+                self.water_droplet = True
+                #add a 2/2 water droplet to board, is possible??
+
+            if sold_minion.name == "Stasis Elemental":
+                self.stasis_elemental_count -= 1
+                if self.stasis_elemental_count == 0:
+                    self.stasis_elemental = False
+
+            if sold_minion.name == "Party Elemental":
+                self.party_elemental_count -= 1
+                if self.party_elemental_count == 0:
+                    self.party_elemental = False
+
     #TODO: refactor most conditionals to functions
     def play(self, minion_index, pos):
 
@@ -165,10 +226,21 @@ class Player:
                         self.rabidSauroliskEffect()
 
                 ### Demon ###
+
+                if curr_minion.name == "Vulgar Hommunculus":
+                    self.vulgarHommunculusBC()
+
                 if curr_minion.minion_type == "Demon":
                     if self.wrath_weaver:
                         self.wrathWeaverEffect()
 
+                if curr_minion.name == "Soul Devourer":
+                    self.soulDevourerBC()
+
+                if curr_minion.name == "Nathrezim Overseer":
+                    self.nathrezim_overseer = True
+                    self.nathrezimOverseerBC(self.board)
+                    
                 ### Neutral ###
                 if curr_minion.name == "Defender of Argus":
                     self.defenderOfArgusBC(self.board, minion_index, curr_minion)
@@ -201,10 +273,59 @@ class Player:
                 if curr_minion.name == "Wrath Weaver":
                     self.wrath_weaver = True
                     self.wrath_weaver_count += 1
-                
+
+                if curr_minion.name == "Refreshing Anomaly":
+                    self.refreshing_anomaly = True
+
+                #Elemental
+                #If you have a party elemental and play an elemental, buff an elemental
+                if curr_minion.minion_type == "Elemental":
+                    if self.party_elemental:
+                        self.partyElementalEffect(self.board)
+        
+                if curr_minion.name == "Stasis Elemental":
+                    self.stasis_elemental = True
+                    self.stasisElementalBC(self.board)
+
+                if curr_minion.name == "Party Elemental":
+                    self.party_elemental = True
+
+                if curr_minion.name == "Arcane Assistant":
+                    self.arcaneAssistantBC(self.board)
     
     ### Battlecries ###
     #TODO: Write unit tests for battlecries / effects
+    def nathrezimOverseerBC(self, board):
+        attack_buff = 2
+        health_buff = 2
+        if self.nathrezim_overseer_gold:
+            attack_buff += 2
+            health_buff += 2
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Demon")
+    def soulDevourerBC(self):
+        #TODO: Can you manually replace minions?
+        #manually select friendly demon, remove it and gain its stats and gold
+        
+    def vulgarHommunculusBC(self):
+        self.health -= 2
+
+    def arcaneAssistantBC(self, board):
+        for m in self.board:
+            if m.type == "Elemental":
+                m.buff(1, 1)
+        #TODO: Handle if arcane assistant is gold or not
+
+    def partyElementalEffect(self, board):
+        
+        if self.party_elemental_gold:
+            attack_buff = 2
+            health_buff = 2
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Elemental")
+            
+    def stasisElementalBC(self, curr_minion):
+        #add random elemental to hand, possible?
+        self.tavern.getRoll(self.stasis_elemental) #WIP
+        self.freezeTavern()
 
     def wrathWeaverEffect(self):
         for m in self.board:
