@@ -83,6 +83,14 @@ class Player:
         self.round += 1
         #make a function for determining the upgrade discount
 
+    #call this function at the end of the turn
+    def roundEnd(self):
+        for m in self.board:
+            if m.name == "Micro Mummy":
+                self.microMummyEffect(self.board, m)
+            if m.name == "Iron Sensei":
+                self.ironSenseiEffect(self.board, m)
+
     def resetGold(self):
         if Player.STARTING_GOLD + self.round > Player.MAX_GOLD:
             self.gold = Player.MAX_GOLD
@@ -319,6 +327,20 @@ class Player:
         for m in board:
             if m.minion_type == "Mech":
                 m.buff(attack_buff, 0)
+
+    def microMummyEffect(self, board, curr_minion):
+        attack_buff = 1
+        if curr_minion.gold:
+            attack_buff += 1
+        self.buffFriendly(board, attack_buff, 0)
+
+    def ironSenseiEffect(self, board, curr_minion):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Mech")
 
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
