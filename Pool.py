@@ -61,7 +61,6 @@ class Pool:
         self.tier4["Defender of Argus"] = self.addM(Pool.TIER_COUNT[4], 2, 3, "Neutral", 4)
 
         ### Mech ###
-
         self.tokens["Guard Bot"] = self.addM(0, 2, 3, "Mech", 1, taunt=True)
         self.tokens["Robosaur"] = self.addM(0, 8, 8, "Mech", 1)
         self.tokens["Microbot"] = self.addM(0, 1, 1, "Mech", 1)
@@ -90,6 +89,17 @@ class Pool:
         ### Pirate ###
 
         ### Dragon ###
+        self.tier1["Dragonspawn Lieutenant"] = self.addM(Pool.TIER_COUNT[1], 2, 3, "Dragon", 1, taunt=True)
+
+        self.tier2["Glyph Guardian"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Dragon", 2)
+        self.tier2["Steward of Time"] = self.addM(Pool.TIER_COUNT[2], 3, 4, "Dragon", 2)
+        
+        self.tier3["Twilight Emissary"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Dragon", 3, taunt=True)
+        self.tier3["Bronze Warden"] = self.addM(Pool.TIER_COUNT[3], 2, 1, "Dragon", 3, divine_shield=True, reborn=True)
+
+        self.tier4["Cobalt Scalebane"] = self.addM(Pool.TIER_COUNT[4], 5, 5, "Dragon", 4)
+        self.tier4["Drakonid Enforcer"] = self.addM(Pool.TIER_COUNT[4], 3, 6, "Dragon", 4)
+        self.tier4["Herald of Flame"] = self.addM(Pool.TIER_COUNT[4], 6, 6, "Dragon", 4)
 
         ### Murloc ###
 
