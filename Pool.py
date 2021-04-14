@@ -102,6 +102,15 @@ class Pool:
         self.tier4["Ring Matron"] = self.addM(Pool.TIER_COUNT[4], 6, 4, "Demon", 4, taunt=True, death_rattle=True)
         self.tier4["Siegebreaker"] = self.addM(Pool.TIER_COUNT[4], 5, 8, "Demon", 4, taunt=True)
         ### Pirate ###
+        self.tier1["Scallywag"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Pirate", 1, death_rattle=True)
+        self.tier1["Deck Swabbie"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Pirate", 1)
+        self.tier2["Freedealing Gambler"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Pirate", 2)
+        self.tier2["Yo-Ho-Ogre"] = self.addM(Pool.TIER_COUNT[2], 3, 6, "Pirate", 2, taunt=True)
+        self.tier2["Southsea Captain"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Pirate", 2)
+        self.tier3["Bloodsail Cannoneer"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Dragon", 3)
+        self.tier3["Southsea Strongarm"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Dragon", 3)
+        self.tier3["Salty Looter"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Dragon", 3)
+        self.tier4["Ripsnarl Captain"] = self.addM(Pool.TIER_COUNT[4], 4, 5, "Pirate", 4)
 
         ### Dragon ###
         self.tier1["Dragonspawn Lieutenant"] = self.addM(Pool.TIER_COUNT[1], 2, 3, "Dragon", 1, taunt=True)
