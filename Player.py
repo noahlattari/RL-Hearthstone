@@ -66,12 +66,31 @@ class Player:
         #Nathrezim Overseer: see nathrezimOverseerBC()
         self.nathrezim_overseer = False
         self.nathrezim_overseer_gold = False
+
         
         #TODO: implement majordomo
         #Majordomo Executus
         #self.majordomo = False
         #self.majordomo_elemntal_counter = 0
            
+
+
+        #Southsea Captain: see southseaCaptainEffect()
+        self.southsea_captain = False
+        self.southsea_captain_gold = False
+
+        #Bloodsail Cannoneer: see bloodsailCanoneerBC()
+        self.bloodsail_cannoneer = False
+        self.bloodsail_cannoneer_gold = False
+
+        #Salty Looter: see saltyLooterBC()
+        self.salty_looter = False
+        self.salty_looter_gold = False 
+
+        #Deck Swabbie: see deckSwabbieBC()
+        self.deck_swabbie = False
+        self.deck_swabbie_gold = False  
+
 
     def freezeTavern(self):
         self.freeze = True
@@ -215,6 +234,13 @@ class Player:
             if sold_minion.name == "Steward of Time":
                 self.stewardOfTimeEffect(self.tavern.roll, sold_minion)
 
+            if sold_minion.name == "Freedealing Gambler":
+                self.gold += 2 #because we already add 1 in the begining 
+
+            if sold_minion.name == "Southsea Captain":
+                self.southsea_captain = False
+                southseaCaptainEffect(self)
+
 
     #TODO: refactor most conditionals to functions
     def play(self, minion_index, pos):
@@ -331,12 +357,66 @@ class Player:
                 ### Dragon ###
                 if curr_minion.name == "Twilight Emissary":
                     self.twilightEmissaryBC(self.board, curr_minion)
+                    
+                ### Pirate
+                if curr_minion.minion_type == "Pirate":
+                    if self.salty_looter:
+                        self.saltyLooterBC(self, curr_minion)
 
-                
+                if curr_minion.name == "Southsea Captain":
+                    self.southsea_captain = True
+                    self.southseaCaptainEffect(self.board)
+
+                if curr_minion.name == "Bloodsail Cannoneer":
+                    self.bloodsailCannoneerBC(self.board)
+
+                if curr_minion.name == "Salty Looter":
+                    self.salty_looter = True
+
+                if curr_minion.name == "Deck Swabbie":
+                    self.deck_swabbie = True
+                    deckSwabbieBC(self)
+
 
     
     ### Battlecries ###
     #TODO: Write unit tests for battlecries / effects
+    def deckSwabbieBC(self):
+        #reduce upgrade cost of tavern by 1???? WIP
+        
+    def saltyLooterBC(self, curr_minion):
+        curr_minion.buff(1, 1)
+
+    def bloodsailCannoneerBC(self):
+        attack_buff = 3
+        health_buff = 3
+        if self.bloodsail_cannoneer_gold:
+            attack_buff += 3
+            health_buff += 3
+        for m in self.board:
+            if m.type == "Pirate":
+                m.buff(attack_buff, health_buff)
+        
+    def southseaCaptainEffect(self):
+        if self.southsea_captain:
+            attack_buff = 1
+            health_buff = 1
+            if self.southsea_captain_gold:
+                attack_buff += 1
+                health_buff += 1
+            for m in self.board:
+                if m.type == "Pirate":
+                    m.buff(attack_buff, health_buff)
+        else: #When card is sold, remove the buffs
+            attack_buff = -1
+            health_buff = -1
+            if self.southsea_captain_gold:
+                attack_buff -= 1
+                health_buff -= 1
+            for m in self.board:
+                if m.type == "Pirate":
+                    m.buff(attack_buff, health_buff)
+
     def nathrezimOverseerBC(self, board):
         attack_buff = 2
         health_buff = 2
@@ -344,6 +424,7 @@ class Player:
             attack_buff += 2
             health_buff += 2
         self.buffFriendly(board, attack_buff, health_buff, minion_type="Demon")
+        
     def soulDevourerBC(self):
         #TODO: Can you manually replace minions?
         #manually select friendly demon, remove it and gain its stats and gold
