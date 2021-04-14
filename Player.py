@@ -67,6 +67,14 @@ class Player:
         self.nathrezim_overseer = False
         self.nathrezim_overseer_gold = False
 
+        
+        #TODO: implement majordomo
+        #Majordomo Executus
+        #self.majordomo = False
+        #self.majordomo_elemntal_counter = 0
+           
+
+
         #Southsea Captain: see southseaCaptainEffect()
         self.southsea_captain = False
         self.southsea_captain_gold = False
@@ -82,6 +90,7 @@ class Player:
         #Deck Swabbie: see deckSwabbieBC()
         self.deck_swabbie = False
         self.deck_swabbie_gold = False  
+
 
     def freezeTavern(self):
         self.freeze = True
@@ -263,7 +272,6 @@ class Player:
                     if self.rabid_saurolisk:
                         self.rabidSauroliskEffect()
 
-                #TODO: Pack leader buff
                 if curr_minion.minion_type == "Beast":
                     if self.pack_leader_gold:
                         curr_minion.buff(4 * self.pack_leader_gold_count, 0)
@@ -419,6 +427,7 @@ class Player:
     def soulDevourerBC(self):
         #TODO: Can you manually replace minions?
         #manually select friendly demon, remove it and gain its stats and gold
+        return
         
     def vulgarHommunculusBC(self):
         self.health -= 2
@@ -512,6 +521,8 @@ class Player:
 
         minion_map = {}
         for m in board:
+            if m == curr_minion:
+                continue
             if m.minion_type in minion_map:
                 minion_map[m.minion_type].append(m)
             else:
@@ -523,11 +534,14 @@ class Player:
         #empty minion_map evaluates to False
         while(minion_map and count < 3):
             #pick a random type
-            random_type = minion_map[minion_map.keys()[random.randint(0,len(minion_map))]]
+            minion_map_keys = list(minion_map.keys())
+            random_type = minion_map_keys[random.randint(0,len(minion_map)-1)]
+            print(random_type)
             type_list = minion_map.pop(random_type)
-            random_minion = type_list[random.randint(0, len(type_list))]
+            random_minion = type_list[random.randint(0, len(type_list)-1)]
             random_minion.buff(attack_buff, health_buff)
             count += 1
+        
 
     def screwjankClunkerBC(self, board, curr_minion):
         attack_buff = 2

@@ -38,6 +38,7 @@ class Minion:
             out += ", microbots"
         if self.golden_microbots:
             out += ", golden microbots"
+        return out
 
     def __str__(self):
         if self.magnetic:
@@ -56,6 +57,7 @@ class Minion:
             out += ", microbots"
         if self.golden_microbots:
             out += ", golden microbots"
+        return out
     
     def giveTaunt(self):
         self.taunt = True
