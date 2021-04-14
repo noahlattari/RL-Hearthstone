@@ -67,13 +67,11 @@ class Player:
         self.nathrezim_overseer = False
         self.nathrezim_overseer_gold = False
 
-        
-        #TODO: implement majordomo
-        #Majordomo Executus
-        #self.majordomo = False
-        #self.majordomo_elemntal_counter = 0
-           
-
+        #Majordomo Executus: at the end of the turn give left most minion +1/+1 (+2/+2 if gold)
+        #give an additional buff for each elemental played this turn
+        self.majodomo = False
+        self.majodomo_count = 0
+        self.majordomo_elemental_counter = 0
 
         #Southsea Captain: see southseaCaptainEffect()
         self.southsea_captain = False
@@ -161,6 +159,8 @@ class Player:
                 self.ironSenseiEffect(self.board, m)
             if m.name == "Cobalt Scalebane":
                 self.cobaltScalebaneEffect(self.board, m)
+            if m.name == "Majordomo Executus":
+                self.majordomoEffect(self.board, m)
 
     def resetGold(self):
         if Player.STARTING_GOLD + self.round > Player.MAX_GOLD:
@@ -213,6 +213,12 @@ class Player:
                 self.rabid_saurolisk_count -= 1
                 if self.rabid_saurolisk_count == 0:
                     self.rabid_saurolisk = False
+
+            if sold_minion.name == "Majordomo Executus":
+                self.majodomo_count -= 1
+                if self.majodomo_count == 0:
+                    self.majodomo = False
+                    self.majordomo_elemental_counter = 0
 
 
             if sold_minion.name == "Sellemental":
@@ -327,15 +333,21 @@ class Player:
                     self.wrath_weaver = True
                     self.wrath_weaver_count += 1
 
+                if curr_minion.name == "Majordomo Executus":
+                    self.majodomo = True
+                    self.majodomo_count += 1
+
+                ### Elemental ###
 
                 if curr_minion.name == "Refreshing Anomaly":
                     self.refreshing_anomaly = True
                 
-                ### Elemental ###
                 #If you have a party elemental and play an elemental, buff an elemental
                 if curr_minion.minion_type == "Elemental":
                     if self.party_elemental:
                         self.partyElementalEffect(self.board)
+                    if self.majodomo:
+                        self.majordomo_elemental_counter += 1
         
                 if curr_minion.name == "Stasis Elemental":
                     self.stasis_elemental = True
@@ -468,6 +480,21 @@ class Player:
                     m.buff(2,4)
                 else:
                     m.buff(1,2)
+
+    def majordomoEffect(self, board, curr_minion):
+        attack_buff = 0
+        health_buff = 0
+        #do the effect once for majordomo and once for each elemental played this turn
+        for i in range(self.majordomo_elemental_counter + 1):
+            if curr_minion.gold:
+                attack_buff += 2
+                health_buff += 2
+            else:
+                attack_buff += 1
+                health_buff += 1
+            
+        board[len(board)-1].buff(attack_buff, health_buff)
+        self.majordomo_elemental_counter = 0
 
     def defenderOfArgusBC(self, board, minion_index, curr_minion):
         attack_buff = 1

@@ -183,4 +183,6 @@ class Pool:
         
         return Minion.Minion(token_name, attack, health, token_type, tier, taunt=is_taunt, token=True, gold=token_is_gold)
     
-            
+    #WIP until we know how the roll works
+    def initMinion(self, minion_name, tier):
+        return

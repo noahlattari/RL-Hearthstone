@@ -9,17 +9,25 @@ import Minion
 #def test_sell():
 #etc ...
 
-def test_houndmaster():
-    return
+def test_majordomo():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+    
+    majordomo = Minion.Minion("Majordomo Executus", 6, 3, "Neutral", 4)
+    elem1 = Minion.Minion("Test Elemental", 1, 1, "Elemental", 1)
+    elem2 = Minion.Minion("Test Elemental", 1, 1, "Elemental", 1)
+    dummy = Minion.Minion("Dummy", 1, 1, "Neutral", 1)
+    buffed_dummy = Minion.Minion("Dummy", 4, 4, "Neutral", 1)
 
-def test_rabid_saurolisk():
-    return
+    player.hand = [majordomo, elem1, elem2]
+    player.board = [dummy]
 
-def test_pack_leader(): 
-    return
+    for i in range(len(player.hand)+1):
+        player.play(0,0)
 
-def test_wrath_weaver():
-    return
+    player.roundEnd()
+    expected_board = [elem2, elem1, majordomo, buffed_dummy]
+    assert str(player.board) == str(expected_board)
 
 def test_khadgar():
     pool = Pool.Pool()
