@@ -48,7 +48,7 @@ class Minion:
             out += ", taunt"
         if self.divine_shield:
             out += ", divine shield"
-        if self.poisionous:
+        if self.poisonous:
             out += ", poisonous"
         if self.windfury:
             out += ", windfury"
