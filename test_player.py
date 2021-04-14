@@ -21,6 +21,25 @@ def test_pack_leader():
 def test_wrath_weaver():
     return
 
+def test_khadgar():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    khadgar1 = Minion.Minion("Khadgar", 2, 2, "Neutral", 3)
+    khadgar2 = Minion.Minion("Khadgar", 2, 2, "Neutral", 3)
+
+    alleycat = Minion.Minion("Alleycat", 1, 1, "Beast", 1)
+    tabbycat = Minion.Minion("Tabbycat", 1, 1, "Beast", 1, token=True)
+
+    player.hand = [khadgar1, khadgar2, alleycat]
+
+    for i in range(len(player.hand)+1):
+        player.play(0,-1) #will append played card to the board
+    
+    expected_board = [khadgar1, khadgar1, alleycat, tabbycat, tabbycat, tabbycat, tabbycat]
+
+    assert str(player.board) == str(expected_board)
+
 def test_alleycat():
     pool = Pool.Pool()
     player = Player.Player(pool)
@@ -29,7 +48,6 @@ def test_alleycat():
     tabbycat = Minion.Minion("Tabbycat", 1, 1, "Beast", 1, token=True)
 
     player.hand = [alleycat]
-    player.board = []
 
     #play the minion in index 0 of our hand to index 0 on the board
     player.play(0, 0)
@@ -46,7 +64,6 @@ def test_alleycat_gold():
     tabbycat = Minion.Minion("Tabbycat", 2, 2, "Beast", 1, token=True, gold=True)
 
     player.hand = [alleycat]
-    player.board = []
 
     #play the minion in index 0 of our hand to index 0 on the board
     player.play(0, 0)
