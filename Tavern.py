@@ -11,8 +11,11 @@ class Tavern:
         self.tier += 1
         #call pool to init next tier's minions
     
-    def getRoll(self):
+    def getRoll(self, stasis_elemental):
         self.roll = self.pool.dummyRoll(self.tier)
+        if stasis_elemental:
+            #one of the cards must be elemental
+            print("hi")
         #roll = list of minions from the pool, tier determines what's in the roll
         #TODO: interaction between tavern and pool: +/- the minion stock. Also instantiating the minion in the roll 
     
