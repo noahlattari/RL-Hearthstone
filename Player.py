@@ -144,14 +144,15 @@ class Player:
                 curr_minion = self.hand.pop(minion_index)
 
                 #use pos variable to determine where to put curr_minion
-                if 0 <= pos < len(self.hand):
+                if 0 <= pos < len(self.board):
                     self.board.insert(pos, curr_minion)
                 else:
+                    pos = len(self.board)
                     self.board.append(curr_minion)
 
                 ### Beast ###
                 if curr_minion.name == "Alleycat":
-                    self.alleyCatBC(self.board)
+                    self.alleyCatBC(self.board, pos)
 
                 if curr_minion.name == "Houndmaster":
                     self.houndmasterBC(self.board, curr_minion)
@@ -165,6 +166,11 @@ class Player:
                         self.rabidSauroliskEffect()
 
                 #TODO: Pack leader buff
+                if curr_minion.minion_type == "Beast":
+                    if self.pack_leader_gold:
+                        curr_minion.buff(4 * self.pack_leader_gold_count, 0)
+                    if self.pack_leader:
+                        curr_minion.buff(2 * self.pack_leader_count, 0)
 
                 ### Demon ###
                 if curr_minion.minion_type == "Demon":
@@ -270,10 +276,8 @@ class Player:
             health_buff += 2
         self.buffFriendly(board, attack_buff, health_buff, minion_type="Beast", taunt=True)
 
-    #WIP
-    def alleyCatBC(self, board):
-        self.pool
-        return
+    def alleyCatBC(self, board, pos):
+        self.summonToken(board, pos, "Tabbycat")
 
     def mugAndJugBC(self, board, curr_minion):
         attack_buff = 1
@@ -335,4 +339,11 @@ class Player:
             random_friend.buff(attack, health)
             if taunt:
                 random_friend.giveTaunt()
+
+    #helper function for summoning tokens WIP
+    def summonToken(self, board, pos, token_name):
+        if len(board) < Player.MAX_BOARD:
+            curr_token = self.pool.summonToken(token_name)
+            board.insert(pos+1, curr_token)
+        
 

@@ -102,7 +102,7 @@ class Pool:
 
     #helper function for adding minions
     def addM(self, count, attack, health, minion_type, minion_tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False, microbots=False, golden_microbots=False, reborn=False, death_rattle=False, token=False):
-        minion_dict = {"count": count, "attack": attack, "type": minion_type}
+        minion_dict = {"count": count, "attack": attack, "health": health, "type": minion_type, "tier": minion_tier}
         if(taunt):
             minion_dict["taunt"] = True
         if(divine_shield):
@@ -115,7 +115,6 @@ class Pool:
             minion_dict["magnetic"] = True
         if(death_rattle):
             minion_dict["death_rattle"] = True
-
         if(token):
             minion_dict["token"] = True
         if(microbots):
@@ -130,8 +129,18 @@ class Pool:
     #TODO: create a helper function to initialize and return Minion objects (for when we pass them to the tavern)
     #also create one for tokens
 
-    def summonToken(self, minion_name):
-        minion_stats = self.tokens[minion_name]
-        #return a minion using the minion_stats
+    def summonToken(self, token_name):
+        minion_stats = self.tokens[token_name]
+        attack = minion_stats["attack"]
+        health = minion_stats["health"]
+        minion_type = minion_stats["type"]
+        tier = minion_stats["tier"]
+        
+        #can add more cases for other attributes as necessary
+        is_taunt = minion_stats["Taunt"]
+        if is_taunt is None:
+            is_taunt = False
+            
+        return Minion.Minion(token_name, attack, health, minion_type, tier, taunt=is_taunt, token=True)
     
             
