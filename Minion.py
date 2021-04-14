@@ -10,7 +10,7 @@ class Minion:
         self.token = token
         self.taunt = taunt
         self.divine_shield = divine_shield
-        self.poisionous = poisonous
+        self.poisonous = poisonous
         self.windfury = windfury
         self.magnetic = magnetic
         self.microbots = microbots
@@ -22,10 +22,40 @@ class Minion:
         
 
     def __repr__(self):
-        return f"{self.attack}/{self.health} {self.name}"
+        if self.magnetic:
+            out = f"{self.attack}/{self.health} <{self.name}>"
+        else:
+            out = f"{self.attack}/{self.health} {self.name}"
+        if self.taunt:
+            out += ", taunt"
+        if self.divine_shield:
+            out += ", divine shield"
+        if self.poisionous:
+            out += ", poisonous"
+        if self.windfury:
+            out += ", windfury"
+        if self.microbots:
+            out += ", microbots"
+        if self.golden_microbots:
+            out += ", golden microbots"
 
     def __str__(self):
-        return f"{self.attack}/{self.health} {self.name}"
+        if self.magnetic:
+            out = f"{self.attack}/{self.health} <{self.name}>"
+        else:
+            out = f"{self.attack}/{self.health} {self.name}"
+        if self.taunt:
+            out += ", taunt"
+        if self.divine_shield:
+            out += ", divine shield"
+        if self.poisionous:
+            out += ", poisonous"
+        if self.windfury:
+            out += ", windfury"
+        if self.microbots:
+            out += ", microbots"
+        if self.golden_microbots:
+            out += ", golden microbots"
     
     def giveTaunt(self):
         self.taunt = True
