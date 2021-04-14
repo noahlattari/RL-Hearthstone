@@ -164,6 +164,8 @@ class Player:
                     if self.rabid_saurolisk:
                         self.rabidSauroliskEffect()
 
+                #TODO: Pack leader buff
+
                 ### Demon ###
                 if curr_minion.minion_type == "Demon":
                     if self.wrath_weaver:

@@ -19,7 +19,8 @@ class Pool:
         self.tokens["Tabbycat"] = self.addM(0, 1, 1, "Beast", 1, token=True)
         self.tokens["Hyena"] = self.addM(0, 2, 2, "Beast", 1, token=True)
         self.tokens["Spider"] = self.addM(0, 1, 1, "Beast", 1, token=True)
-        self.tokens["Big Bad Wolf"] = self.addM(0, 3, 2, 1, token=True)
+
+        self.tokens["Big Bad Wolf"] = self.addM(0, 3, 2, "Beast", 1, token=True)
 
         self.tier1["Alleycat"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Beast", 1)
         self.tier1["Scavenging Hyena"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Beast", 1)
@@ -100,7 +101,7 @@ class Pool:
         return dummy
 
     #helper function for adding minions
-    def addM(self, count, attack, health, minion_type, minion_tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False, microbots=False, golden_microbots=False, reborn=False, death_rattle=False):
+    def addM(self, count, attack, health, minion_type, minion_tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False, microbots=False, golden_microbots=False, reborn=False, death_rattle=False, token=False):
         minion_dict = {"count": count, "attack": attack, "type": minion_type}
         if(taunt):
             minion_dict["taunt"] = True
@@ -114,12 +115,16 @@ class Pool:
             minion_dict["magnetic"] = True
         if(death_rattle):
             minion_dict["death_rattle"] = True
+
+        if(token):
+            minion_dict["token"] = True
         if(microbots):
             minion_dict["microbots"] = True
         if(golden_microbots):
             minion_dict["golden_microbots"] = True
         if(reborn):
             minion_dict["reborn"] = True
+
         return minion_dict
 
     #TODO: create a helper function to initialize and return Minion objects (for when we pass them to the tavern)
