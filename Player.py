@@ -90,6 +90,8 @@ class Player:
                 self.microMummyEffect(self.board, m)
             if m.name == "Iron Sensei":
                 self.ironSenseiEffect(self.board, m)
+            if m.name == "Cobalt Scalebane":
+                self.cobaltScalebaneEffect(self.board, m)
 
     def resetGold(self):
         if Player.STARTING_GOLD + self.round > Player.MAX_GOLD:
@@ -142,6 +144,9 @@ class Player:
                 self.rabid_saurolisk_count -= 1
                 if self.rabid_saurolisk_count == 0:
                     self.rabid_saurolisk = False
+
+            if sold_minion.name == "Steward of Time":
+                self.stewardOfTimeEffect(self.tavern.roll, sold_minion)
 
     #TODO: refactor most conditionals to functions
     def play(self, minion_index, pos):
@@ -218,6 +223,10 @@ class Player:
                 
                 if curr_minion.name == "Metaltooth Leaper":
                     self.metaltoothLeaperBC(self.board, curr_minion)
+
+                ### Dragon ###
+                if curr_minion.name == "Twilight Emissary":
+                    self.twilightEmissaryBC(self.board, curr_minion)
     
     ### Battlecries ###
     #TODO: Write unit tests for battlecries / effects
@@ -341,6 +350,29 @@ class Player:
             attack_buff += 2
             health_buff += 2
         self.buffFriendly(board, attack_buff, health_buff, minion_type="Mech")
+
+    def twilightEmissaryBC(self, board, curr_minion):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Dragon")
+
+    def cobaltScalebaneEffect(self, board, curr_minion):
+        attack_buff = 3
+        if curr_minion.gold:
+            attack_buff += 3
+        self.buffFriendly(board, attack_buff, 0, minion_type="Dragon")
+
+    def stewardOfTimeEffect(self, roll, curr_minion):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        for m in roll:
+            m.buff(attack_buff, health_buff)
 
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
