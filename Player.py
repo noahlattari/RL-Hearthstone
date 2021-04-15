@@ -276,6 +276,10 @@ class Player:
                 if self.murloc_tidecaller_count == 0:
                     self.murloc_tidecaller = False
 
+            #return the sold minion to the pool if it's not 
+            if not sold_minion.token and not sold_minion.gold:
+                self.pool.returnToPool(sold_minion.name, sold_minion.tier)
+
 
     #TODO: refactor most conditionals to functions
     def play(self, minion_index, pos):
@@ -455,7 +459,47 @@ class Player:
 
                 if curr_minion.name == "Murloc Tidecaller":
                     self.murloc_tidecaller = True
-    
+                
+                self.goldCheck(self.board)
+
+    def goldCheck(self, board):
+        #loop through board looking for triples, when one is found combine the three minions and return 1 gold minion to the hand
+        minion_map = {}
+        for m in board:
+            # collect non gold minions into arrays by name, we are looking for sets of 3 or more
+            if not m.gold:
+                if m.name in minion_map:
+                    minion_map[m.name].append(m)
+                else:
+                    minion_list = []
+                    minion_list.append(m)
+                    minion_map[m.name] = minion_list
+        
+        for i in minion_map:
+            if len(minion_map[i]) >= 3: #if we find a set of 3
+                self.makeGold(minion_map[i], self.board, self.hand) #create the gold card and add it to your hand
+                self.discover(self.tavern.tier, self.hand) #also get a card from discovery
+
+    def makeGold(self, triple, board, hand):
+        first = triple[0]
+        second = triple[1]
+        third = triple[2]
+
+        gold = self.pool.combine_minions([first, second, third])
+
+        if len(hand) < Player.MAX_HAND:
+            hand.append(gold)
+
+        board.remove(first)
+        board.remove(second)
+        board.remove(third)
+
+    def discover(self, tier, hand):
+        #check if there's room in our hand then call pool.discovery and pass in self.tavern.tier
+        if len(hand) < Player.MAX_HAND:
+            hand.append(self.pool.discovery(tier))
+        return
+
     ### Battlecries ###
     #TODO: Write unit tests for battlecries / effects
     def murlocTidecallerEffect(self, curr_minion):

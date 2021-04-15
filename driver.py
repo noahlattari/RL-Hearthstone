@@ -25,3 +25,14 @@ if str(first) == str(second):
 else:
     print("no")
 '''
+
+
+### SAMPLE GAME FLOW ###
+# pool = Pool.Pool()
+# player = Player.Player()
+# player.roundStart()
+# player.getRoll()
+# player.buy(index) or player.reRoll()
+# player.sell(index)
+# etc ...
+# player.roundEnd()

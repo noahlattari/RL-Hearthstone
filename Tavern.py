@@ -12,19 +12,17 @@ class Tavern:
         #call pool to init next tier's minions
     
     def getRoll(self, stasis_elemental=False):
-        self.roll = self.pool.dummyRoll(self.tier)
         if stasis_elemental:
             print("hi")
-            #one of the cards must be elemental
-            #check if our current roll has an elemental if not then just reroll until we get one
-        #roll = list of minions from the pool, tier determines what's in the roll
-        #TODO: interaction between tavern and pool: +/- the minion stock. Also instantiating the minion in the roll 
+        
+        #get the roll and take these minions out of the pool
+        self.roll = self.pool.getRoll(self.tier)
+        for m in self.roll:
+            self.pool.removeFromPool(m.name, m.tier) #go and decrement the minion's counter in it's tier dictionary
 
-        #call get roll
-        #call pool.removeFromPool
     def returnRoll(self):
-        #for each minion remaining in roll: call pool.returnToPool
-        return
+        for m in self.roll:
+            self.pool.returnToPool(m.name, m.tier) #go and increment the minion's counter in it's tier dictionary
     
     def buy(self, minion_index):
         #check if minion (by index) is in roll
