@@ -89,6 +89,9 @@ class Player:
         self.murloc_tidecaller = False
         self.murloc_tidecaller_gold = False  
 
+        #Murloc Warleader
+        self.murloc_warleader = False
+        self.murloc_warleader_count = 0
 
     def freezeTavern(self):
         self.freeze = True
@@ -254,6 +257,19 @@ class Player:
                 self.southsea_captain = False
                 self.southseaCaptainEffect(self.board)
 
+            if sold_minion.name == "Murloc Warleader":
+                self.murloc_warleader_count -= 1
+                if self.murloc_warleader_count == 0:
+                    self.murloc_warleader = False
+
+            if sold_minion.type == "Murloc":
+                for m in self.board:
+                    if m.name == "Old Murk-Eye":
+                        if m.gold == True:
+                            m.buff(-2, 0)
+                        else:
+                            m.buff(-1, 0) 
+                            
             if sold_minion.name == "Murloc Tidecaller":
                 self.murloc_tidecaller_count -= 1
                 if self.murloc_tidecaller_count == 0:
@@ -382,7 +398,7 @@ class Player:
                 if curr_minion.name == "Twilight Emissary":
                     self.twilightEmissaryBC(self.board, curr_minion)
                     
-                ### Pirate
+                ### Pirate ###
                 if curr_minion.minion_type == "Pirate":
                     if self.salty_looter:
                         self.saltyLooterBC(curr_minion)
@@ -399,8 +415,38 @@ class Player:
 
                 if curr_minion.name == "Deck Swabbie":
                     self.deckSwabbieBC()
+                    
+                ### Murloc ###
+                if curr_minion.minion_type == "Murloc":
+                    if self.murloc_warleader:
+                        curr_minion.buff(murloc_warleader_count, 0)
+                    for m in self.board:
+                        if m.name == "Old Murk-Eye":
+                            if m.gold == True:
+                                m.buff(2, 0)
+                            else:
+                                m.buff(1, 0) 
 
-                #Murloc
+                if curr_minion.name == "Toxfin":
+                    self.toxfinBC(self.board)
+
+                if curr_minion.name == "Coldlight Seer":
+                    self.coldlightSeerBC(self.board, curr_minion)
+
+                if curr_minion.name == "Rockpool Hunter":
+                    self.rockpoolHunterBC(self.board, curr_minion)
+
+                if curr_minion.name == "Felfin Navigator":
+                    self.felfinNavigatorBC(self.board, curr_minion)
+                
+                if curr_minion.name == "Murloc Warleader":
+                    self.murlocWarleaderEffect(self.board, curr_minion)
+                    self.murloc_warleader = True
+                    self.murloc_warleader_count += 1
+                
+                if curr_minion.name == "Old Murk-Eye":
+                    self.oldMurkEyeEffect(self.board, curr_minion)
+
                 if curr_minion.minion_type == "Murloc":
                     if self.murloc_tidecaller == True:
                         self.murlocTidecallerEffect(curr_minion)
@@ -680,9 +726,46 @@ class Player:
         for m in roll:
             m.buff(attack_buff, health_buff)
 
+    def toxfinBC(self, board):
+        self.buffFriendly(board, 0, 0, minion_type="Murloc", poisonous=True)
+
+    def coldlightSeerBC(self, board, curr_minion):
+        health_buff = 2
+        if curr_minion.gold:
+            health_buff += 2
+        self.buffAllFriendly(board, 0, health_buff)
+
+    def rockpoolHunterBC(self, board, curr_minion):
+        attack_buff = 1
+        health_buff = 1
+        if curr_minion.gold:
+            attack_buff += 1
+            health_buff += 1
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Murloc")
+
+    def felfinNavigatorBC(self, board, curr_minion):
+        attack_buff = 1
+        health_buff = 1
+        if curr_minion.gold:
+            attack_buff += 1
+            health_buff += 1
+        self.buffAllFriendly(board, attack_buff, health_buff, minion_type="Murloc")
+
+    def murlocWarleaderEffect(self, board, curr_minion):
+        attack_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+        self.self.buffAllFriendly(board, attack_buff, 0, minion_type="Murloc")
+    
+    def oldMurkEyeEffect(self, board, curr_minion):
+        attack_buff = 1
+        if curr_minion.gold:
+            attack_buff += 1
+        curr_minion.buff(attack_buff, 0)
+
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
-    def buffFriendly(self, board, attack, health, minion_type=None, taunt=False): #add more cases as necessary eg. windfury, divine_shield, etc
+    def buffFriendly(self, board, attack, health, minion_type=None, taunt=False, poisonous=False): #add more cases as necessary eg. windfury, divine_shield, etc
         if minion_type is not None:
             type_specific_list = [m for m in board if m.minion_type == minion_type]
         else:
@@ -694,6 +777,23 @@ class Player:
             random_friend.buff(attack, health)
             if taunt:
                 random_friend.giveTaunt()
+            if poisonous:
+                random_friend.givePoisonous()
+
+    def buffAllFriendly(self, board, attack, health, minion_type=None, taunt=False, poisonous=False): #add more cases as necessary eg. windfury, divine_shield, etc
+        if minion_type is not None:
+            type_specific_list = [m for m in board if m.minion_type == minion_type]
+        else:
+            type_specific_list = board
+
+        #fails if type_specific_list is empty
+        if type_specific_list:
+            for m in type_specific_list:
+                m.buff(attack, health)
+                if taunt:
+                    m.giveTaunt()
+                if poisonous:
+                    m.givePoisonous()
 
     #helper function for summoning tokens WIP
     def summonToken(self, board, pos, token_name, gold=False):
@@ -709,4 +809,3 @@ class Player:
             else: 
                 break #if the board is full no point in looping
         
-
