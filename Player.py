@@ -82,7 +82,12 @@ class Player:
         self.salty_looter_gold = False 
 
         #Deck Swabbie: see deckSwabbieBC()
-        self.deck_swabbie_gold = False  
+        self.deck_swabbie_gold = False
+
+        #Murloc Tidecaller: see murlocTidecallerEffect()
+        self.murloc_tidecaller_count = 0
+        self.murloc_tidecaller = False
+        self.murloc_tidecaller_gold = False  
 
         #Murloc Warleader
         self.murloc_warleader = False
@@ -264,6 +269,11 @@ class Player:
                             m.buff(-2, 0)
                         else:
                             m.buff(-1, 0) 
+                            
+            if sold_minion.name == "Murloc Tidecaller":
+                self.murloc_tidecaller_count -= 1
+                if self.murloc_tidecaller_count == 0:
+                    self.murloc_tidecaller = False
 
 
     #TODO: refactor most conditionals to functions
@@ -405,7 +415,7 @@ class Player:
 
                 if curr_minion.name == "Deck Swabbie":
                     self.deckSwabbieBC()
-
+                    
                 ### Murloc ###
                 if curr_minion.minion_type == "Murloc":
                     if self.murloc_warleader:
@@ -437,9 +447,29 @@ class Player:
                 if curr_minion.name == "Old Murk-Eye":
                     self.oldMurkEyeEffect(self.board, curr_minion)
 
+                if curr_minion.minion_type == "Murloc":
+                    if self.murloc_tidecaller == True:
+                        self.murlocTidecallerEffect(curr_minion)
+
+                if curr_minion.name == "Murloc Tidehunter":
+                    self.murlocTidehunterBC(self.board, pos, curr_minion)
+
+                if curr_minion.name == "Murloc Tidecaller":
+                    self.murloc_tidecaller = True
     
     ### Battlecries ###
     #TODO: Write unit tests for battlecries / effects
+    def murlocTidecallerEffect(self, curr_minion):
+        if curr_minion.gold:
+            curr_minion.buff(2, 0)
+        curr_minion.buff(1, 0)
+
+    def murlocTidehunterBC(self, board, pos, curr_minion):
+        gold = False
+        if curr_minion.gold:
+            gold = True
+        self.summonToken(board, pos, "Murloc Scout", gold)
+    
     def deckSwabbieBC(self):
         self.discount += 1
         
@@ -492,8 +522,6 @@ class Player:
                 curr_minion.buff(m.attack, m.health)
                 board.pop(board.index(m))
         
-
-        
     def vulgarHommunculusBC(self):
         self.health -= 2
 
@@ -504,7 +532,6 @@ class Player:
         #TODO: Handle if arcane assistant is gold or not
 
     def partyElementalEffect(self, board):
-        
         if self.party_elemental_gold:
             attack_buff = 2
             health_buff = 2
