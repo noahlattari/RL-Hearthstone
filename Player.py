@@ -420,6 +420,8 @@ class Player:
                 if curr_minion.minion_type == "Murloc":
                     if self.murloc_warleader:
                         curr_minion.buff(murloc_warleader_count, 0)
+                    if self.murloc_tidecaller:
+                        self.murlocTidecallerEffect(curr_minion)
                     for m in self.board:
                         if m.name == "Old Murk-Eye":
                             if m.gold == True:
@@ -446,10 +448,6 @@ class Player:
                 
                 if curr_minion.name == "Old Murk-Eye":
                     self.oldMurkEyeEffect(self.board, curr_minion)
-
-                if curr_minion.minion_type == "Murloc":
-                    if self.murloc_tidecaller == True:
-                        self.murlocTidecallerEffect(curr_minion)
 
                 if curr_minion.name == "Murloc Tidehunter":
                     self.murlocTidehunterBC(self.board, pos, curr_minion)
