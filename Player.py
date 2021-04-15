@@ -262,7 +262,7 @@ class Player:
                 if self.murloc_warleader_count == 0:
                     self.murloc_warleader = False
 
-            if sold_minion.type == "Murloc":
+            if sold_minion.minion_type == "Murloc":
                 for m in self.board:
                     if m.name == "Old Murk-Eye":
                         if m.gold == True:
