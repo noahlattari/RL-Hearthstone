@@ -1,4 +1,5 @@
 import Minion
+import random
 
 class Pool:
 
@@ -82,8 +83,9 @@ class Pool:
         self.tier4["Mechano-Egg"] = self.addM(Pool.TIER_COUNT[4], 0, 5, "Mech", 4, death_rattle=True)
 
         ### Elemental ###
+        self.tokens["Water Droplet"] = self.addM(0, 2, 2, "Elemental", 1, token=True)
+
         self.tier1["Sellemental"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Elemental", 1)
-        self.tier1["Water Drople"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Elemental", 1)
         self.tier1["Refreshing Anomaly"] = self.addM(Pool.TIER_COUNT[1], 1, 3, "Elemental", 1)
         self.tier2["Party Elemental"] = self.addM(Pool.TIER_COUNT[2], 3, 2, "Elemental", 2)
         self.tier2["Molten Rock"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Elemental", 2, taunt=True)
@@ -134,6 +136,55 @@ class Pool:
             dummy.append(Minion.Minion("Alleycat", 1, 1, "Beast", 1))
         return dummy
 
+    def getRoll(self, tier):
+        all_minions = []
+        for i in range(1, tier + 1):
+            currTier = None
+            if i == 1:
+                currTier = self.tier1
+            if i == 2:
+                currTier = self.tier2
+            if i == 3:
+                currTier = self.tier3
+            if i == 4:
+                currTier = self.tier4
+            if i == 5:
+                currTier = self.tier5
+            if i == 6:
+                currTier = self.tier6
+            
+            for m in currTier: #current minion
+                count = currTier[m]["count"]
+                for c in range(count):
+                    minion_index_pair = (i, m) #(tier, minion_name)
+                    all_minions.append(minion_index_pair)
+        
+        rolls = []
+        for i in range(Pool.ROLL_SIZE[tier]):
+            rolls.append(random.randint(0,len(all_minions)))
+
+        result = []
+        for i in rolls:
+            currTier = None
+            if all_minions[i][0] == 1:
+                currTier = self.tier1
+            if all_minions[i][0] == 2:
+                currTier = self.tier2
+            if all_minions[i][0] == 3:
+                currTier = self.tier3
+            if all_minions[i][0] == 4:
+                currTier = self.tier4
+            if all_minions[i][0] == 5:
+                currTier = self.tier5
+            if all_minions[i][0] == 6:
+                currTier = self.tier6
+            
+            curr_minion_name = all_minions[i][1]
+            curr_minion = self.initMinion(curr_minion_name, currTier)
+            result.append(curr_minion)
+        
+        return result
+
     #helper function for adding minions
     def addM(self, count, attack, health, minion_type, minion_tier, taunt=False, divine_shield=False, poisonous=False, windfury=False, magnetic=False, microbots=False, golden_microbots=False, reborn=False, death_rattle=False, token=False):
         minion_dict = {"count": count, "attack": attack, "health": health, "type": minion_type, "tier": minion_tier}
@@ -171,7 +222,7 @@ class Pool:
         tier = token_stats["tier"]
         
         #can add more cases for other attributes as necessary
-        is_taunt = token_stats.get("Taunt")
+        is_taunt = token_stats.get("taunt")
         if is_taunt is None:
             is_taunt = False
         
@@ -183,6 +234,55 @@ class Pool:
         
         return Minion.Minion(token_name, attack, health, token_type, tier, taunt=is_taunt, token=True, gold=token_is_gold)
     
-    #WIP until we know how the roll works
+    #initialize minion object and return it
     def initMinion(self, minion_name, tier):
+        minion_stats = tier[minion_name]
+        attack = minion_stats["attack"]
+        health = minion_stats["health"]
+        minion_type = minion_stats["type"]
+        minion_tier = minion_stats["tier"]
+
+        t = minion_stats.get("Taunt")
+        if t is None:
+            t = False  
+        
+        ds = minion_stats.get("divine_shield")
+        if ds is None:
+            ds = False
+        
+        p = minion_stats.get("poisionous")
+        if p is None:
+            p = False
+        
+        wf = minion_stats.get("wind_fury")
+        if wf is None:
+            wf = False
+        
+        mag = minion_stats.get("magnetic")
+        if mag is None:
+            mag = False
+
+        mic = minion_stats.get("microbots")
+        if mic is None:
+            mic = False
+
+        rb = minion_stats.get("reborn")
+        if rb is None:
+            rb = False
+
+        dr = minion_stats.get("death_rattle")
+        if dr is None:
+            dr = False
+
+        return Minion.Minion(minion_name, attack, health, minion_type, minion_tier, taunt=t, divine_shield=ds, poisonous=p, windfury=wf, magnetic=mag, microbots=mic, reborn=rb, death_rattle=dr)
+
+    #get a random minion from a tier above
+    def discovery(self, tier):
+        minion_name = ""
+        return init_minion(minion_name, tier)
+
+    #dec/inc from minion's count in it's tier dictionary
+    def removeFromPool(self, minion_name, tier):
+        return
+    def returnToPool(self, minion_name, tier):
         return

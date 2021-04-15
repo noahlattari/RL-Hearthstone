@@ -3,6 +3,10 @@ import Player
 
 import Minion
 
+pool = Pool.Pool()
+print(pool.getRoll(6))
+
+'''
 beast = Minion.Minion("Test Beast", 1, 1, "Beast", 1)
 buffed_beast = Minion.Minion("Test Beast", 2, 2, "Beast", 1)
 
@@ -19,3 +23,4 @@ if str(first) == str(second):
     print("yes")
 else:
     print("no")
+'''
