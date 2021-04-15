@@ -44,10 +44,6 @@ class Player:
         self.rabid_saurolisk = False
         self.rabid_saurolisk_count = 0
 
-        #Sellemental/Water Droplet
-        self.sellemental_count = 0
-        self.water_droplet = False
-
         #Stasis Elemental: see stasisElementalBC()
         self.stasis_elemental = False
         self.stasis_elemental_count = 0
@@ -67,13 +63,11 @@ class Player:
         self.nathrezim_overseer = False
         self.nathrezim_overseer_gold = False
 
-        
-        #TODO: implement majordomo
-        #Majordomo Executus
-        #self.majordomo = False
-        #self.majordomo_elemntal_counter = 0
-           
-
+        #Majordomo Executus: at the end of the turn give left most minion +1/+1 (+2/+2 if gold)
+        #give an additional buff for each elemental played this turn
+        self.majodomo = False
+        self.majodomo_count = 0
+        self.majordomo_elemental_counter = 0
 
         #Southsea Captain: see southseaCaptainEffect()
         self.southsea_captain = False
@@ -160,6 +154,10 @@ class Player:
                 self.ironSenseiEffect(self.board, m)
             if m.name == "Cobalt Scalebane":
                 self.cobaltScalebaneEffect(self.board, m)
+            if m.name == "Majordomo Executus":
+                self.majordomoEffect(self.board, m)
+            if m.name == "Lightfang Enforcer":
+                self.lightfangEffect(self.board, m)
 
     def resetGold(self):
         if Player.STARTING_GOLD + self.round > Player.MAX_GOLD:
@@ -213,12 +211,23 @@ class Player:
                 if self.rabid_saurolisk_count == 0:
                     self.rabid_saurolisk = False
 
+            if sold_minion.name == "Majordomo Executus":
+                self.majodomo_count -= 1
+                if self.majodomo_count == 0:
+                    self.majodomo = False
+                    self.majordomo_elemental_counter = 0
 
             if sold_minion.name == "Sellemental":
-                #When you sell a sellemental, get a water_droplet
-                self.sellemental_count -= 1
-                self.water_droplet = True
-                #add a 2/2 water droplet to board, is possible??
+                #When you sell a sellemental, get a water_droplet in your hand, gold gives you two
+                if len(self.hand) < Player.MAX_HAND:
+                    gold_token = False
+                    if sold_minion.gold:
+                        gold_token = True
+                        if len(self.hand) < Player.MAX_HAND - 1:
+                            extra_water_droplet = self.pool.summonToken("Water Droplet", gold=gold_token)
+                            self.hand.append(extra_water_droplet)
+                    water_droplet = self.pool.summonToken("Water Droplet", gold=gold_token)
+                    self.hand.append(water_droplet)
 
             if sold_minion.name == "Stasis Elemental":
                 self.stasis_elemental_count -= 1
@@ -326,15 +335,21 @@ class Player:
                     self.wrath_weaver = True
                     self.wrath_weaver_count += 1
 
+                if curr_minion.name == "Majordomo Executus":
+                    self.majodomo = True
+                    self.majodomo_count += 1
+
+                ### Elemental ###
 
                 if curr_minion.name == "Refreshing Anomaly":
                     self.refreshing_anomaly = True
                 
-                ### Elemental ###
                 #If you have a party elemental and play an elemental, buff an elemental
                 if curr_minion.minion_type == "Elemental":
                     if self.party_elemental:
                         self.partyElementalEffect(self.board)
+                    if self.majodomo:
+                        self.majordomo_elemental_counter += 1
         
                 if curr_minion.name == "Stasis Elemental":
                     self.stasis_elemental = True
@@ -471,6 +486,21 @@ class Player:
                 else:
                     m.buff(1,2)
 
+    def majordomoEffect(self, board, curr_minion):
+        attack_buff = 0
+        health_buff = 0
+        #do the effect once for majordomo and once for each elemental played this turn
+        for i in range(self.majordomo_elemental_counter + 1):
+            if curr_minion.gold:
+                attack_buff += 2
+                health_buff += 2
+            else:
+                attack_buff += 1
+                health_buff += 1
+            
+        board[len(board)-1].buff(attack_buff, health_buff)
+        self.majordomo_elemental_counter = 0
+
     def defenderOfArgusBC(self, board, minion_index, curr_minion):
         attack_buff = 1
         health_buff = 1
@@ -547,7 +577,28 @@ class Player:
             random_minion = type_list[random.randint(0, len(type_list)-1)]
             random_minion.buff(attack_buff, health_buff)
             count += 1
+    
+    def lightfangEffect(self, board, curr_minion):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        minion_map = {}
+        for m in board:
+            if m == curr_minion:
+                continue
+            if m.minion_type in minion_map:
+                minion_map[m.minion_type].append(m)
+            else:
+                minion_type_list = []
+                minion_type_list.append(m)
+                minion_map[m.minion_type] = minion_type_list
         
+        for i in minion_map:
+            random_minion = minion_map[i][random.randint(0,len(i)-1)]
+            random_minion.buff(attack_buff, health_buff)
+
 
     def screwjankClunkerBC(self, board, curr_minion):
         attack_buff = 2

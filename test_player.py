@@ -9,17 +9,25 @@ import Minion
 #def test_sell():
 #etc ...
 
-def test_houndmaster():
-    return
+def test_majordomo():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+    
+    majordomo = Minion.Minion("Majordomo Executus", 6, 3, "Neutral", 4)
+    elem1 = Minion.Minion("Test Elemental", 1, 1, "Elemental", 1)
+    elem2 = Minion.Minion("Test Elemental", 1, 1, "Elemental", 1)
+    dummy = Minion.Minion("Dummy", 1, 1, "Neutral", 1)
+    buffed_dummy = Minion.Minion("Dummy", 4, 4, "Neutral", 1)
 
-def test_rabid_saurolisk():
-    return
+    player.hand = [majordomo, elem1, elem2]
+    player.board = [dummy]
 
-def test_pack_leader(): 
-    return
+    for i in range(len(player.hand)+1):
+        player.play(0,0)
 
-def test_wrath_weaver():
-    return
+    player.roundEnd()
+    expected_board = [elem2, elem1, majordomo, buffed_dummy]
+    assert str(player.board) == str(expected_board)
 
 def test_khadgar():
     pool = Pool.Pool()
@@ -149,3 +157,27 @@ def test_soul_devourer():
 
     print(player.board)
     assert str(player.board) == str(expected_board)
+
+def test_steward_of_time():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    steward = Minion.Minion("Steward of Time", 3, 4, "Dragon", 2)
+
+    beast = Minion.Minion("Test Beast", 1, 1, "Beast", 1)
+    demon = Minion.Minion("Test Demon", 1, 1, "Demon", 1)
+    mech = Minion.Minion("Test Mech", 1, 1, "Mech", 1)
+
+    player.tavern.roll = [beast, demon, mech]
+    player.board = [steward]
+
+    buffed_beast = Minion.Minion("Test Beast", 3, 3, "Beast", 1)
+    buffed_demon = Minion.Minion("Test Demon", 3, 3, "Demon", 1)
+    buffed_mech = Minion.Minion("Test Mech", 3, 3, "Mech", 1)
+
+    expected_roll = [buffed_beast, buffed_demon, buffed_mech]
+
+    player.sell(0)
+
+    print(player.tavern.roll)
+    assert str(player.tavern.roll) == str(expected_roll)

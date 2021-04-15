@@ -59,6 +59,8 @@ class Pool:
         self.tier4["Bolvar, Fireblood"] = self.addM(Pool.TIER_COUNT[4], 1, 7, "Neutral", 4, divine_shield=True)
         self.tier4["Defender of Argus"] = self.addM(Pool.TIER_COUNT[4], 2, 3, "Neutral", 4)
 
+        self.tier5["Lightfang Enforcer"] = self.addM(Pool.TIER_COUNT[5], 2, 2, "Neutral", 5)
+
         ### Mech ###
         self.tokens["Guard Bot"] = self.addM(0, 2, 3, "Mech", 1, taunt=True)
         self.tokens["Robosaur"] = self.addM(0, 8, 8, "Mech", 1)
@@ -82,8 +84,9 @@ class Pool:
         self.tier4["Mechano-Egg"] = self.addM(Pool.TIER_COUNT[4], 0, 5, "Mech", 4, death_rattle=True)
 
         ### Elemental ###
+        self.tokens["Water Droplet"] = self.addM(0, 2, 2, "Elemental", 1)
+
         self.tier1["Sellemental"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Elemental", 1)
-        self.tier1["Water Drople"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Elemental", 1)
         self.tier1["Refreshing Anomaly"] = self.addM(Pool.TIER_COUNT[1], 1, 3, "Elemental", 1)
         self.tier2["Party Elemental"] = self.addM(Pool.TIER_COUNT[2], 3, 2, "Elemental", 2)
         self.tier2["Molten Rock"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Elemental", 2, taunt=True)
@@ -177,10 +180,13 @@ class Pool:
         
         token_is_gold = False
         if gold:
-            attack *= 2
-            health *= 2
+            if token_name != "Water Droplet":
+                attack *= 2
+                health *= 2
             token_is_gold = True
         
         return Minion.Minion(token_name, attack, health, token_type, tier, taunt=is_taunt, token=True, gold=token_is_gold)
     
-            
+    #WIP until we know how the roll works
+    def initMinion(self, minion_name, tier):
+        return

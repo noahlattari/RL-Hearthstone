@@ -59,11 +59,17 @@ class Minion:
             out += ", golden microbots"
         return out
     
+    def giveMagnetic(self):
+        self.magnetic = True
     def giveTaunt(self):
         self.taunt = True
-
-    #TODO: write a giveX function for each property
-    
+    def giveDivineShield(self):
+        self.divine_shield = True
+    def givePoisonous(self):
+        self.poisonous = True
+    def giveWindfury(self):
+        self.windfury = True
+        
     def buff(self, attack, health):
         self.attack += attack
         self.health += health
@@ -71,4 +77,6 @@ class Minion:
     #WIP :(
     def becomeGold(self):
         self.gold = True
-        # Note: if microbots, change to golden microbots
+        if self.microbots:
+            self.microbots = False
+            self.golden_microbots = True
