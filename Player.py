@@ -539,7 +539,7 @@ class Player:
     def murloc_discover(self, tier, hand):
         #check if there's room in our hand then call pool.murloc_discovery and pass in self.tavern.tier
         if len(hand) < Player.MAX_HAND:
-            hand.append(self.pool.discovery(tier))
+            hand.append(self.pool.murloc_discovery(tier))
         return
 
     ### Battlecries ###
