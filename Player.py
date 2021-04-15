@@ -450,6 +450,9 @@ class Player:
 
                 if curr_minion.name == "Murloc Tidecaller":
                     self.murloc_tidecaller = True
+
+                if curr_minion.name == "Primalfin Lookout":
+                    self.primalfinLookoutBC(self.board, curr_minion)
                 
                 self.goldCheck(self.board)
 
@@ -529,6 +532,12 @@ class Player:
 
     def discover(self, tier, hand):
         #check if there's room in our hand then call pool.discovery and pass in self.tavern.tier
+        if len(hand) < Player.MAX_HAND:
+            hand.append(self.pool.discovery(tier))
+        return
+
+    def murloc_discover(self, tier, hand):
+        #check if there's room in our hand then call pool.murloc_discovery and pass in self.tavern.tier
         if len(hand) < Player.MAX_HAND:
             hand.append(self.pool.discovery(tier))
         return
@@ -854,6 +863,11 @@ class Player:
         if curr_minion.gold:
             attack_buff += 1
         curr_minion.buff(attack_buff, 0)
+
+    def primalfinLookoutBC(self, board, curr_minion):
+        self.murloc_discover(4, self.hand)
+        if curr_minion.gold:
+            self.murloc_discover(4, self.hand)
 
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
