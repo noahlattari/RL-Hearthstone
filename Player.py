@@ -424,7 +424,7 @@ class Player:
                         self.murlocTidecallerEffect(curr_minion)
                     for m in self.board:
                         if m.name == "Old Murk-Eye":
-                            if m.gold == True:
+                            if m.gold:
                                 m.buff(2, 0)
                             else:
                                 m.buff(1, 0) 
