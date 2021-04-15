@@ -158,6 +158,24 @@ def test_soul_devourer():
     print(player.board)
     assert str(player.board) == str(expected_board)
 
+def test_murloc_tidecaller():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    murloc_tidecaller = Minion.Minion("Murloc Tidecaller", 1, 2, "Murloc", 1)
+    murloc = Minion.Minion("Test murloc", 1, 1, "Murloc", 1)
+
+    player.hand = [murloc_tidecaller, murloc]
+
+    player.play(0, 0) #play the murloc tidecaller
+    player.play(0, 1) #play the murloc
+    buffed_murloc = Minion.Minion("Test murloc", 2, 1, "Murloc", 1)
+
+    expected_board = [murloc_tidecaller, buffed_murloc]
+
+    print(player.board)
+    assert str(player.board) == str(expected_board)
+
 def test_steward_of_time():
     pool = Pool.Pool()
     player = Player.Player(pool)

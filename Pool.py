@@ -129,6 +129,9 @@ class Pool:
         self.tier4["Herald of Flame"] = self.addM(Pool.TIER_COUNT[4], 6, 6, "Dragon", 4)
 
         ### Murloc ###
+        self.tier1["Murloc Scout"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Murloc", 1)
+        self.tier1["Murloc Tidecaller"] = self.addM(Pool.TIER_COUNT[1], 1, 2, "Murloc", 1)
+        self.tier2["Murloc Tidehunter"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Murloc", 1)
 
     #for testing
     def dummyRoll(self, tier):
