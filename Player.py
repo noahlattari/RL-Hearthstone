@@ -88,7 +88,6 @@ class Player:
         self.salty_looter_gold = False 
 
         #Deck Swabbie: see deckSwabbieBC()
-        self.deck_swabbie = False
         self.deck_swabbie_gold = False  
 
 
@@ -288,7 +287,7 @@ class Player:
                         self.wrathWeaverEffect()
 
                 if curr_minion.name == "Soul Devourer":
-                    self.soulDevourerBC()
+                    self.soulDevourerBC(self.board, curr_minion)
 
                 if curr_minion.name == "Nathrezim Overseer":
                     self.nathrezim_overseer = True
@@ -374,7 +373,6 @@ class Player:
                     self.salty_looter = True
 
                 if curr_minion.name == "Deck Swabbie":
-                    self.deck_swabbie = True
                     self.deckSwabbieBC()
 
 
@@ -382,8 +380,7 @@ class Player:
     ### Battlecries ###
     #TODO: Write unit tests for battlecries / effects
     def deckSwabbieBC(self):
-        #reduce upgrade cost of tavern by 1???? WIP
-        return
+        self.discount += 1
         
     def saltyLooterBC(self, curr_minion):
         curr_minion.buff(1, 1)
@@ -395,7 +392,7 @@ class Player:
             attack_buff += 3
             health_buff += 3
         for m in board:
-            if m.type == "Pirate":
+            if m.minion_type == "Pirate":
                 m.buff(attack_buff, health_buff)
         
     def southseaCaptainEffect(self, board):
@@ -406,7 +403,7 @@ class Player:
                 attack_buff += 1
                 health_buff += 1
             for m in board:
-                if m.type == "Pirate":
+                if m.minion_type == "Pirate":
                     m.buff(attack_buff, health_buff)
         else: #When card is sold, remove the buffs
             attack_buff = -1
@@ -415,7 +412,7 @@ class Player:
                 attack_buff -= 1
                 health_buff -= 1
             for m in board:
-                if m.type == "Pirate":
+                if m.minion_type == "Pirate":
                     m.buff(attack_buff, health_buff)
 
     def nathrezimOverseerBC(self, board):
@@ -426,17 +423,22 @@ class Player:
             health_buff += 2
         self.buffFriendly(board, attack_buff, health_buff, minion_type="Demon")
         
-    def soulDevourerBC(self):
+    def soulDevourerBC(self, board, curr_minion):
         #TODO: Can you manually replace minions?
         #manually select friendly demon, remove it and gain its stats and gold
-        return
+        for m in board:
+            if m.minion_type == "Demon" and m.name != "Soul Devourer":
+                curr_minion.buff(m.attack, m.health)
+                board.pop(board.index(m))
+        
+
         
     def vulgarHommunculusBC(self):
         self.health -= 2
 
     def arcaneAssistantBC(self, board):
         for m in self.board:
-            if m.type == "Elemental":
+            if m.minion_type == "Elemental":
                 m.buff(1, 1)
         #TODO: Handle if arcane assistant is gold or not
 
