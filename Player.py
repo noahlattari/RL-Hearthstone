@@ -265,7 +265,7 @@ class Player:
             if sold_minion.minion_type == "Murloc":
                 for m in self.board:
                     if m.name == "Old Murk-Eye":
-                        if m.gold == True:
+                        if m.gold:
                             m.buff(-2, 0)
                         else:
                             m.buff(-1, 0) 
