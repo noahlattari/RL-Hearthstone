@@ -104,3 +104,27 @@ def test_menagerie_mug():
 
     print(player.board)
     assert str(player.board) == str(expected_board)
+
+def test_steward_of_time():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    steward = Minion.Minion("Steward of Time", 3, 4, "Dragon", 2)
+
+    beast = Minion.Minion("Test Beast", 1, 1, "Beast", 1)
+    demon = Minion.Minion("Test Demon", 1, 1, "Demon", 1)
+    mech = Minion.Minion("Test Mech", 1, 1, "Mech", 1)
+
+    player.tavern.roll = [beast, demon, mech]
+    player.board = [steward]
+
+    buffed_beast = Minion.Minion("Test Beast", 3, 3, "Beast", 1)
+    buffed_demon = Minion.Minion("Test Demon", 3, 3, "Demon", 1)
+    buffed_mech = Minion.Minion("Test Mech", 3, 3, "Mech", 1)
+
+    expected_roll = [buffed_beast, buffed_demon, buffed_mech]
+
+    player.sell(0)
+
+    print(player.tavern.roll)
+    assert str(player.tavern.roll) == str(expected_roll)
