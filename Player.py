@@ -97,6 +97,7 @@ class Player:
         self.freeze = True
 
     def reroll(self):
+
         #refreshing anomaly gives a free reroll, refreshing anomoly gold gives two rerolls
         
         #if normal anomoly has been plaued
@@ -105,6 +106,9 @@ class Player:
             self.refreshing_anomaly = False
             if self.gold >= Player.REROLL_COST:
                 self.gold -= Player.REROLL_COST #- reroll discount
+
+                #return the current roll back to the pool before getting a new one
+                self.tavern.returnRoll()
                 self.tavern.getRoll(stasis_elemental=False)
             Player.REROLL_COST = 1
         if self.refreshing_anomaly_gold:
@@ -112,6 +116,9 @@ class Player:
                 Player.REROLL_COST = 0
                 if self.gold >= Player.REROLL_COST:
                     self.gold -= Player.REROLL_COST
+
+                    #return the current roll back to the pool before getting a new one
+                    self.tavern.returnRoll()
                     self.tavern.getRoll(stasis_elemental=False)
                 self.anomaly_gold_counter -= 1
             else:
@@ -120,6 +127,9 @@ class Player:
         else:
             if self.gold >= Player.REROLL_COST:
                 self.gold -= Player.REROLL_COST
+
+                #return the current roll back to the pool before getting a new one
+                self.tavern.returnRoll()
                 self.tavern.getRoll(stasis_elemental=False)
 
     def upgradeTavern(self):
@@ -147,6 +157,8 @@ class Player:
         self.resetGold()
         self.calcDiscount()
         if not self.freeze:
+            #return the current roll back to the pool before getting a new one
+            self.tavern.returnRoll()
             self.tavern.getRoll()
         else:
             self.freeze = False
