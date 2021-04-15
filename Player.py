@@ -506,6 +506,48 @@ class Player:
         board.remove(second)
         board.remove(third)
 
+        #adjust minion specific variables, remove 3 copies
+        if first.name == "Khadgar":
+            self.khadgar_count -= 3
+            if self.khadgar_count == 0:
+                self.khadgar = False
+
+        if first.name == "Pack Leader":
+            self.pack_leader_count -= 3
+            if self.pack_leader_count == 0:
+                self.pack_leader = False
+
+        if first.name == "Wrath Weaver":
+            self.wrath_weaver_count -= 3
+            if self.wrath_weaver_count == 0:
+                self.wrath_weaver = False
+
+        if first.name == "Rabid Saurolisk":
+            self.rabid_saurolisk_count -= 3
+            if self.rabid_saurolisk_count == 0:
+                self.rabid_saurolisk = False
+
+        if first.name == "Majordomo Executus":
+            self.majodomo_count -= 3
+            if self.majodomo_count == 0:
+                self.majodomo = False
+                self.majordomo_elemental_counter = 0
+
+        if first.name == "Stasis Elemental":
+                self.stasis_elemental_count -= 3
+                if self.stasis_elemental_count == 0:
+                    self.stasis_elemental = False
+
+        if first.name == "Party Elemental":
+            self.party_elemental_count -= 3
+            if self.party_elemental_count == 0:
+                self.party_elemental = False
+
+        if first.name == "Murloc Warleader":
+                self.murloc_warleader_count -= 3
+                if self.murloc_warleader_count == 0:
+                    self.murloc_warleader = False
+
     def discover(self, tier, hand):
         #check if there's room in our hand then call pool.discovery and pass in self.tavern.tier
         if len(hand) < Player.MAX_HAND:
