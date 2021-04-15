@@ -80,6 +80,21 @@ def test_alleycat_gold():
 
     assert str(player.board) == str(expected_board)
 
+def test_deck_swabbie():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    deck_swabbie = Minion.Minion("Deck Swabbie", 2, 2, "Pirate", 1)
+
+    player.hand = [deck_swabbie]
+
+    #play the minion in index 0 of our hand to index 0 on the board
+    player.play(0, 0)
+
+    expected_discount = 1
+
+    assert expected_discount == player.discount
+
 def test_menagerie_mug():
     pool = Pool.Pool()
     player = Player.Player(pool)
@@ -104,3 +119,83 @@ def test_menagerie_mug():
 
     print(player.board)
     assert str(player.board) == str(expected_board)
+
+def test_salty_looter():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    salty_looter = Minion.Minion("Salty Looter", 4, 4, "Pirate", 3)
+    pirate = Minion.Minion("Test Pirate", 1, 1, "Pirate", 1)
+
+    player.hand = [salty_looter, pirate]
+
+    #play the minion in index 0 of our hand to index 1 on the board
+    player.play(0, 0)
+    player.play(0, 1)
+    buffed_pirate = Minion.Minion("Test Pirate", 2, 2, "Pirate", 1)
+
+    expected_board = [salty_looter, buffed_pirate]
+
+    print(player.board)
+    assert str(player.board) == str(expected_board)
+
+def test_soul_devourer():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    soul_devourer = Minion.Minion("Soul Devourer", 3, 3, "Demon", 3)
+    demon = Minion.Minion("Test demon", 1, 1, "Demon", 1)
+
+    player.hand = [demon, soul_devourer]
+
+    #play the minion in index 0 of our hand to index 1 on the board
+    player.play(0, 0)
+    player.play(0, 1)
+    buffed_soul = Minion.Minion("Soul Devourer", 4, 4, "Demon", 3)
+
+    expected_board = [buffed_soul]
+
+    print(player.board)
+    assert str(player.board) == str(expected_board)
+
+def test_murloc_tidecaller():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    murloc_tidecaller = Minion.Minion("Murloc Tidecaller", 1, 2, "Murloc", 1)
+    murloc = Minion.Minion("Test murloc", 1, 1, "Murloc", 1)
+
+    player.hand = [murloc_tidecaller, murloc]
+
+    player.play(0, 0) #play the murloc tidecaller
+    player.play(0, 1) #play the murloc
+    buffed_murloc = Minion.Minion("Test murloc", 2, 1, "Murloc", 1)
+
+    expected_board = [murloc_tidecaller, buffed_murloc]
+
+    print(player.board)
+    assert str(player.board) == str(expected_board)
+
+def test_steward_of_time():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    steward = Minion.Minion("Steward of Time", 3, 4, "Dragon", 2)
+
+    beast = Minion.Minion("Test Beast", 1, 1, "Beast", 1)
+    demon = Minion.Minion("Test Demon", 1, 1, "Demon", 1)
+    mech = Minion.Minion("Test Mech", 1, 1, "Mech", 1)
+
+    player.tavern.roll = [beast, demon, mech]
+    player.board = [steward]
+
+    buffed_beast = Minion.Minion("Test Beast", 3, 3, "Beast", 1)
+    buffed_demon = Minion.Minion("Test Demon", 3, 3, "Demon", 1)
+    buffed_mech = Minion.Minion("Test Mech", 3, 3, "Mech", 1)
+
+    expected_roll = [buffed_beast, buffed_demon, buffed_mech]
+
+    player.sell(0)
+
+    print(player.tavern.roll)
+    assert str(player.tavern.roll) == str(expected_roll)

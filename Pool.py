@@ -60,6 +60,8 @@ class Pool:
         self.tier4["Bolvar, Fireblood"] = self.addM(Pool.TIER_COUNT[4], 1, 7, "Neutral", 4, divine_shield=True)
         self.tier4["Defender of Argus"] = self.addM(Pool.TIER_COUNT[4], 2, 3, "Neutral", 4)
 
+        self.tier5["Lightfang Enforcer"] = self.addM(Pool.TIER_COUNT[5], 2, 2, "Neutral", 5)
+
         ### Mech ###
         self.tokens["Guard Bot"] = self.addM(0, 2, 3, "Mech", 1, taunt=True)
         self.tokens["Robosaur"] = self.addM(0, 8, 8, "Mech", 1)
@@ -85,6 +87,7 @@ class Pool:
         ### Elemental ###
         self.tokens["Water Droplet"] = self.addM(0, 2, 2, "Elemental", 1, token=True)
 
+
         self.tier1["Sellemental"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Elemental", 1)
         self.tier1["Refreshing Anomaly"] = self.addM(Pool.TIER_COUNT[1], 1, 3, "Elemental", 1)
         self.tier2["Party Elemental"] = self.addM(Pool.TIER_COUNT[2], 3, 2, "Elemental", 2)
@@ -103,6 +106,7 @@ class Pool:
         self.tier3["Soul Devourer"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Demon", 3)
         self.tier4["Ring Matron"] = self.addM(Pool.TIER_COUNT[4], 6, 4, "Demon", 4, taunt=True, death_rattle=True)
         self.tier4["Siegebreaker"] = self.addM(Pool.TIER_COUNT[4], 5, 8, "Demon", 4, taunt=True)
+        
         ### Pirate ###
         self.tier1["Scallywag"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Pirate", 1, death_rattle=True)
         self.tier1["Deck Swabbie"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Pirate", 1)
@@ -128,6 +132,18 @@ class Pool:
         self.tier4["Herald of Flame"] = self.addM(Pool.TIER_COUNT[4], 6, 6, "Dragon", 4)
 
         ### Murloc ###
+        self.tier1["Rockpool Hunter"] = self.addM(Pool.TIER_COUNT[1], 2, 3, "Murloc", 1)
+        self.tier1["Murloc Scout"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Murloc", 1)
+        self.tier1["Murloc Tidecaller"] = self.addM(Pool.TIER_COUNT[1], 1, 2, "Murloc", 1)
+        
+        self.tier2["Murloc Warleader"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Murloc", 2)
+        self.tier2["Old Murk-Eye"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Murloc", 2)
+        self.tier2["Murloc Tidehunter"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Murloc", 1)
+
+        self.tier3["Coldlight Seer"] = self.addM(Pool.TIER_COUNT[3], 2, 3, "Murloc", 3)
+        self.tier3["Felfin Navigator"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Murloc", 3)
+        
+        self.tier4["Toxfin"] = self.addM(Pool.TIER_COUNT[4], 1, 2, "Murloc", 4)
 
     #for testing
     def dummyRoll(self, tier):
@@ -228,8 +244,9 @@ class Pool:
         
         token_is_gold = False
         if gold:
-            attack *= 2
-            health *= 2
+            if token_name != "Water Droplet":
+                attack *= 2
+                health *= 2
             token_is_gold = True
         
         return Minion.Minion(token_name, attack, health, token_type, tier, taunt=is_taunt, token=True, gold=token_is_gold)
