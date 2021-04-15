@@ -157,7 +157,10 @@ class Pool:
         self.murloc[3]["Felfin Navigator"] = self.addM(0, 4, 4, "Murloc", 3)
         
         self.tier4["Toxfin"] = self.addM(Pool.TIER_COUNT[4], 1, 2, "Murloc", 4)
+        self.tier4["Primalfin Lookout"] = self.addM(Pool.TIER_COUNT[4], 3, 2, "Murloc", 4)
+
         self.murloc[4]["Toxfin"] = self.addM(0, 1, 2, "Murloc", 4)
+        self.murloc[4]["Primalfin Lookout"] = self.addM(0, 1, 2, "Murloc", 4)
 
     #for testing
     def dummyRoll(self, tier):
