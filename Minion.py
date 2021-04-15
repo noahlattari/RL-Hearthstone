@@ -62,7 +62,7 @@ class Minion:
     def giveTaunt(self):
         self.taunt = True
 
-    #TODO: write a giveX function for each property
+    #TODO: write a giveX function for each property as needed
     
     def buff(self, attack, health):
         self.attack += attack
