@@ -865,9 +865,12 @@ class Player:
         curr_minion.buff(attack_buff, 0)
 
     def primalfinLookoutBC(self, board, curr_minion):
-        self.murloc_discover(4, self.hand)
-        if curr_minion.gold:
-            self.murloc_discover(4, self.hand)
+        for m in board:
+            if m.minion_type == "Murloc" and m.name != "Primalfin Lookout":
+                self.murloc_discover(self.tavern.tier, self.hand)
+                if curr_minion.gold:
+                    self.murloc_discover(self.tavern.tier, self.hand)
+                break
 
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
