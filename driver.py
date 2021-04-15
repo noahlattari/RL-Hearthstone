@@ -5,6 +5,7 @@ import Minion
 
 pool = Pool.Pool()
 print(pool.getRoll(6))
+print(pool.discovery(1))
 
 '''
 beast = Minion.Minion("Test Beast", 1, 1, "Beast", 1)

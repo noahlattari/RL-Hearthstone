@@ -14,6 +14,7 @@ class Pool:
         self.tier5 = {}
         self.tier6 = {}
         self.tokens = {}
+        self.all_minions = []
 
         ### Beast ###
         self.tokens["Rat"] = self.addM(0, 1, 1, "Beast", 1, token=True)
@@ -295,11 +296,66 @@ class Pool:
 
     #get a random minion from a tier above
     def discovery(self, tier):
-        minion_name = ""
-        return init_minion(minion_name, tier)
+        all_minions_in_tier = []
+        currTier = None
+        if tier == 1:
+            currTier = self.tier2
+        if tier == 2:
+            currTier = self.tier3
+        if tier == 3:
+            currTier = self.tier4
+        if tier == 4:
+            currTier = self.tier5
+        if tier >= 5:
+            currTier = self.tier6
+
+        for m in currTier: #current minion
+            count = currTier[m]["count"]
+            for c in range(count):
+                all_minions_in_tier.append(m)
+
+        roll = random.randint(0, len(all_minions_in_tier))
+
+        discovered_minion = all_minions_in_tier[roll]
+
+        return self.initMinion(discovered_minion, currTier)
+
 
     #dec/inc from minion's count in it's tier dictionary
     def removeFromPool(self, minion_name, tier):
-        return
+        currTier = None
+        if tier == 1:
+            currTier = self.tier1
+        if tier == 2:
+            currTier = self.tier2
+        if tier == 3:
+            currTier = self.tier3
+        if tier == 4:
+            currTier = self.tier4
+        if tier == 5:
+            currTier = self.tier5
+        if tier == 6:
+            currTier = self.tier6
+        
+        minion_stats = currTier[minion_name]
+        minion_stats["count"] -= 1
+        currTier[minion_name] = minion_stats
+
     def returnToPool(self, minion_name, tier):
-        return
+        currTier = None
+        if tier == 1:
+            currTier = self.tier1
+        if tier == 2:
+            currTier = self.tier2
+        if tier == 3:
+            currTier = self.tier3
+        if tier == 4:
+            currTier = self.tier4
+        if tier == 5:
+            currTier = self.tier5
+        if tier == 6:
+            currTier = self.tier6
+        
+        minion_stats = currTier[minion_name]
+        minion_stats["count"] += 1
+        currTier[minion_name] = minion_stats
