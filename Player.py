@@ -410,8 +410,6 @@ class Player:
 
                 if curr_minion.name == "Murloc Tidecaller":
                     self.murloc_tidecaller = True
-
-
     
     ### Battlecries ###
     #TODO: Write unit tests for battlecries / effects
@@ -478,8 +476,6 @@ class Player:
                 curr_minion.buff(m.attack, m.health)
                 board.pop(board.index(m))
         
-
-        
     def vulgarHommunculusBC(self):
         self.health -= 2
 
@@ -490,7 +486,6 @@ class Player:
         #TODO: Handle if arcane assistant is gold or not
 
     def partyElementalEffect(self, board):
-        
         if self.party_elemental_gold:
             attack_buff = 2
             health_buff = 2
