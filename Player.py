@@ -81,9 +81,6 @@ class Player:
         self.salty_looter = False
         self.salty_looter_gold = False 
 
-        #Deck Swabbie: see deckSwabbieBC()
-        self.deck_swabbie_gold = False
-
         #Murloc Tidecaller: see murlocTidecallerEffect()
         self.murloc_tidecaller_count = 0
         self.murloc_tidecaller = False
@@ -97,7 +94,6 @@ class Player:
         self.freeze = True
 
     def reroll(self):
-
         #refreshing anomaly gives a free reroll, refreshing anomoly gold gives two rerolls
         
         #if normal anomoly has been plaued
@@ -106,9 +102,6 @@ class Player:
             self.refreshing_anomaly = False
             if self.gold >= Player.REROLL_COST:
                 self.gold -= Player.REROLL_COST #- reroll discount
-
-                #return the current roll back to the pool before getting a new one
-                self.tavern.returnRoll()
                 self.tavern.getRoll(stasis_elemental=False)
             Player.REROLL_COST = 1
         if self.refreshing_anomaly_gold:
@@ -116,9 +109,6 @@ class Player:
                 Player.REROLL_COST = 0
                 if self.gold >= Player.REROLL_COST:
                     self.gold -= Player.REROLL_COST
-
-                    #return the current roll back to the pool before getting a new one
-                    self.tavern.returnRoll()
                     self.tavern.getRoll(stasis_elemental=False)
                 self.anomaly_gold_counter -= 1
             else:
@@ -127,9 +117,6 @@ class Player:
         else:
             if self.gold >= Player.REROLL_COST:
                 self.gold -= Player.REROLL_COST
-
-                #return the current roll back to the pool before getting a new one
-                self.tavern.returnRoll()
                 self.tavern.getRoll(stasis_elemental=False)
 
     def upgradeTavern(self):
@@ -157,8 +144,6 @@ class Player:
         self.resetGold()
         self.calcDiscount()
         if not self.freeze:
-            #return the current roll back to the pool before getting a new one
-            self.tavern.returnRoll()
             self.tavern.getRoll()
         else:
             self.freeze = False
@@ -199,7 +184,6 @@ class Player:
             sold_minion = self.board.pop(minion_index)
             self.gold += 1
             #TODO: return this minion to the pool, when you sell a token they just die
-
 
             # Handling removal of specific minions
             if sold_minion.name == "Khadgar":
@@ -278,7 +262,7 @@ class Player:
             if sold_minion.minion_type == "Murloc":
                 for m in self.board:
                     if m.name == "Old Murk-Eye":
-                        if m.gold:
+                        if m.gold == True:
                             m.buff(-2, 0)
                         else:
                             m.buff(-1, 0) 
@@ -287,10 +271,6 @@ class Player:
                 self.murloc_tidecaller_count -= 1
                 if self.murloc_tidecaller_count == 0:
                     self.murloc_tidecaller = False
-
-            #return the sold minion to the pool if it's not 
-            if not sold_minion.token and not sold_minion.gold:
-                self.pool.returnToPool(sold_minion.name, sold_minion.tier)
 
 
     #TODO: refactor most conditionals to functions
@@ -390,19 +370,18 @@ class Player:
                 #If you have a party elemental and play an elemental, buff an elemental
                 if curr_minion.minion_type == "Elemental":
                     if self.party_elemental:
-                        self.partyElementalEffect(self.board)
+                        self.partyElementalEffect(self.board, curr_minion)
                     if self.majodomo:
                         self.majordomo_elemental_counter += 1
         
                 if curr_minion.name == "Stasis Elemental":
                     self.stasis_elemental = True
-                    self.stasisElementalBC(self.board)
 
                 if curr_minion.name == "Party Elemental":
                     self.party_elemental = True
 
                 if curr_minion.name == "Arcane Assistant":
-                    self.arcaneAssistantBC(self.board)
+                    self.arcaneAssistantBC(self.board, curr_minion)
                 
                 ### Mech ###
                 if curr_minion.name == "Screwjank Clunker":
@@ -431,7 +410,7 @@ class Player:
                     self.salty_looter = True
 
                 if curr_minion.name == "Deck Swabbie":
-                    self.deckSwabbieBC()
+                    self.deckSwabbieBC(curr_minion)
                     
                 ### Murloc ###
                 if curr_minion.minion_type == "Murloc":
@@ -441,7 +420,7 @@ class Player:
                         self.murlocTidecallerEffect(curr_minion)
                     for m in self.board:
                         if m.name == "Old Murk-Eye":
-                            if m.gold:
+                            if m.gold == True:
                                 m.buff(2, 0)
                             else:
                                 m.buff(1, 0) 
@@ -567,12 +546,18 @@ class Player:
             gold = True
         self.summonToken(board, pos, "Murloc Scout", gold)
     
-    def deckSwabbieBC(self):
-        self.discount += 1
+    def deckSwabbieBC(self, curr_minion):
+        if curr_minion.gold:
+            self.discount += 2
+        else:
+            self.discount += 1
         
     def saltyLooterBC(self, curr_minion):
-        curr_minion.buff(1, 1)
-
+        if curr_minion.gold:
+            curr_minion.buff(2, 2)
+        else:
+            curr_minion.buff(1, 1)
+        
     def bloodsailCannoneerBC(self, board):
         attack_buff = 3
         health_buff = 3
@@ -612,32 +597,42 @@ class Player:
         self.buffFriendly(board, attack_buff, health_buff, minion_type="Demon")
         
     def soulDevourerBC(self, board, curr_minion):
-        #TODO: Can you manually replace minions?
-        #manually select friendly demon, remove it and gain its stats and gold
-        for m in board:
-            if m.minion_type == "Demon" and m.name != "Soul Devourer":
-                curr_minion.buff(m.attack, m.health)
-                board.pop(board.index(m))
+        if curr_minion.gold:
+            for m in board:
+                if m.minion_type == "Demon" and m.name != "Soul Devourer":
+                    curr_minion.buff(2*m.attack, 2*m.health)
+                    self.gold += 6
+                    board.pop(board.index(m))
+        else:
+            for m in board:
+                if m.minion_type == "Demon" and m.name != "Soul Devourer":
+                    curr_minion.buff(m.attack, m.health)
+                    self.gold += 3
+                    board.pop(board.index(m))
         
     def vulgarHommunculusBC(self):
-        self.health -= 2
+        self.health -= 2 #gold case is the same
 
-    def arcaneAssistantBC(self, board):
-        for m in self.board:
-            if m.minion_type == "Elemental":
-                m.buff(1, 1)
-        #TODO: Handle if arcane assistant is gold or not
+    def arcaneAssistantBC(self, board, curr_minion):
+        if curr_minion.gold:
+            for m in self.board:
+                if m.minion_type == "Elemental":
+                    m.buff(2, 2)
+        else:
+            if curr_minion.gold:
+                for m in self.board:
+                    if m.minion_type == "Elemental":
+                        m.buff(2, 2)
 
-    def partyElementalEffect(self, board):
-        if self.party_elemental_gold:
+    def partyElementalEffect(self, board, curr_minion):
+        if curr_minion.gold:
             attack_buff = 2
             health_buff = 2
-        self.buffFriendly(board, attack_buff, health_buff, minion_type="Elemental")
-            
-    def stasisElementalBC(self, curr_minion):
-        #add random elemental to hand, possible?
-        self.tavern.getRoll(self.stasis_elemental) #WIP
-        self.freezeTavern()
+            self.buffFriendly(board, attack_buff, health_buff, minion_type="Elemental")
+        else:
+            attack_buff = 1
+            health_buff = 1
+            self.buffFriendly(board, attack_buff, health_buff, minion_type="Elemental")
 
     def wrathWeaverEffect(self):
         for m in self.board:
@@ -824,7 +819,7 @@ class Player:
             m.buff(attack_buff, health_buff)
 
     def toxfinBC(self, board):
-        self.buffFriendly(board, 0, 0, minion_type="Murloc", poisonous=True)
+        self.buffFriendly(board, 0, 0, minion_type="Murloc", poisonous=True) #gold is same case
 
     def coldlightSeerBC(self, board, curr_minion):
         health_buff = 2
