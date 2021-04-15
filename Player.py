@@ -188,6 +188,7 @@ class Player:
             self.gold += 1
             #TODO: return this minion to the pool, when you sell a token they just die
 
+
             # Handling removal of specific minions
             if sold_minion.name == "Khadgar":
                 if sold_minion.gold:
@@ -419,7 +420,7 @@ class Player:
                 ### Murloc ###
                 if curr_minion.minion_type == "Murloc":
                     if self.murloc_warleader:
-                        curr_minion.buff(murloc_warleader_count, 0)
+                        curr_minion.buff(self.murloc_warleader_count, 0)
                     if self.murloc_tidecaller:
                         self.murlocTidecallerEffect(curr_minion)
                     for m in self.board:
@@ -753,7 +754,7 @@ class Player:
         attack_buff = 2
         if curr_minion.gold:
             attack_buff += 2
-        self.self.buffAllFriendly(board, attack_buff, 0, minion_type="Murloc")
+        self.buffAllFriendly(board, attack_buff, 0, minion_type="Murloc")
     
     def oldMurkEyeEffect(self, board, curr_minion):
         attack_buff = 1
