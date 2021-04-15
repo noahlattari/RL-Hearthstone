@@ -77,4 +77,6 @@ class Minion:
     #WIP :(
     def becomeGold(self):
         self.gold = True
-        # Note: if microbots, change to golden microbots
+        if self.microbots:
+            self.microbots = False
+            self.golden_microbots = True
