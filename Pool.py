@@ -104,6 +104,7 @@ class Pool:
         self.tier3["Soul Devourer"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Demon", 3)
         self.tier4["Ring Matron"] = self.addM(Pool.TIER_COUNT[4], 6, 4, "Demon", 4, taunt=True, death_rattle=True)
         self.tier4["Siegebreaker"] = self.addM(Pool.TIER_COUNT[4], 5, 8, "Demon", 4, taunt=True)
+        
         ### Pirate ###
         self.tier1["Scallywag"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Pirate", 1, death_rattle=True)
         self.tier1["Deck Swabbie"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Pirate", 1)
@@ -129,6 +130,15 @@ class Pool:
         self.tier4["Herald of Flame"] = self.addM(Pool.TIER_COUNT[4], 6, 6, "Dragon", 4)
 
         ### Murloc ###
+        self.tier1["Rockpool Hunter"] = self.addM(Pool.TIER_COUNT[1], 2, 3, "Murloc", 1)
+
+        self.tier2["Murloc Warleader"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Murloc", 2)
+        self.tier2["Old Murk-Eye"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Murloc", 2)
+
+        self.tier3["Coldlight Seer"] = self.addM(Pool.TIER_COUNT[3], 2, 3, "Murloc", 3)
+        self.tier3["Felfin Navigator"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Murloc", 3)
+        
+        self.tier4["Toxfin"] = self.addM(Pool.TIER_COUNT[4], 1, 2, "Murloc", 4)
 
     #for testing
     def dummyRoll(self, tier):
