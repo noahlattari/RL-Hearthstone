@@ -279,7 +279,7 @@ class Pool:
     #get a random minion from a tier above
     def discovery(self, tier):
         minion_name = ""
-        return init_minion(minion_name, tier)
+        return self.init_minion(minion_name, tier)
 
     #dec/inc from minion's count in it's tier dictionary
     def removeFromPool(self, minion_name, tier):

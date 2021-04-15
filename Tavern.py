@@ -18,7 +18,7 @@ class Tavern:
             #check if our current roll has an elemental if not then just reroll until we get one
         #roll = list of minions from the pool, tier determines what's in the roll
         #TODO: interaction between tavern and pool: +/- the minion stock. Also instantiating the minion in the roll 
-
+        return
         #call get roll
         #call pool.removeFromPool
     def returnRoll(self):
