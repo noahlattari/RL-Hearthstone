@@ -44,10 +44,6 @@ class Player:
         self.rabid_saurolisk = False
         self.rabid_saurolisk_count = 0
 
-        #Sellemental/Water Droplet
-        self.sellemental_count = 0
-        self.water_droplet = False
-
         #Stasis Elemental: see stasisElementalBC()
         self.stasis_elemental = False
         self.stasis_elemental_count = 0
@@ -161,6 +157,8 @@ class Player:
                 self.cobaltScalebaneEffect(self.board, m)
             if m.name == "Majordomo Executus":
                 self.majordomoEffect(self.board, m)
+            if m.name == "Lightfang Enforcer":
+                self.lightfangEffect(self.board, m)
 
     def resetGold(self):
         if Player.STARTING_GOLD + self.round > Player.MAX_GOLD:
@@ -220,12 +218,17 @@ class Player:
                     self.majodomo = False
                     self.majordomo_elemental_counter = 0
 
-
             if sold_minion.name == "Sellemental":
-                #When you sell a sellemental, get a water_droplet
-                self.sellemental_count -= 1
-                self.water_droplet = True
-                #add a 2/2 water droplet to board, is possible??
+                #When you sell a sellemental, get a water_droplet in your hand, gold gives you two
+                if len(self.hand) < Player.MAX_HAND:
+                    gold_token = False
+                    if sold_minion.gold:
+                        gold_token = True
+                        if len(self.hand) < Player.MAX_HAND - 1:
+                            extra_water_droplet = self.pool.summonToken("Water Droplet", gold=gold_token)
+                            self.hand.append(extra_water_droplet)
+                    water_droplet = self.pool.summonToken("Water Droplet", gold=gold_token)
+                    self.hand.append(water_droplet)
 
             if sold_minion.name == "Stasis Elemental":
                 self.stasis_elemental_count -= 1
@@ -572,7 +575,28 @@ class Player:
             random_minion = type_list[random.randint(0, len(type_list)-1)]
             random_minion.buff(attack_buff, health_buff)
             count += 1
+    
+    def lightfangEffect(self, board, curr_minion):
+        attack_buff = 2
+        health_buff = 2
+        if curr_minion.gold:
+            attack_buff += 2
+            health_buff += 2
+        minion_map = {}
+        for m in board:
+            if m == curr_minion:
+                continue
+            if m.minion_type in minion_map:
+                minion_map[m.minion_type].append(m)
+            else:
+                minion_type_list = []
+                minion_type_list.append(m)
+                minion_map[m.minion_type] = minion_type_list
         
+        for i in minion_map:
+            random_minion = minion_map[i][random.randint(0,len(i)-1)]
+            random_minion.buff(attack_buff, health_buff)
+
 
     def screwjankClunkerBC(self, board, curr_minion):
         attack_buff = 2
