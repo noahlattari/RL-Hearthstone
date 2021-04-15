@@ -80,6 +80,21 @@ def test_alleycat_gold():
 
     assert str(player.board) == str(expected_board)
 
+def test_deck_swabbie():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    deck_swabbie = Minion.Minion("Deck Swabbie", 2, 2, "Pirate", 1)
+
+    player.hand = [deck_swabbie]
+
+    #play the minion in index 0 of our hand to index 0 on the board
+    player.play(0, 0)
+
+    expected_discount = 1
+
+    assert expected_discount == player.discount
+
 def test_menagerie_mug():
     pool = Pool.Pool()
     player = Player.Player(pool)
@@ -101,6 +116,44 @@ def test_menagerie_mug():
     buffed_mech = Minion.Minion("Test Mech", 2, 2, "Mech", 1)
 
     expected_board = [buffed_beast, m_mug, buffed_demon, buffed_mech]
+
+    print(player.board)
+    assert str(player.board) == str(expected_board)
+
+def test_salty_looter():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    salty_looter = Minion.Minion("Salty Looter", 4, 4, "Pirate", 3)
+    pirate = Minion.Minion("Test Pirate", 1, 1, "Pirate", 1)
+
+    player.hand = [salty_looter, pirate]
+
+    #play the minion in index 0 of our hand to index 1 on the board
+    player.play(0, 0)
+    player.play(0, 1)
+    buffed_pirate = Minion.Minion("Test Pirate", 2, 2, "Pirate", 1)
+
+    expected_board = [salty_looter, buffed_pirate]
+
+    print(player.board)
+    assert str(player.board) == str(expected_board)
+
+def test_soul_devourer():
+    pool = Pool.Pool()
+    player = Player.Player(pool)
+
+    soul_devourer = Minion.Minion("Soul Devourer", 3, 3, "Demon", 3)
+    demon = Minion.Minion("Test demon", 1, 1, "Demon", 1)
+
+    player.hand = [demon, soul_devourer]
+
+    #play the minion in index 0 of our hand to index 1 on the board
+    player.play(0, 0)
+    player.play(0, 1)
+    buffed_soul = Minion.Minion("Soul Devourer", 4, 4, "Demon", 3)
+
+    expected_board = [buffed_soul]
 
     print(player.board)
     assert str(player.board) == str(expected_board)
