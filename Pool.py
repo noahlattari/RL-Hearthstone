@@ -345,26 +345,24 @@ class Pool:
         all_murlocs_in_tier = []
 
         currTier = None
-        if tier == 1:
-            currTier = self.tier2
-        if tier == 2:
-            currTier = self.tier3
-        if tier == 3:
-            currTier = self.tier4
-        if tier == 4:
-            currTier = self.tier5
-        if tier >= 5:
-            currTier = self.tier6
-        
-        if tier == 6:
-            murlocTier = self.murloc[tier]
-        else:
-            murlocTier = self.murloc[tier+1]
 
-        for m in murlocTier: 
-            count = currTier[m]["count"]
-            for c in range(count):
-                all_murlocs_in_tier.append(m)
+        for i in range(1, tier):
+            for m in murloc[i]: 
+                if i == 1:
+                    currTier = self.tier2
+                if i == 2:
+                    currTier = self.tier3
+                if i == 3:
+                    currTier = self.tier4
+                if i == 4:
+                    currTier = self.tier5
+                if i >= 5:
+                    currTier = self.tier6
+
+                count = currTier[m]["count"]
+                
+                for c in range(count):
+                    all_murlocs_in_tier.append(m)
 
         roll = random.randint(0, len(all_murlocs_in_tier))
         discovered_minion = all_murlocs_in_tier[roll]
