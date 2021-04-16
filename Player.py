@@ -20,7 +20,6 @@ class Player:
         self.board = []
         self.round = 0
         self.discount = 0
-        self.tieredUp = False
 
         # minion specific variables
         # Khadgar: Your cards that summon minions summon twice as many (thrice when gold)
@@ -90,6 +89,12 @@ class Player:
         self.murloc_warleader = False
         self.murloc_warleader_count = 0
 
+    def getRoll(self):
+        return self.tavern.roll
+
+    def getTavernCost(self):
+        return Player.UPGRADE_COST[self.tavern.tier + 1] - self.discount
+
     def freezeTavern(self):
         self.freeze = True
 
@@ -127,8 +132,8 @@ class Player:
             cost = 0
         if self.gold >= cost:
             self.tavern.tierUp()
-            self.tieredUp = True
             self.gold -= cost
+            self.calcDiscount(True)
 
     def buy(self, minion_index):
         #check if we can fit it in our hand
@@ -170,9 +175,8 @@ class Player:
         else:
             self.gold = Player.STARTING_GOLD + self.round
     
-    def calcDiscount(self):
-        if self.tieredUp or self.round == 0:
-            self.tieredUp = False
+    def calcDiscount(self, tieredUp=False):
+        if tieredUp or self.round == 0:
             self.discount = 0
         else:
             self.discount += 1
@@ -536,10 +540,11 @@ class Player:
             hand.append(self.pool.discovery(tier))
         return
 
-    def murloc_discover(self, tier, hand):
+    def murloc_discover(self, tier, hand, gold=False):
         #check if there's room in our hand then call pool.murloc_discovery and pass in self.tavern.tier
         if len(hand) < Player.MAX_HAND:
             hand.append(self.pool.murloc_discovery(tier))
+
         return
 
     ### Battlecries ###
@@ -865,8 +870,12 @@ class Player:
         curr_minion.buff(attack_buff, 0)
 
     def primalfinLookoutBC(self, board, curr_minion):
+        lookout_num = 0
         for m in board:
-            if m.minion_type == "Murloc" and m.name != "Primalfin Lookout":
+            if m.name == "Primalfin Lookout":
+                lookout_num += 1
+
+            if m.minion_type == "Murloc" and lookout_num > 1:
                 self.murloc_discover(self.tavern.tier, self.hand)
                 if curr_minion.gold:
                     self.murloc_discover(self.tavern.tier, self.hand)

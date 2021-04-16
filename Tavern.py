@@ -12,6 +12,8 @@ class Tavern:
         #call pool to init next tier's minions
     
     def getRoll(self, stasis_elemental=False):
+        self.returnRoll()
+
         if stasis_elemental:
             print("hi")
         
@@ -28,5 +30,3 @@ class Tavern:
         #check if minion (by index) is in roll
         if 0 <= minion_index < len(self.roll):
             return self.roll.pop(minion_index)
-
-    

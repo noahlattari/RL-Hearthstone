@@ -1,9 +1,0 @@
-board
-* Hangry Dragon
-* Waxrider Togwaggle
-* Waxrider Togwaggle
-* Murloc Scout
-vs
-* Tabbycat
-* Tabbycat
-trace

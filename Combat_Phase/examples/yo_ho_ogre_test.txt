@@ -1,7 +1,0 @@
-board
-* Yo-Ho-Ogre
-VS
-* Murloc Scout
-* Murloc Scout
-
-trace
