@@ -1,11 +1,10 @@
 import Minion
 import random
 
-
 class Pool:
 
-    ROLL_SIZE = {1: 3, 2: 3, 3: 3, 4: 4, 5: 4, 6: 5}
-    TIER_COUNT = {1: 16, 2: 15, 3: 13, 4: 11, 5: 9, 6: 7}
+    ROLL_SIZE = {1:3, 2:3, 3:3, 4:4, 5:4, 6:5}
+    TIER_COUNT = {1:16, 2:15, 3:13, 4:11, 5:9, 6:7}
 
     def __init__(self):
         self.tier1 = {}
@@ -16,7 +15,7 @@ class Pool:
         self.tier6 = {}
         self.tokens = {}
         self.all_minions = []
-        self.murloc = {1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}}
+        self.murloc = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}}
 
         ### Beast ###
         self.tokens["Rat"] = self.addM(0, 1, 1, "Beast", 1, token=True)
@@ -43,7 +42,7 @@ class Pool:
         ### Neutral ###
         self.tier1["Wrath Weaver"] = self.addM(Pool.TIER_COUNT[1], 1, 3, "Neutral", 1)
         self.tier1["Acolyte of C'Thun"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Neutral", 1, taunt=True)
-        
+
         self.tier2["Spawn of N'Zoth"] = self.addM(Pool.TIER_COUNT[2], 2, 2, "Neutral", 2, death_rattle=True)
         self.tier2["Pack Leader"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Neutral", 2)
         self.tier2["Selfless Hero"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Neutral", 2, death_rattle=True)
@@ -51,7 +50,7 @@ class Pool:
         self.tier2["Tormented Ritualist"] = self.addM(Pool.TIER_COUNT[2], 2, 3, "Neutral", 2, taunt=True)
         self.tier2["Unstable Ghoul"] = self.addM(Pool.TIER_COUNT[2], 1, 3, "Neutral", 2, taunt=True, death_rattle=True)
         self.tier2["Menagerie Mug"] = self.addM(Pool.TIER_COUNT[2], 2, 2, "Neutral", 2)
-        
+
         self.tier3["Crystalweaver"] = self.addM(Pool.TIER_COUNT[3], 5, 4, "Neutral", 3)
         self.tier3["Soul Juggler"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Neutral", 3)
         self.tier3["Khadgar"] = self.addM(Pool.TIER_COUNT[3], 2, 2, "Neutral", 3)
@@ -79,7 +78,7 @@ class Pool:
 
         self.tier3["Replicating Menace"] = self.addM(Pool.TIER_COUNT[3], 3, 1, "Mech", 3, magnetic=True, microbots=True, death_rattle=True)
         self.tier3["Iron Sensei"] = self.addM(Pool.TIER_COUNT[3], 2, 2, "Mech", 3)
-        self.tier3["Piloted Shredder"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Mech", 3, death_rattle=True)
+        self.tier3["Pilotted Shredder"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Mech", 3, death_rattle=True)
         self.tier3["Screwjank Clunker"] = self.addM(Pool.TIER_COUNT[3], 2, 5, "Mech", 3)
         self.tier3["Deflect-o-Bot"] = self.addM(Pool.TIER_COUNT[3], 3, 2, "Mech", 3, divine_shield=True)
 
@@ -98,17 +97,18 @@ class Pool:
         self.tier3["Stasis Elemental"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Elemental", 3)
         self.tier3["Arcane Assistant"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Elemental", 3)
         self.tier3["Crackling Cyclone"] = self.addM(Pool.TIER_COUNT[3], 4, 1, "Elemental", 3, divine_shield=True, windfury=True)
-        
+
         ### Demon ###
+        self.tier1["Imp"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Demon", 1)
         self.tier1["Fiendish Servant"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Demon", 1, death_rattle=True)
-        self.tier1["Vulgar Homunculus"] = self.addM(Pool.TIER_COUNT[1], 2, 4, "Demon", 1, taunt=True)
+        self.tier1["Vulgar Homunculus"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Demon", 1, taunt=True)
         self.tier2["Nathrezim Overseer"] = self.addM(Pool.TIER_COUNT[2], 2, 3, "Demon", 2)
         self.tier2["Imprisoner"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Demon", 2, taunt=True, death_rattle=True)
         self.tier3["Imp Gang Boss"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Demon", 1)
         self.tier3["Soul Devourer"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Demon", 3)
         self.tier4["Ring Matron"] = self.addM(Pool.TIER_COUNT[4], 6, 4, "Demon", 4, taunt=True, death_rattle=True)
         self.tier4["Siegebreaker"] = self.addM(Pool.TIER_COUNT[4], 5, 8, "Demon", 4, taunt=True)
-        
+
         ### Pirate ###
         self.tier1["Scallywag"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Pirate", 1, death_rattle=True)
         self.tier1["Deck Swabbie"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Pirate", 1)
@@ -125,7 +125,7 @@ class Pool:
 
         self.tier2["Glyph Guardian"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Dragon", 2)
         self.tier2["Steward of Time"] = self.addM(Pool.TIER_COUNT[2], 3, 4, "Dragon", 2)
-        
+
         self.tier3["Twilight Emissary"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Dragon", 3, taunt=True)
         self.tier3["Bronze Warden"] = self.addM(Pool.TIER_COUNT[3], 2, 1, "Dragon", 3, divine_shield=True, reborn=True)
 
@@ -141,7 +141,7 @@ class Pool:
 
         self.murloc[1]["Rockpool Hunter"] = self.addM(0, 2, 3, "Murloc", 1)
         self.murloc[1]["Murloc Tidecaller"] = self.addM(0, 1, 2, "Murloc", 1)
-        
+
         self.tier2["Murloc Warleader"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Murloc", 2)
         self.tier2["Old Murk-Eye"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Murloc", 2)
         self.tier2["Murloc Tidehunter"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Murloc", 1)
@@ -155,7 +155,7 @@ class Pool:
 
         self.murloc[3]["Coldlight Seer"] = self.addM(0, 2, 3, "Murloc", 3)
         self.murloc[3]["Felfin Navigator"] = self.addM(0, 4, 4, "Murloc", 3)
-        
+
         self.tier4["Toxfin"] = self.addM(Pool.TIER_COUNT[4], 1, 2, "Murloc", 4)
         self.tier4["Primalfin Lookout"] = self.addM(Pool.TIER_COUNT[4], 3, 2, "Murloc", 4)
 
@@ -185,13 +185,13 @@ class Pool:
                 currTier = self.tier5
             if i == 6:
                 currTier = self.tier6
-            
+
             for m in currTier: #current minion
                 count = currTier[m]["count"]
                 for c in range(count):
                     minion_index_pair = (i, m) #(tier, minion_name)
                     all_minions.append(minion_index_pair)
-        
+
         rolls = []
         for i in range(Pool.ROLL_SIZE[tier]):
             rolls.append(random.randint(0,len(all_minions)))
@@ -211,11 +211,11 @@ class Pool:
                 currTier = self.tier5
             if all_minions[i][0] == 6:
                 currTier = self.tier6
-            
+
             curr_minion_name = all_minions[i][1]
             curr_minion = self.initMinion(curr_minion_name, currTier)
             result.append(curr_minion)
-        
+
         return result
 
     #helper function for adding minions
@@ -253,21 +253,21 @@ class Pool:
         health = token_stats["health"]
         token_type = token_stats["type"]
         tier = token_stats["tier"]
-        
+
         #can add more cases for other attributes as necessary
         is_taunt = token_stats.get("taunt")
         if is_taunt is None:
             is_taunt = False
-        
+
         token_is_gold = False
         if gold:
             if token_name != "Water Droplet":
                 attack *= 2
                 health *= 2
             token_is_gold = True
-        
+
         return Minion.Minion(token_name, attack, health, token_type, tier, taunt=is_taunt, token=True, gold=token_is_gold)
-    
+
     #initialize minion object and return it
     def initMinion(self, minion_name, tier, is_gold=False):
         minion_stats = tier[minion_name]
@@ -282,20 +282,20 @@ class Pool:
 
         t = minion_stats.get("Taunt")
         if t is None:
-            t = False  
-        
+            t = False
+
         ds = minion_stats.get("divine_shield")
         if ds is None:
             ds = False
-        
+
         p = minion_stats.get("poisionous")
         if p is None:
             p = False
-        
+
         wf = minion_stats.get("wind_fury")
         if wf is None:
             wf = False
-        
+
         mag = minion_stats.get("magnetic")
         if mag is None:
             mag = False
@@ -338,35 +338,33 @@ class Pool:
 
         discovered_minion = all_minions_in_tier[roll]
 
-        minion = self.initMinion(discovered_minion, currTier)
-
-        self.removeFromPool(minion.name, minion.tier)
-
-        return minion
+        return self.initMinion(discovered_minion, currTier)
 
     #get a random murloc from a tie above
     def murloc_discovery(self, tier):
         all_murlocs_in_tier = []
 
         currTier = None
+        if tier == 1:
+            currTier = self.tier2
+        if tier == 2:
+            currTier = self.tier3
+        if tier == 3:
+            currTier = self.tier4
+        if tier == 4:
+            currTier = self.tier5
+        if tier >= 5:
+            currTier = self.tier6
 
-        for i in range(1, tier):
-            for m in self.murloc[i]:
-                if i == 1:
-                    currTier = self.tier2
-                if i == 2:
-                    currTier = self.tier3
-                if i == 3:
-                    currTier = self.tier4
-                if i == 4:
-                    currTier = self.tier5
-                if i >= 5:
-                    currTier = self.tier6
+        if tier == 6:
+            murlocTier = self.murloc[tier]
+        else:
+            murlocTier = self.murloc[tier+1]
 
-                count = currTier[m]["count"]
-
-                for c in range(count):
-                    all_murlocs_in_tier.append(m)
+        for m in murlocTier:
+            count = currTier[m]["count"]
+            for c in range(count):
+                all_murlocs_in_tier.append(m)
 
         roll = random.randint(0, len(all_murlocs_in_tier))
         discovered_minion = all_murlocs_in_tier[roll]
@@ -376,6 +374,7 @@ class Pool:
         self.removeFromPool(murloc.name, murloc.tier)
 
         return murloc
+
 
     #dec/inc from minion's count in it's tier dictionary
     def removeFromPool(self, minion_name, tier):
@@ -440,17 +439,17 @@ class Pool:
         minion_stats = currTier[minion_name]
         base_attack = minion_stats["attack"]
         base_health = minion_stats["health"]
-        
+
         gold = self.initMinion(minion_name, currTier, is_gold=True)
         
-        #add the buffs from all three to the gold minion
+        # Add the buffs from all three to the gold minion
         for i in triple:
             attack_buff = i.attack - base_attack
             health_buff = i.health - base_health
 
             gold.buff(attack_buff, health_buff)
 
-            #will need to make sure we are not stacking these improperly
+            # Will need to make sure we are not stacking these improperly
             if i.magnetic:
                 gold.giveMagnetic()
             if i.taunt:
@@ -464,7 +463,5 @@ class Pool:
             if i.microbots:
                 gold.microbots = False
                 gold.golden_microbots = True
-
-
 
         return gold

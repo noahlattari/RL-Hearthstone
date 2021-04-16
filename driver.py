@@ -1,32 +1,38 @@
 import Pool
 import Player
 import MinionVector
+import Combat
 
 import subprocess
-import os
+from pathlib import Path
 
 pool = Pool.Pool()
 minion_vectors = MinionVector.MinionVector()
+combat_phase = Combat.Combat()
 
 players = []
 
 for i in range(0, 7):
     players.append(Player.Player(pool))
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
+dir_path = Path(__file__).parent
 
-process = subprocess.Popen([dir_path + "\hsbg.exe", dir_path + "\\run1.txt"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+print(dir_path)
+
+process = subprocess.Popen([dir_path / "hsbg.exe", dir_path / "tests/run2.txt"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 stdout, _ = map(lambda x: x.decode(), process.communicate())
 
-print(pool.tier5)
+print(stdout)
 
-for m in pool.tier5:
-    if minion_vectors.get_vector(m):
-        print("Passed")
-    else:
-        print("Failed to get key")
-        print(m)
-        break
+# print(pool.tier5)
+#
+# for m in pool.tier5:
+#     if minion_vectors.get_vector(m):
+#         print("Passed")
+#     else:
+#         print("Failed to get key")
+#         print(m)
+#         break
 
 # for player in players:
 #     if player.health <= 0:

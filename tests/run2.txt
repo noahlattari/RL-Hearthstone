@@ -1,0 +1,15 @@
+board
+* 4/6 Cave Hydra
+* 23/9 Kaboom Bot, microbots
+* 16/9 Nightmare Amalgam, microbots
+* Lightfang Enforcer
+* 6/8 Imp Gang Boss
+Vs
+* 11/9 CobaltGuardian, divine shield
+* Brann Bronzebeard
+* 7/8 golden Kindly Grandmother
+* CobaltGuardian, divine shield
+* Screwjank Clunker
+* 8/8 OldMurkEye
+* 17/17 Nightmare Amalgam, taunt, poison
+show

@@ -1,4 +1,5 @@
 
+
 class MinionVector:
 
     def __init__(self):
@@ -6,8 +7,8 @@ class MinionVector:
         self.setup_vectors()
 
     def setup_vectors(self):
-        names_file = open("card2vec_hsbg_10_metadata.tsv", "r")
-        vectors_file = open("card2vec_hsbg_10.tsv", "r")
+        names_file = open("resources/card2vec_hsbg_10_metadata.tsv", "r")
+        vectors_file = open("resources/card2vec_hsbg_10.tsv", "r")
 
         names = []
         vectors = []
@@ -31,7 +32,7 @@ class MinionVector:
     def get_vector(self, minion):
         minion = minion.lower()
 
-        if minion in self.vectors:
-            return True
+        if minion not in self.vectors:
+            raise Exception("Vector for minion doesn't exist")
 
-        return False
+        return self.vectors.get(minion)
