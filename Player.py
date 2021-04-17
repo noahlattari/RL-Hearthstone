@@ -58,6 +58,10 @@ class Player:
         self.refreshing_anomaly_gold = False
         self.anomaly_gold_counter = 2
 
+        # Lil' Rag: see lilRagEffect()
+        self.lil_rag_count = 0
+        self.lil_rag_gold_count = 0
+
         #Nathrezim Overseer: see nathrezimOverseerBC()
         self.nathrezim_overseer = False
         self.nathrezim_overseer_gold = False
@@ -271,6 +275,12 @@ class Player:
                 if self.party_elemental_count == 0:
                     self.party_elemental = False
 
+            if sold_minion.name == "Lil' Rag":
+                if sold_minion.gold:
+                    self.lil_rag_gold_count -= 1
+                else:
+                    self.lil_rag_count -= 1
+
             if sold_minion.name == "Steward of Time":
                 self.stewardOfTimeEffect(self.tavern.roll, sold_minion)
 
@@ -401,6 +411,12 @@ class Player:
 
                 if curr_minion.name == "Refreshing Anomaly":
                     self.refreshing_anomaly = True
+
+                if curr_minion.name == "Lil' Rag":
+                    if curr_minion.gold:
+                        self.lil_rag_gold_count += 1
+                    else:
+                        self.lil_rag_count += 1
                 
                 #If you have a party elemental and play an elemental, buff an elemental
                 if curr_minion.minion_type == "Elemental":
@@ -408,6 +424,13 @@ class Player:
                         self.partyElementalEffect(self.board, curr_minion)
                     if self.majodomo:
                         self.majordomo_elemental_counter += 1
+                    if self.lil_rag_count > 0:
+                        for i in range(self.lil_rag_count-1):
+                            self.lilRagEffect(self.board, curr_minion)
+                    if self.lil_rag_gold_count > 0:
+                        for i in range(self.lil_rag_gold_count-1):
+                            self.lilRagEffect(self.board, curr_minion)
+                            self.lilRagEffect(self.board, curr_minion)
                     if self.lieutenant_garr:
                         self.lieutenant_garr_count += 1
                         self.lieutenantGarrEffect(self.board, curr_minion)
@@ -577,10 +600,13 @@ class Player:
             if self.party_elemental_count == 0:
                 self.party_elemental = False
 
+        if first.name == "Lil' Rag":
+            self.lil_rag_count -= 3
+
         if first.name == "Murloc Warleader":
-                self.murloc_warleader_count -= 3
-                if self.murloc_warleader_count == 0:
-                    self.murloc_warleader = False
+            self.murloc_warleader_count -= 3
+            if self.murloc_warleader_count == 0:
+                self.murloc_warleader = False
 
     def discover(self, tier, hand):
         #check if there's room in our hand then call pool.discovery and pass in self.tavern.tier
@@ -967,9 +993,11 @@ class Player:
             val = 4
         else:
             val = 2
-        for m in board:
-            if m.type == "Murloc" and m != curr_minion:
-                m.buff(val, val)
+        self.buffAllFriendly(board, val, val, minion_type="Murloc", this_minion=curr_minion)
+
+    def lilRagEffect(self, board, elemental):
+        val = elemental.tier
+        self.buffFriendly(board, val, val)
 
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type

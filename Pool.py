@@ -100,6 +100,8 @@ class Pool:
         self.tier3["Crackling Cyclone"] = self.addM(Pool.TIER_COUNT[3], 4, 1, "Elemental", 3, divine_shield=True, windfury=True)
         self.tier6["Lieutenant Garr"] = self.addM(Pool.TIER_COUNT[6], 8, 1, "Elemental", 6, taunt=True)
 
+        self.tier6["Lil' Rag"] = self.addM(Pool.TIER_COUNT[6], 6, 6, "Elemental", 6)
+
         ### Demon ###
 
         self.tokens["Imp"] = self.addM(0, 1, 1, "Demon", 1, token=True)
