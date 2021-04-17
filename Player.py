@@ -83,11 +83,19 @@ class Player:
         #Murloc Tidecaller: see murlocTidecallerEffect()
         self.murloc_tidecaller_count = 0
         self.murloc_tidecaller = False
-        self.murloc_tidecaller_gold = False  
 
         #Murloc Warleader
         self.murloc_warleader = False
         self.murloc_warleader_count = 0
+
+        #Lieutenant Garr: see lieutenantGarrEffect()
+        self.lieutenant_garr = False
+        self.lieutenant_garr_count = 0
+
+        #Cap'n Hoggarr
+        self.capn_hoggarr = False
+        self.capn_hoggarr_gold = False
+        self.capn_hoggarr_count = 0
 
     def getRoll(self):
         return self.tavern.roll
@@ -157,6 +165,8 @@ class Player:
 
     #call this function at the end of the turn
     def roundEnd(self):
+        self.capn_hoggarr = False
+        self.capn_hoggarr_gold = False
         for m in self.board:
             if m.name == "Micro Mummy":
                 self.microMummyEffect(self.board, m)
@@ -190,6 +200,10 @@ class Player:
             #TODO: return this minion to the pool, when you sell a token they just die
 
             # Handling removal of specific minions
+            if sold_minion.minion_type == "Pirate":
+                if self.capn_hoggarr_gold:
+                    self.gold += 2
+                self.gold += 1
             if sold_minion.name == "Khadgar":
                 if sold_minion.gold:
                     self.khadgar_gold_count -= 1
@@ -243,6 +257,11 @@ class Player:
                 if self.stasis_elemental_count == 0:
                     self.stasis_elemental = False
 
+            if sold_minion.name == "Lieutenant Garr":
+                self.lieutenant_garr_count -= 1
+                if self.lieutenant_garr_count == 0:
+                    self.lieutenant_garr = False
+
             if sold_minion.name == "Party Elemental":
                 self.party_elemental_count -= 1
                 if self.party_elemental_count == 0:
@@ -269,7 +288,12 @@ class Player:
                         if m.gold == True:
                             m.buff(-2, 0)
                         else:
-                            m.buff(-1, 0) 
+                            m.buff(-1, 0)
+
+            if sold_minion.name == "Cap'n Hoggarr":
+                self.capn_hoggarr_count -= 1
+                if self.capn_hoggarr_count == 0:
+                    self.capn_hoggarr = False
                             
             if sold_minion.name == "Murloc Tidecaller":
                 self.murloc_tidecaller_count -= 1
@@ -328,6 +352,9 @@ class Player:
                 if curr_minion.name == "Nathrezim Overseer":
                     self.nathrezim_overseer = True
                     self.nathrezimOverseerBC(self.board)
+
+                if curr_minion.name == "Annihilan Battlemaster":
+                    self.annihilanBattlemasterBC(curr_minion)
                 
                 ### Neutral ###
                 if curr_minion.name == "Defender of Argus":
@@ -377,6 +404,9 @@ class Player:
                         self.partyElementalEffect(self.board, curr_minion)
                     if self.majodomo:
                         self.majordomo_elemental_counter += 1
+                    if self.lieutenant_garr:
+                        self.lieutenant_garr_count += 1
+                        self.lieutenantGarrEffect(self.board, curr_minion)
         
                 if curr_minion.name == "Stasis Elemental":
                     self.stasis_elemental = True
@@ -386,6 +416,9 @@ class Player:
 
                 if curr_minion.name == "Arcane Assistant":
                     self.arcaneAssistantBC(self.board, curr_minion)
+
+                if curr_minion.name == "Lieutenant Garr":
+                    self.lieutenantGarrEffect(self.board, curr_minion)
                 
                 ### Mech ###
                 if curr_minion.name == "Screwjank Clunker":
@@ -403,9 +436,17 @@ class Player:
                     if self.salty_looter:
                         self.saltyLooterBC(curr_minion)
 
+                if curr_minion.name == "Seabreaker Goliath":
+                    self.seabreakerGoliathEffect(self.board, curr_minion)
+            
                 if curr_minion.name == "Southsea Captain":
                     self.southsea_captain = True
                     self.southseaCaptainEffect(self.board)
+
+                if curr_minion.name == "Cap'n Hoggarr":
+                    if curr_minion.gold == True:
+                        self.capn_hoggarr_gold = True
+                    self.capn_hoggarr = True
 
                 if curr_minion.name == "Bloodsail Cannoneer":
                     self.bloodsailCannoneerBC(self.board)
@@ -548,7 +589,32 @@ class Player:
         return
 
     ### Battlecries ###
-    #TODO: Write unit tests for battlecries / effects
+    def seabreakerGoliathEffect(self, board, curr_minion):
+        attack_buff = 1
+        health_buff = 1
+        if curr_minion.gold:
+            attack_buff = 2
+            health_buff = 2
+        for m in board:
+            if m.minion_type == "Pirate":
+                m.buff(attack_buff, health_buff)
+
+    def annihilanBattlemasterBC(self, curr_minion):
+        damage_taken = 40 - self.health
+        if curr_minion.gold:
+            curr_minion.buff(0, damage_taken*2)
+        curr_minion.buff(0, damage_taken)
+
+    def lieutenantGarrEffect(self, board, curr_minion):
+        health_buff = 0
+        for m in board:
+            if m.minion_type == "Elemental":
+                health_buff += 1
+        if curr_minion.gold:
+            health_buff *= 2
+        health_buff -= 1 #This is implying he doesn't count himself as an elemental to buff
+        curr_minion.buff(0, health_buff)
+    
     def murlocTidecallerEffect(self, curr_minion):
         if curr_minion.gold:
             curr_minion.buff(2, 0)
