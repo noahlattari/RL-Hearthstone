@@ -178,6 +178,10 @@ class Player:
                 self.majordomoEffect(self.board, m)
             if m.name == "Lightfang Enforcer":
                 self.lightfangEffect(self.board, m)
+            if m.name == "Razorgore, the Untamed":
+                self.razorgoreEffect(self.board, m)
+
+        self.tavern.returnRoll()
 
     def resetGold(self):
         if Player.STARTING_GOLD + self.round > Player.MAX_GOLD:
@@ -197,7 +201,7 @@ class Player:
             #remove minion from board 
             sold_minion = self.board.pop(minion_index)
             self.gold += 1
-            #TODO: return this minion to the pool, when you sell a token they just die
+            self.pool.returnToPool(sold_minion.name, sold_minion.tier)
 
             # Handling removal of specific minions
             if sold_minion.minion_type == "Pirate":
@@ -498,7 +502,10 @@ class Player:
 
                 if curr_minion.name == "Primalfin Lookout":
                     self.primalfinLookoutBC(self.board, curr_minion)
-                
+
+                if curr_minion.name == "King Bagurgle":
+                    self.kingBagurgleBC(self.board, curr_minion)
+
                 self.goldCheck(self.board)
 
     def goldCheck(self, board):
@@ -581,11 +588,10 @@ class Player:
             hand.append(self.pool.discovery(tier))
         return
 
-    def murloc_discover(self, tier, hand, gold=False):
+    def murloc_discover(self, tier, hand):
         #check if there's room in our hand then call pool.murloc_discovery and pass in self.tavern.tier
         if len(hand) < Player.MAX_HAND:
             hand.append(self.pool.murloc_discovery(tier))
-
         return
 
     ### Battlecries ###
@@ -913,7 +919,7 @@ class Player:
         if curr_minion.gold:
             attack_buff += 1
             health_buff += 1
-        self.buffFriendly(board, attack_buff, health_buff, minion_type="Murloc")
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Murloc", this_minion=curr_minion)
 
     def felfinNavigatorBC(self, board, curr_minion):
         attack_buff = 1
@@ -947,26 +953,44 @@ class Player:
                     self.murloc_discover(self.tavern.tier, self.hand)
                 break
 
+    def razorgoreEffect(self, board, curr_minion):
+        if curr_minion.gold:
+            val = 2
+        else:
+            val = 1
+        for m in board:
+            if m.type == "Dragon" and m != curr_minion:
+                curr_minion.buff(val, val)
+
+    def kingBagurgleBC(self, board, curr_minion):
+        if curr_minion.gold:
+            val = 4
+        else:
+            val = 2
+        for m in board:
+            if m.type == "Murloc" and m != curr_minion:
+                m.buff(val, val)
+
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
-    def buffFriendly(self, board, attack, health, minion_type=None, taunt=False, poisonous=False): #add more cases as necessary eg. windfury, divine_shield, etc
+    def buffFriendly(self, board, attack, health, minion_type=None, taunt=False, poisonous=False, this_minion=None): #add more cases as necessary eg. windfury, divine_shield, etc
         if minion_type is not None:
-            type_specific_list = [m for m in board if m.minion_type == minion_type]
+            type_specific_list = [m for m in board if m.minion_type == minion_type and m != this_minion]
         else:
             type_specific_list = board
 
         #fails if type_specific_list is empty
         if type_specific_list:
-            random_friend = type_specific_list[random.randint(0, len(type_specific_list))]
+            random_friend = type_specific_list[random.randint(0, len(type_specific_list) -1)]
             random_friend.buff(attack, health)
             if taunt:
                 random_friend.giveTaunt()
             if poisonous:
                 random_friend.givePoisonous()
 
-    def buffAllFriendly(self, board, attack, health, minion_type=None, taunt=False, poisonous=False): #add more cases as necessary eg. windfury, divine_shield, etc
+    def buffAllFriendly(self, board, attack, health, minion_type=None, taunt=False, poisonous=False, this_minion=None): #add more cases as necessary eg. windfury, divine_shield, etc
         if minion_type is not None:
-            type_specific_list = [m for m in board if m.minion_type == minion_type]
+            type_specific_list = [m for m in board if m.minion_type == minion_type and m != this_minion]
         else:
             type_specific_list = board
 
@@ -992,4 +1016,3 @@ class Player:
                 board.insert(pos+1, curr_token)
             else: 
                 break #if the board is full no point in looping
-        

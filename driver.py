@@ -3,26 +3,13 @@ import Player
 import MinionVector
 import Combat
 
-import subprocess
-from pathlib import Path
-
 pool = Pool.Pool()
 minion_vectors = MinionVector.MinionVector()
-combat_phase = Combat.Combat()
 
 players = []
 
 for i in range(0, 7):
     players.append(Player.Player(pool))
-
-dir_path = Path(__file__).parent
-
-print(dir_path)
-
-process = subprocess.Popen([dir_path / "hsbg.exe", dir_path / "tests/run2.txt"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-stdout, _ = map(lambda x: x.decode(), process.communicate())
-
-print(stdout)
 
 # print(pool.tier5)
 #
@@ -44,19 +31,23 @@ print(stdout)
 #
 #     player.roundEnd()
 
-# players[0].roundStart()
-# print(players[0].getRoll())
-#
-# print(pool.tier1.keys())
-#
-# for m in pool.tier1:
-#     print(pool.tier1[m]["count"])
-#
-# players[0].buy(1)
-#
-# print(players[0].getRoll())
-#
-# print(players[0].hand[0].name)
+players[0].roundStart()
+players[0].buy(1)
+players[0].play(0, len(players[0].board))
+players[0].roundEnd()
+
+players[1].roundStart()
+players[1].buy(1)
+players[1].play(0, len(players[1].board))
+players[1].roundEnd()
+
+print(players[0].board)
+print(players[1].board)
+
+print(players[0].board[0].taunt)
+print(players[0].board[0].reborn)
+print(repr(players[0].board[0]))
+combat = Combat.Combat(players[0].board, players[1].board)
 
 # Player.roundStart()
 # Player.roundEnd()
@@ -65,6 +56,9 @@ print(stdout)
 # Player.upgradeTavern()
 # Player.buy()
 # Player.getTavernCost()
+# Player.getRoll()
+# Player.sell()
+# Player.play()
 
 
 

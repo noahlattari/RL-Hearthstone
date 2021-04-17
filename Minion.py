@@ -38,6 +38,8 @@ class Minion:
             out += ", microbots"
         if self.golden_microbots:
             out += ", golden microbots"
+        if self.reborn:
+            out += ", reborn"
         return out
 
     def __str__(self):
