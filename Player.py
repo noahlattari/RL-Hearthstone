@@ -72,25 +72,13 @@ class Player:
         self.majodomo_count = 0
         self.majordomo_elemental_counter = 0
 
-        #Southsea Captain: see southseaCaptainEffect()
-        self.southsea_captain = False
-        self.southsea_captain_gold = False
-
-        #Bloodsail Cannoneer: see bloodsailCanoneerBC()
-        self.bloodsail_cannoneer = False
-        self.bloodsail_cannoneer_gold = False
-
-        #Salty Looter: see saltyLooterBC()
+        #Salty Looter: see saltyLooterEffect()
         self.salty_looter = False
         self.salty_looter_gold = False 
 
         #Murloc Tidecaller: see murlocTidecallerEffect()
         self.murloc_tidecaller_count = 0
         self.murloc_tidecaller = False
-
-        #Murloc Warleader
-        self.murloc_warleader = False
-        self.murloc_warleader_count = 0
 
         #Lieutenant Garr: see lieutenantGarrEffect()
         self.lieutenant_garr = False
@@ -210,14 +198,14 @@ class Player:
         if 0 <= minion_index < len(self.board):
             #remove minion from board 
             sold_minion = self.board.pop(minion_index)
-            self.gold += 1
+            self.addGold(1)
             self.pool.returnToPool(sold_minion.name, sold_minion.tier)
 
             # Handling removal of specific minions
             if sold_minion.minion_type == "Pirate":
                 if self.capn_hoggarr_gold:
-                    self.gold += 2
-                self.gold += 1
+                    self.addGold(2)
+                self.addGold(1)
             if sold_minion.name == "Khadgar":
                 if sold_minion.gold:
                     self.khadgar_gold_count -= 1
@@ -291,24 +279,9 @@ class Player:
                 self.stewardOfTimeEffect(self.tavern.roll, sold_minion)
 
             if sold_minion.name == "Freedealing Gambler":
-                self.gold += 2 #because we already add 1 in the begining 
-
-            if sold_minion.name == "Southsea Captain":
-                self.southsea_captain = False
-                self.southseaCaptainEffect(self.board)
-
-            if sold_minion.name == "Murloc Warleader":
-                self.murloc_warleader_count -= 1
-                if self.murloc_warleader_count == 0:
-                    self.murloc_warleader = False
-
-            if sold_minion.minion_type == "Murloc":
-                for m in self.board:
-                    if m.name == "Old Murk-Eye":
-                        if m.gold == True:
-                            m.buff(-2, 0)
-                        else:
-                            m.buff(-1, 0)
+                if sold_minion.gold:
+                    self.addGold(3)
+                self.addGold(2)#because we already add 1 in the begining 
 
             if sold_minion.name == "Cap'n Hoggarr":
                 self.capn_hoggarr_count -= 1
@@ -371,7 +344,7 @@ class Player:
 
                 if curr_minion.name == "Nathrezim Overseer":
                     self.nathrezim_overseer = True
-                    self.nathrezimOverseerBC(self.board)
+                    self.nathrezimOverseerBC(self.board, curr_minion)
 
                 if curr_minion.name == "Annihilan Battlemaster":
                     self.annihilanBattlemasterBC(curr_minion)
@@ -427,7 +400,7 @@ class Player:
                 #If you have a party elemental and play an elemental, buff an elemental
                 if curr_minion.minion_type == "Elemental":
                     if self.party_elemental:
-                        self.partyElementalEffect(self.board, curr_minion)
+                        self.partyElementalEffect(self.board)
                     if self.majodomo:
                         self.majordomo_elemental_counter += 1
                     if self.lil_rag_count > 0:
@@ -467,14 +440,10 @@ class Player:
                 ### Pirate ###
                 if curr_minion.minion_type == "Pirate":
                     if self.salty_looter:
-                        self.saltyLooterBC(curr_minion)
+                        self.saltyLooterEffect(self.board)
 
                 if curr_minion.name == "Seabreaker Goliath":
                     self.seabreakerGoliathEffect(self.board, curr_minion)
-            
-                if curr_minion.name == "Southsea Captain":
-                    self.southsea_captain = True
-                    self.southseaCaptainEffect(self.board)
 
                 if curr_minion.name == "Cap'n Hoggarr":
                     if curr_minion.gold == True:
@@ -482,7 +451,7 @@ class Player:
                     self.capn_hoggarr = True
 
                 if curr_minion.name == "Bloodsail Cannoneer":
-                    self.bloodsailCannoneerBC(self.board)
+                    self.bloodsailCannoneerBC(self.board, curr_minion)
 
                 if curr_minion.name == "Salty Looter":
                     self.salty_looter = True
@@ -492,19 +461,11 @@ class Player:
                     
                 ### Murloc ###
                 if curr_minion.minion_type == "Murloc":
-                    if self.murloc_warleader:
-                        curr_minion.buff(self.murloc_warleader_count, 0)
                     if self.murloc_tidecaller:
                         self.murlocTidecallerEffect(curr_minion)
-                    for m in self.board:
-                        if m.name == "Old Murk-Eye":
-                            if m.gold == True:
-                                m.buff(2, 0)
-                            else:
-                                m.buff(1, 0) 
 
                 if curr_minion.name == "Toxfin":
-                    self.toxfinBC(self.board)
+                    self.toxfinBC(self.board, curr_minion)
 
                 if curr_minion.name == "Coldlight Seer":
                     self.coldlightSeerBC(self.board, curr_minion)
@@ -514,14 +475,6 @@ class Player:
 
                 if curr_minion.name == "Felfin Navigator":
                     self.felfinNavigatorBC(self.board, curr_minion)
-                
-                if curr_minion.name == "Murloc Warleader":
-                    self.murlocWarleaderEffect(self.board, curr_minion)
-                    self.murloc_warleader = True
-                    self.murloc_warleader_count += 1
-                
-                if curr_minion.name == "Old Murk-Eye":
-                    self.oldMurkEyeEffect(self.board, curr_minion)
 
                 if curr_minion.name == "Murloc Tidehunter":
                     self.murlocTidehunterBC(self.board, pos, curr_minion)
@@ -609,11 +562,6 @@ class Player:
         if first.name == "Lil' Rag":
             self.lil_rag_count -= 3
 
-        if first.name == "Murloc Warleader":
-            self.murloc_warleader_count -= 3
-            if self.murloc_warleader_count == 0:
-                self.murloc_warleader = False
-
     def discover(self, tier, hand):
         #check if there's room in our hand then call pool.discovery and pass in self.tavern.tier
         if len(hand) < Player.MAX_HAND:
@@ -670,87 +618,64 @@ class Player:
         else:
             self.discount += 1
         
-    def saltyLooterBC(self, curr_minion):
-        if curr_minion.gold:
-            curr_minion.buff(2, 2)
-        else:
-            curr_minion.buff(1, 1)
+    def saltyLooterEffect(self, board):
+        for m in board:
+            if m.name == "Salty Looter":
+                if m.gold:
+                    m.buff(2,2)
+                else:
+                    m.buff(1,1)
         
-    def bloodsailCannoneerBC(self, board):
+    def bloodsailCannoneerBC(self, board, curr_minion):
         attack_buff = 3
         health_buff = 3
-        if self.bloodsail_cannoneer_gold:
+        if curr_minion.gold:
             attack_buff += 3
             health_buff += 3
         for m in board:
-            if m.minion_type == "Pirate":
+            if m.minion_type == "Pirate" and m != curr_minion:
                 m.buff(attack_buff, health_buff)
-        
-    def southseaCaptainEffect(self, board):
-        if self.southsea_captain:
-            attack_buff = 1
-            health_buff = 1
-            if self.southsea_captain_gold:
-                attack_buff += 1
-                health_buff += 1
-            for m in board:
-                if m.minion_type == "Pirate":
-                    m.buff(attack_buff, health_buff)
-        else: #When card is sold, remove the buffs
-            attack_buff = -1
-            health_buff = -1
-            if self.southsea_captain_gold:
-                attack_buff -= 1
-                health_buff -= 1
-            for m in board:
-                if m.minion_type == "Pirate":
-                    m.buff(attack_buff, health_buff)
 
-    def nathrezimOverseerBC(self, board):
+    def nathrezimOverseerBC(self, board, curr_minon):
         attack_buff = 2
         health_buff = 2
         if self.nathrezim_overseer_gold:
             attack_buff += 2
             health_buff += 2
-        self.buffFriendly(board, attack_buff, health_buff, minion_type="Demon")
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Demon", this_minion=curr_minon)
         
     def soulDevourerBC(self, board, curr_minion):
         if curr_minion.gold:
             for m in board:
-                if m.minion_type == "Demon" and m.name != "Soul Devourer":
+                if m.minion_type == "Demon" and m != curr_minion:
                     curr_minion.buff(2*m.attack, 2*m.health)
-                    self.gold += 6
+                    self.addGold(6)
                     board.pop(board.index(m))
         else:
             for m in board:
-                if m.minion_type == "Demon" and m.name != "Soul Devourer":
+                if m.minion_type == "Demon" and m != curr_minion:
                     curr_minion.buff(m.attack, m.health)
-                    self.gold += 3
+                    self.addGold(3)
                     board.pop(board.index(m))
         
     def vulgarHommunculusBC(self):
         self.health -= 2 #gold case is the same
 
     def arcaneAssistantBC(self, board, curr_minion):
-        if curr_minion.gold:
-            for m in self.board:
-                if m.minion_type == "Elemental":
-                    m.buff(2, 2)
-        else:
-            if curr_minion.gold:
-                for m in self.board:
-                    if m.minion_type == "Elemental":
-                        m.buff(1, 1)
+        for m in self.board:
+            if m.minion_type == "Elemental" and m != curr_minion:
+                if curr_minion.gold:
+                    m.buff(2,2)
+                else:
+                    m.buff(1,1)
 
-    def partyElementalEffect(self, board, curr_minion):
-        if curr_minion.gold:
-            attack_buff = 2
-            health_buff = 2
-            self.buffFriendly(board, attack_buff, health_buff, minion_type="Elemental")
-        else:
-            attack_buff = 1
-            health_buff = 1
-            self.buffFriendly(board, attack_buff, health_buff, minion_type="Elemental")
+    def partyElementalEffect(self, board):
+        for m in board:
+            if m.name == "Party Elemental":
+                if m.gold:
+                    self.buffFriendly(board, 2, 2, minion_type="Elemental", this_minion=m)
+                else:
+                    self.buffFriendly(board, 1, 1, minion_type="Elemental", this_minion=m)
 
     def wrathWeaverEffect(self):
         for m in self.board:
@@ -841,7 +766,7 @@ class Player:
 
         minion_map = {}
         for m in board:
-            if m == curr_minion:
+            if m == curr_minion or m.minion_type == "Neutral":
                 continue
             if m.minion_type in minion_map:
                 minion_map[m.minion_type].append(m)
@@ -869,7 +794,7 @@ class Player:
             health_buff += 2
         minion_map = {}
         for m in board:
-            if m == curr_minion:
+            if m == curr_minion or m.minion_type == "Neutral":
                 continue
             if m.minion_type in minion_map:
                 minion_map[m.minion_type].append(m)
@@ -889,21 +814,21 @@ class Player:
         if curr_minion.gold:
             attack_buff += 2
             health_buff += 2
-        self.buffFriendly(board, attack_buff, health_buff, minion_type="Mech")
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Mech", this_minion=curr_minion)
 
     def metaltoothLeaperBC(self, board, curr_minion):
         attack_buff = 2
         if curr_minion.gold:
             attack_buff += 2
         for m in board:
-            if m.minion_type == "Mech":
+            if m.minion_type == "Mech" and m != curr_minion:
                 m.buff(attack_buff, 0)
 
     def microMummyEffect(self, board, curr_minion):
         attack_buff = 1
         if curr_minion.gold:
             attack_buff += 1
-        self.buffFriendly(board, attack_buff, 0)
+        self.buffFriendly(board, attack_buff, 0, this_minion=curr_minion)
 
     def ironSenseiEffect(self, board, curr_minion):
         attack_buff = 2
@@ -911,7 +836,7 @@ class Player:
         if curr_minion.gold:
             attack_buff += 2
             health_buff += 2
-        self.buffFriendly(board, attack_buff, health_buff, minion_type="Mech")
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Mech", this_minion=curr_minion)
 
     def twilightEmissaryBC(self, board, curr_minion):
         attack_buff = 2
@@ -919,13 +844,13 @@ class Player:
         if curr_minion.gold:
             attack_buff += 2
             health_buff += 2
-        self.buffFriendly(board, attack_buff, health_buff, minion_type="Dragon")
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Dragon", this_minion=curr_minion)
 
     def cobaltScalebaneEffect(self, board, curr_minion):
         attack_buff = 3
         if curr_minion.gold:
             attack_buff += 3
-        self.buffFriendly(board, attack_buff, 0, minion_type="Dragon")
+        self.buffFriendly(board, attack_buff, 0, minion_type="Dragon", this_minion=curr_minion)
 
     def stewardOfTimeEffect(self, roll, curr_minion):
         attack_buff = 2
@@ -936,14 +861,14 @@ class Player:
         for m in roll:
             m.buff(attack_buff, health_buff)
 
-    def toxfinBC(self, board):
-        self.buffFriendly(board, 0, 0, minion_type="Murloc", poisonous=True) #gold is same case
+    def toxfinBC(self, board, curr_minion):
+        self.buffFriendly(board, 0, 0, minion_type="Murloc", poisonous=True, this_minion=curr_minion) #gold is same case
 
     def coldlightSeerBC(self, board, curr_minion):
         health_buff = 2
         if curr_minion.gold:
             health_buff += 2
-        self.buffAllFriendly(board, 0, health_buff)
+        self.buffAllFriendly(board, 0, health_buff, this_minion=curr_minion)
 
     def rockpoolHunterBC(self, board, curr_minion):
         attack_buff = 1
@@ -959,19 +884,8 @@ class Player:
         if curr_minion.gold:
             attack_buff += 1
             health_buff += 1
-        self.buffAllFriendly(board, attack_buff, health_buff, minion_type="Murloc")
-
-    def murlocWarleaderEffect(self, board, curr_minion):
-        attack_buff = 2
-        if curr_minion.gold:
-            attack_buff += 2
-        self.buffAllFriendly(board, attack_buff, 0, minion_type="Murloc")
+        self.buffAllFriendly(board, attack_buff, health_buff, minion_type="Murloc", this_minion=curr_minion)
     
-    def oldMurkEyeEffect(self, board, curr_minion):
-        attack_buff = 1
-        if curr_minion.gold:
-            attack_buff += 1
-        curr_minion.buff(attack_buff, 0)
 
     def primalfinLookoutBC(self, board, curr_minion):
         lookout_num = 0
@@ -1050,3 +964,8 @@ class Player:
                 board.insert(pos+1, curr_token)
             else: 
                 break #if the board is full no point in looping
+
+    def addGold(self, amount):
+        self.gold += amount
+        if self.gold > Player.MAX_GOLD:
+            self.gold = Player.MAX_GOLD
