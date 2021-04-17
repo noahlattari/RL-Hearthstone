@@ -169,6 +169,8 @@ class Player:
             if m.name == "Lightfang Enforcer":
                 self.lightfangEffect(self.board, m)
 
+        self.tavern.returnRoll()
+
     def resetGold(self):
         if Player.STARTING_GOLD + self.round > Player.MAX_GOLD:
             self.gold = Player.MAX_GOLD
@@ -540,11 +542,10 @@ class Player:
             hand.append(self.pool.discovery(tier))
         return
 
-    def murloc_discover(self, tier, hand, gold=False):
+    def murloc_discover(self, tier, hand):
         #check if there's room in our hand then call pool.murloc_discovery and pass in self.tavern.tier
         if len(hand) < Player.MAX_HAND:
             hand.append(self.pool.murloc_discovery(tier))
-
         return
 
     ### Battlecries ###
@@ -926,4 +927,3 @@ class Player:
                 board.insert(pos+1, curr_token)
             else: 
                 break #if the board is full no point in looping
-        

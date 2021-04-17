@@ -3,8 +3,8 @@ import random
 
 class Pool:
 
-    ROLL_SIZE = {1:3, 2:3, 3:3, 4:4, 5:4, 6:5}
-    TIER_COUNT = {1:16, 2:15, 3:13, 4:11, 5:9, 6:7}
+    ROLL_SIZE = {1: 3, 2: 3, 3: 3, 4: 4, 5: 4, 6: 5}
+    TIER_COUNT = {1: 16, 2: 15, 3: 13, 4: 11, 5: 9, 6: 7}
 
     def __init__(self):
         self.tier1 = {}
@@ -15,7 +15,7 @@ class Pool:
         self.tier6 = {}
         self.tokens = {}
         self.all_minions = []
-        self.murloc = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}}
+        self.murloc = {1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}}
 
         ### Beast ###
         self.tokens["Rat"] = self.addM(0, 1, 1, "Beast", 1, token=True)
@@ -78,7 +78,7 @@ class Pool:
 
         self.tier3["Replicating Menace"] = self.addM(Pool.TIER_COUNT[3], 3, 1, "Mech", 3, magnetic=True, microbots=True, death_rattle=True)
         self.tier3["Iron Sensei"] = self.addM(Pool.TIER_COUNT[3], 2, 2, "Mech", 3)
-        self.tier3["Pilotted Shredder"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Mech", 3, death_rattle=True)
+        self.tier3["Piloted Shredder"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Mech", 3, death_rattle=True)
         self.tier3["Screwjank Clunker"] = self.addM(Pool.TIER_COUNT[3], 2, 5, "Mech", 3)
         self.tier3["Deflect-o-Bot"] = self.addM(Pool.TIER_COUNT[3], 3, 2, "Mech", 3, divine_shield=True)
 
@@ -99,9 +99,8 @@ class Pool:
         self.tier3["Crackling Cyclone"] = self.addM(Pool.TIER_COUNT[3], 4, 1, "Elemental", 3, divine_shield=True, windfury=True)
 
         ### Demon ###
-        self.tier1["Imp"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Demon", 1)
         self.tier1["Fiendish Servant"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Demon", 1, death_rattle=True)
-        self.tier1["Vulgar Homunculus"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Demon", 1, taunt=True)
+        self.tier1["Vulgar Homunculus"] = self.addM(Pool.TIER_COUNT[1], 2, 4, "Demon", 1, taunt=True)
         self.tier2["Nathrezim Overseer"] = self.addM(Pool.TIER_COUNT[2], 2, 3, "Demon", 2)
         self.tier2["Imprisoner"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Demon", 2, taunt=True, death_rattle=True)
         self.tier3["Imp Gang Boss"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Demon", 1)
@@ -338,33 +337,35 @@ class Pool:
 
         discovered_minion = all_minions_in_tier[roll]
 
-        return self.initMinion(discovered_minion, currTier)
+        minion = self.initMinion(discovered_minion, currTier)
+
+        self.removeFromPool(minion.name, minion.tier)
+
+        return minion
 
     #get a random murloc from a tie above
     def murloc_discovery(self, tier):
         all_murlocs_in_tier = []
 
         currTier = None
-        if tier == 1:
-            currTier = self.tier2
-        if tier == 2:
-            currTier = self.tier3
-        if tier == 3:
-            currTier = self.tier4
-        if tier == 4:
-            currTier = self.tier5
-        if tier >= 5:
-            currTier = self.tier6
 
-        if tier == 6:
-            murlocTier = self.murloc[tier]
-        else:
-            murlocTier = self.murloc[tier+1]
+        for i in range(1, tier):
+            for m in self.murloc[i]:
+                if i == 1:
+                    currTier = self.tier2
+                if i == 2:
+                    currTier = self.tier3
+                if i == 3:
+                    currTier = self.tier4
+                if i == 4:
+                    currTier = self.tier5
+                if i >= 5:
+                    currTier = self.tier6
 
-        for m in murlocTier:
-            count = currTier[m]["count"]
-            for c in range(count):
-                all_murlocs_in_tier.append(m)
+                count = currTier[m]["count"]
+
+                for c in range(count):
+                    all_murlocs_in_tier.append(m)
 
         roll = random.randint(0, len(all_murlocs_in_tier))
         discovered_minion = all_murlocs_in_tier[roll]
