@@ -189,7 +189,7 @@ class Player:
             #remove minion from board 
             sold_minion = self.board.pop(minion_index)
             self.gold += 1
-            #TODO: return this minion to the pool, when you sell a token they just die
+            self.pool.returnToPool(sold_minion.name, sold_minion.tier)
 
             # Handling removal of specific minions
             if sold_minion.name == "Khadgar":

@@ -41,7 +41,7 @@ class Pool:
 
         ### Neutral ###
         self.tier1["Wrath Weaver"] = self.addM(Pool.TIER_COUNT[1], 1, 3, "Neutral", 1)
-        self.tier1["Acolyte of C'Thun"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Neutral", 1, taunt=True)
+        self.tier1["Acolyte of C'Thun"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Neutral", 1, taunt=True, reborn=True)
 
         self.tier2["Spawn of N'Zoth"] = self.addM(Pool.TIER_COUNT[2], 2, 2, "Neutral", 2, death_rattle=True)
         self.tier2["Pack Leader"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Neutral", 2)
@@ -137,17 +137,17 @@ class Pool:
 
         self.tier1["Rockpool Hunter"] = self.addM(Pool.TIER_COUNT[1], 2, 3, "Murloc", 1)
         self.tier1["Murloc Tidecaller"] = self.addM(Pool.TIER_COUNT[1], 1, 2, "Murloc", 1)
+        self.tier1["Murloc Tidehunter"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Murloc", 1)
 
         self.murloc[1]["Rockpool Hunter"] = self.addM(0, 2, 3, "Murloc", 1)
         self.murloc[1]["Murloc Tidecaller"] = self.addM(0, 1, 2, "Murloc", 1)
+        self.murloc[1]["Murloc Tidehunter"] = self.addM(0, 2, 1, "Murloc", 1)
 
         self.tier2["Murloc Warleader"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Murloc", 2)
         self.tier2["Old Murk-Eye"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Murloc", 2)
-        self.tier2["Murloc Tidehunter"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Murloc", 1)
 
         self.murloc[2]["Murloc Warleader"] = self.addM(0, 3, 3, "Murloc", 2)
         self.murloc[2]["Old Murk-Eye"] = self.addM(0, 2, 4, "Murloc", 2)
-        self.murloc[2]["Murloc Tidehunter"] = self.addM(0, 2, 1, "Murloc", 1)
 
         self.tier3["Coldlight Seer"] = self.addM(Pool.TIER_COUNT[3], 2, 3, "Murloc", 3)
         self.tier3["Felfin Navigator"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Murloc", 3)
@@ -225,7 +225,7 @@ class Pool:
         if(divine_shield):
             minion_dict["divine_shield"] = True
         if(poisonous):
-            minion_dict["poisionous"] = True
+            minion_dict["poisonous"] = True
         if(windfury):
             minion_dict["windfury"] = True
         if(magnetic):
@@ -279,7 +279,7 @@ class Pool:
             attack *= 2
             health *= 2
 
-        t = minion_stats.get("Taunt")
+        t = minion_stats.get("taunt")
         if t is None:
             t = False
 
@@ -287,7 +287,7 @@ class Pool:
         if ds is None:
             ds = False
 
-        p = minion_stats.get("poisionous")
+        p = minion_stats.get("poisonous")
         if p is None:
             p = False
 

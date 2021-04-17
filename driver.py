@@ -38,11 +38,16 @@ players[0].roundEnd()
 
 players[1].roundStart()
 players[1].buy(1)
-players[1].play(0, len(players[0].board))
+players[1].play(0, len(players[1].board))
 players[1].roundEnd()
 
 print(players[0].board)
 print(players[1].board)
+
+print(players[0].board[0].taunt)
+print(players[0].board[0].reborn)
+print(repr(players[0].board[0]))
+combat = Combat.Combat(players[0].board, players[1].board)
 
 # Player.roundStart()
 # Player.roundEnd()
