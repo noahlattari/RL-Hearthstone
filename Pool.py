@@ -134,7 +134,7 @@ class Pool:
         self.tier1["Dragonspawn Lieutenant"] = self.addM(Pool.TIER_COUNT[1], 2, 3, "Dragon", 1, taunt=True)
 
         self.tier2["Glyph Guardian"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Dragon", 2)
-        self.tier2["Steward of Time"] = self.addM(Pool.TIER_COUNT[2], 3, 4, "Dragon", 2)
+        self.tier2["Steward of Time"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Dragon", 2)
 
         self.tier3["Twilight Emissary"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Dragon", 3, taunt=True)
         self.tier3["Bronze Warden"] = self.addM(Pool.TIER_COUNT[3], 2, 1, "Dragon", 3, divine_shield=True, reborn=True)
