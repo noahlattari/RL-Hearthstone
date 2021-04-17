@@ -41,7 +41,7 @@ class Pool:
 
         ### Neutral ###
         self.tier1["Wrath Weaver"] = self.addM(Pool.TIER_COUNT[1], 1, 3, "Neutral", 1)
-        self.tier1["Acolyte of C'Thun"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Neutral", 1, taunt=True)
+        self.tier1["Acolyte of C'Thun"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Neutral", 1, taunt=True, reborn=True)
 
         self.tier2["Spawn of N'Zoth"] = self.addM(Pool.TIER_COUNT[2], 2, 2, "Neutral", 2, death_rattle=True)
         self.tier2["Pack Leader"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Neutral", 2)
@@ -91,7 +91,6 @@ class Pool:
         ### Elemental ###
         self.tokens["Water Droplet"] = self.addM(0, 2, 2, "Elemental", 1, token=True)
 
-
         self.tier1["Sellemental"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Elemental", 1)
         self.tier1["Refreshing Anomaly"] = self.addM(Pool.TIER_COUNT[1], 1, 3, "Elemental", 1)
         self.tier2["Party Elemental"] = self.addM(Pool.TIER_COUNT[2], 3, 2, "Elemental", 2)
@@ -99,10 +98,13 @@ class Pool:
         self.tier3["Stasis Elemental"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Elemental", 3)
         self.tier3["Arcane Assistant"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Elemental", 3)
         self.tier3["Crackling Cyclone"] = self.addM(Pool.TIER_COUNT[3], 4, 1, "Elemental", 3, divine_shield=True, windfury=True)
+        self.tier6["Lieutenant Garr"] = self.addM(Pool.TIER_COUNT[6], 8, 1, "Elemental", 6, taunt=True)
 
         self.tier6["Lil' Rag"] = self.addM(Pool.TIER_COUNT[6], 6, 6, "Elemental", 6)
 
         ### Demon ###
+
+        self.tokens["Imp"] = self.addM(0, 1, 1, "Demon", 1, token=True)
         self.tier1["Fiendish Servant"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Demon", 1, death_rattle=True)
         self.tier1["Vulgar Homunculus"] = self.addM(Pool.TIER_COUNT[1], 2, 4, "Demon", 1, taunt=True)
         self.tier2["Nathrezim Overseer"] = self.addM(Pool.TIER_COUNT[2], 2, 3, "Demon", 2)
@@ -111,6 +113,8 @@ class Pool:
         self.tier3["Soul Devourer"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Demon", 3)
         self.tier4["Ring Matron"] = self.addM(Pool.TIER_COUNT[4], 6, 4, "Demon", 4, taunt=True, death_rattle=True)
         self.tier4["Siegebreaker"] = self.addM(Pool.TIER_COUNT[4], 5, 8, "Demon", 4, taunt=True)
+        self.tier5["Annihilan Battlemaster"] = self.addM(Pool.TIER_COUNT[5], 3, 1, "Demon", 5)
+        self.tier6["Imp Mama"] = self.addM(Pool.TIER_COUNT[6], 6, 10, "Demon", 6)
 
         ### Pirate ###
         self.tier1["Scallywag"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Pirate", 1, death_rattle=True)
@@ -118,11 +122,14 @@ class Pool:
         self.tier2["Freedealing Gambler"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Pirate", 2)
         self.tier2["Yo-Ho-Ogre"] = self.addM(Pool.TIER_COUNT[2], 3, 6, "Pirate", 2, taunt=True)
         self.tier2["Southsea Captain"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Pirate", 2)
-        self.tier3["Bloodsail Cannoneer"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Dragon", 3)
-        self.tier3["Southsea Strongarm"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Dragon", 3)
-        self.tier3["Salty Looter"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Dragon", 3)
+        self.tier3["Bloodsail Cannoneer"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Pirate", 3)
+        self.tier3["Southsea Strongarm"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Pirate", 3)
+        self.tier3["Salty Looter"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Pirate", 3)
         self.tier4["Ripsnarl Captain"] = self.addM(Pool.TIER_COUNT[4], 4, 5, "Pirate", 4)
-
+        self.tier5["Cap'n Hoggarr"] = self.addM(Pool.TIER_COUNT[5], 6, 6, "Pirate", 5)
+        self.tier5["Seabreaker Goliath"] = self.addM(Pool.TIER_COUNT[5], 6, 7, "Pirate", 5, windfury=True)
+        self.tier6["Dread Admiral Eliza"] = self.addM(Pool.TIER_COUNT[6], 6, 7, "Pirate", 6)
+        
         ### Dragon ###
         self.tier1["Dragonspawn Lieutenant"] = self.addM(Pool.TIER_COUNT[1], 2, 3, "Dragon", 1, taunt=True)
 
@@ -143,17 +150,17 @@ class Pool:
 
         self.tier1["Rockpool Hunter"] = self.addM(Pool.TIER_COUNT[1], 2, 3, "Murloc", 1)
         self.tier1["Murloc Tidecaller"] = self.addM(Pool.TIER_COUNT[1], 1, 2, "Murloc", 1)
+        self.tier1["Murloc Tidehunter"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Murloc", 1)
 
         self.murloc[1]["Rockpool Hunter"] = self.addM(0, 2, 3, "Murloc", 1)
         self.murloc[1]["Murloc Tidecaller"] = self.addM(0, 1, 2, "Murloc", 1)
+        self.murloc[1]["Murloc Tidehunter"] = self.addM(0, 2, 1, "Murloc", 1)
 
         self.tier2["Murloc Warleader"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Murloc", 2)
         self.tier2["Old Murk-Eye"] = self.addM(Pool.TIER_COUNT[2], 2, 4, "Murloc", 2)
-        self.tier2["Murloc Tidehunter"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Murloc", 1)
 
         self.murloc[2]["Murloc Warleader"] = self.addM(0, 3, 3, "Murloc", 2)
         self.murloc[2]["Old Murk-Eye"] = self.addM(0, 2, 4, "Murloc", 2)
-        self.murloc[2]["Murloc Tidehunter"] = self.addM(0, 2, 1, "Murloc", 1)
 
         self.tier3["Coldlight Seer"] = self.addM(Pool.TIER_COUNT[3], 2, 3, "Murloc", 3)
         self.tier3["Felfin Navigator"] = self.addM(Pool.TIER_COUNT[3], 4, 4, "Murloc", 3)
@@ -233,7 +240,7 @@ class Pool:
         if(divine_shield):
             minion_dict["divine_shield"] = True
         if(poisonous):
-            minion_dict["poisionous"] = True
+            minion_dict["poisonous"] = True
         if(windfury):
             minion_dict["windfury"] = True
         if(magnetic):
@@ -287,7 +294,7 @@ class Pool:
             attack *= 2
             health *= 2
 
-        t = minion_stats.get("Taunt")
+        t = minion_stats.get("taunt")
         if t is None:
             t = False
 
@@ -295,7 +302,7 @@ class Pool:
         if ds is None:
             ds = False
 
-        p = minion_stats.get("poisionous")
+        p = minion_stats.get("poisonous")
         if p is None:
             p = False
 
