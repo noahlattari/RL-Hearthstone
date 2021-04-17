@@ -58,6 +58,10 @@ class Player:
         self.refreshing_anomaly_gold = False
         self.anomaly_gold_counter = 2
 
+        # Lil' Rag: see lilRagEffect()
+        self.lil_rag_count = 0
+        self.lil_rag_gold_count = 0
+
         #Nathrezim Overseer: see nathrezimOverseerBC()
         self.nathrezim_overseer = False
         self.nathrezim_overseer_gold = False
@@ -83,11 +87,19 @@ class Player:
         #Murloc Tidecaller: see murlocTidecallerEffect()
         self.murloc_tidecaller_count = 0
         self.murloc_tidecaller = False
-        self.murloc_tidecaller_gold = False  
 
         #Murloc Warleader
         self.murloc_warleader = False
         self.murloc_warleader_count = 0
+
+        #Lieutenant Garr: see lieutenantGarrEffect()
+        self.lieutenant_garr = False
+        self.lieutenant_garr_count = 0
+
+        #Cap'n Hoggarr
+        self.capn_hoggarr = False
+        self.capn_hoggarr_gold = False
+        self.capn_hoggarr_count = 0
 
     def getRoll(self):
         return self.tavern.roll
@@ -163,6 +175,8 @@ class Player:
 
     #call this function at the end of the turn
     def roundEnd(self):
+        self.capn_hoggarr = False
+        self.capn_hoggarr_gold = False
         for m in self.board:
             if m.name == "Micro Mummy":
                 self.microMummyEffect(self.board, m)
@@ -200,6 +214,10 @@ class Player:
             self.pool.returnToPool(sold_minion.name, sold_minion.tier)
 
             # Handling removal of specific minions
+            if sold_minion.minion_type == "Pirate":
+                if self.capn_hoggarr_gold:
+                    self.gold += 2
+                self.gold += 1
             if sold_minion.name == "Khadgar":
                 if sold_minion.gold:
                     self.khadgar_gold_count -= 1
@@ -253,10 +271,21 @@ class Player:
                 if self.stasis_elemental_count == 0:
                     self.stasis_elemental = False
 
+            if sold_minion.name == "Lieutenant Garr":
+                self.lieutenant_garr_count -= 1
+                if self.lieutenant_garr_count == 0:
+                    self.lieutenant_garr = False
+
             if sold_minion.name == "Party Elemental":
                 self.party_elemental_count -= 1
                 if self.party_elemental_count == 0:
                     self.party_elemental = False
+
+            if sold_minion.name == "Lil' Rag":
+                if sold_minion.gold:
+                    self.lil_rag_gold_count -= 1
+                else:
+                    self.lil_rag_count -= 1
 
             if sold_minion.name == "Steward of Time":
                 self.stewardOfTimeEffect(self.tavern.roll, sold_minion)
@@ -279,7 +308,12 @@ class Player:
                         if m.gold == True:
                             m.buff(-2, 0)
                         else:
-                            m.buff(-1, 0) 
+                            m.buff(-1, 0)
+
+            if sold_minion.name == "Cap'n Hoggarr":
+                self.capn_hoggarr_count -= 1
+                if self.capn_hoggarr_count == 0:
+                    self.capn_hoggarr = False
                             
             if sold_minion.name == "Murloc Tidecaller":
                 self.murloc_tidecaller_count -= 1
@@ -338,6 +372,9 @@ class Player:
                 if curr_minion.name == "Nathrezim Overseer":
                     self.nathrezim_overseer = True
                     self.nathrezimOverseerBC(self.board)
+
+                if curr_minion.name == "Annihilan Battlemaster":
+                    self.annihilanBattlemasterBC(curr_minion)
                 
                 ### Neutral ###
                 if curr_minion.name == "Defender of Argus":
@@ -380,6 +417,12 @@ class Player:
 
                 if curr_minion.name == "Refreshing Anomaly":
                     self.refreshing_anomaly = True
+
+                if curr_minion.name == "Lil' Rag":
+                    if curr_minion.gold:
+                        self.lil_rag_gold_count += 1
+                    else:
+                        self.lil_rag_count += 1
                 
                 #If you have a party elemental and play an elemental, buff an elemental
                 if curr_minion.minion_type == "Elemental":
@@ -387,6 +430,16 @@ class Player:
                         self.partyElementalEffect(self.board, curr_minion)
                     if self.majodomo:
                         self.majordomo_elemental_counter += 1
+                    if self.lil_rag_count > 0:
+                        for i in range(self.lil_rag_count-1):
+                            self.lilRagEffect(self.board, curr_minion)
+                    if self.lil_rag_gold_count > 0:
+                        for i in range(self.lil_rag_gold_count-1):
+                            self.lilRagEffect(self.board, curr_minion)
+                            self.lilRagEffect(self.board, curr_minion)
+                    if self.lieutenant_garr:
+                        self.lieutenant_garr_count += 1
+                        self.lieutenantGarrEffect(self.board, curr_minion)
         
                 if curr_minion.name == "Stasis Elemental":
                     self.stasis_elemental = True
@@ -396,6 +449,9 @@ class Player:
 
                 if curr_minion.name == "Arcane Assistant":
                     self.arcaneAssistantBC(self.board, curr_minion)
+
+                if curr_minion.name == "Lieutenant Garr":
+                    self.lieutenantGarrEffect(self.board, curr_minion)
                 
                 ### Mech ###
                 if curr_minion.name == "Screwjank Clunker":
@@ -413,9 +469,17 @@ class Player:
                     if self.salty_looter:
                         self.saltyLooterBC(curr_minion)
 
+                if curr_minion.name == "Seabreaker Goliath":
+                    self.seabreakerGoliathEffect(self.board, curr_minion)
+            
                 if curr_minion.name == "Southsea Captain":
                     self.southsea_captain = True
                     self.southseaCaptainEffect(self.board)
+
+                if curr_minion.name == "Cap'n Hoggarr":
+                    if curr_minion.gold == True:
+                        self.capn_hoggarr_gold = True
+                    self.capn_hoggarr = True
 
                 if curr_minion.name == "Bloodsail Cannoneer":
                     self.bloodsailCannoneerBC(self.board)
@@ -542,10 +606,13 @@ class Player:
             if self.party_elemental_count == 0:
                 self.party_elemental = False
 
+        if first.name == "Lil' Rag":
+            self.lil_rag_count -= 3
+
         if first.name == "Murloc Warleader":
-                self.murloc_warleader_count -= 3
-                if self.murloc_warleader_count == 0:
-                    self.murloc_warleader = False
+            self.murloc_warleader_count -= 3
+            if self.murloc_warleader_count == 0:
+                self.murloc_warleader = False
 
     def discover(self, tier, hand):
         #check if there's room in our hand then call pool.discovery and pass in self.tavern.tier
@@ -560,7 +627,32 @@ class Player:
         return
 
     ### Battlecries ###
-    #TODO: Write unit tests for battlecries / effects
+    def seabreakerGoliathEffect(self, board, curr_minion):
+        attack_buff = 1
+        health_buff = 1
+        if curr_minion.gold:
+            attack_buff = 2
+            health_buff = 2
+        for m in board:
+            if m.minion_type == "Pirate":
+                m.buff(attack_buff, health_buff)
+
+    def annihilanBattlemasterBC(self, curr_minion):
+        damage_taken = 40 - self.health
+        if curr_minion.gold:
+            curr_minion.buff(0, damage_taken*2)
+        curr_minion.buff(0, damage_taken)
+
+    def lieutenantGarrEffect(self, board, curr_minion):
+        health_buff = 0
+        for m in board:
+            if m.minion_type == "Elemental":
+                health_buff += 1
+        if curr_minion.gold:
+            health_buff *= 2
+        health_buff -= 1 #This is implying he doesn't count himself as an elemental to buff
+        curr_minion.buff(0, health_buff)
+    
     def murlocTidecallerEffect(self, curr_minion):
         if curr_minion.gold:
             curr_minion.buff(2, 0)
@@ -837,10 +929,10 @@ class Player:
 
     def stewardOfTimeEffect(self, roll, curr_minion):
         attack_buff = 2
-        health_buff = 2
+        health_buff = 1
         if curr_minion.gold:
             attack_buff += 2
-            health_buff += 2
+            health_buff += 1
         for m in roll:
             m.buff(attack_buff, health_buff)
 
@@ -907,9 +999,11 @@ class Player:
             val = 4
         else:
             val = 2
-        for m in board:
-            if m.type == "Murloc" and m != curr_minion:
-                m.buff(val, val)
+        self.buffAllFriendly(board, val, val, minion_type="Murloc", this_minion=curr_minion)
+
+    def lilRagEffect(self, board, elemental):
+        val = elemental.tier
+        self.buffFriendly(board, val, val)
 
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
