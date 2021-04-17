@@ -159,6 +159,8 @@ class Player:
                 self.hand.append(bought_minion)
                 self.gold -= 3
         
+        self.goldCheck(self.board, self.hand)
+        
     #call this function at the start of each round
     #start at round 0 so first round is STARTING_GOLD + self.round = 3 + 0
     def roundStart(self):
@@ -213,112 +215,8 @@ class Player:
             self.addGold(1)
             self.pool.returnToPool(sold_minion.name, sold_minion.tier)
 
-            # Handling removal of specific minions
-            if sold_minion.minion_type == "Pirate":
-                if self.capn_hoggarr_gold:
-                    self.addGold(2)
-                self.addGold(1)
-            if sold_minion.name == "Khadgar":
-                if sold_minion.gold:
-                    self.khadgar_gold_count -= 1
-                    if self.khadgar_gold_count == 0:
-                        self.khadgar_gold = False
-                else:
-                    self.khadgar_count -= 1
-                    if self.khadgar_count == 0:
-                        self.khadgar = False
-
-            if sold_minion.name == "Pack Leader":
-                if sold_minion.gold:
-                    self.pack_leader_gold_count -= 1
-                    if self.pack_leader_gold_count == 0:
-                        self.pack_leader_gold = False
-                else:
-                    self.pack_leader_count -= 1
-                    if self.pack_leader_count == 0:
-                        self.pack_leader = False
-
-            if sold_minion.name == "Wrath Weaver":
-                self.wrath_weaver_count -= 1
-                if self.wrath_weaver_count == 0:
-                    self.wrath_weaver = False
-
-            if sold_minion.name == "Rabid Saurolisk":
-                self.rabid_saurolisk_count -= 1
-                if self.rabid_saurolisk_count == 0:
-                    self.rabid_saurolisk = False
-
-            if sold_minion.name == "Majordomo Executus":
-                self.majodomo_count -= 1
-                if self.majodomo_count == 0:
-                    self.majodomo = False
-                    self.majordomo_elemental_counter = 0
-
-            if sold_minion.name == "Sellemental":
-                #When you sell a sellemental, get a water_droplet in your hand, gold gives you two
-                if len(self.hand) < Player.MAX_HAND:
-                    gold_token = False
-                    if sold_minion.gold:
-                        gold_token = True
-                        if len(self.hand) < Player.MAX_HAND - 1:
-                            extra_water_droplet = self.pool.summonToken("Water Droplet", gold=gold_token)
-                            self.hand.append(extra_water_droplet)
-                    water_droplet = self.pool.summonToken("Water Droplet", gold=gold_token)
-                    self.hand.append(water_droplet)
-            '''
-            if sold_minion.name == "Stasis Elemental":
-                self.stasis_elemental_count -= 1
-                if self.stasis_elemental_count == 0:
-                    self.stasis_elemental = False
-            '''
-            if sold_minion.name == "Lieutenant Garr":
-                self.lieutenant_garr_count -= 1
-                if self.lieutenant_garr_count == 0:
-                    self.lieutenant_garr = False
-
-            if sold_minion.name == "Party Elemental":
-                self.party_elemental_count -= 1
-                if self.party_elemental_count == 0:
-                    self.party_elemental = False
-
-            if sold_minion.name == "Lil' Rag":
-                if sold_minion.gold:
-                    self.lil_rag_gold_count -= 1
-                else:
-                    self.lil_rag_count -= 1
-
-            if sold_minion.name == "Steward of Time":
-                self.stewardOfTimeEffect(self.tavern.roll, sold_minion)
-
-            if sold_minion.name == "Freedealing Gambler":
-                if sold_minion.gold:
-                    self.addGold(3)
-                self.addGold(2)#because we already add 1 in the begining 
-
-            if sold_minion.name == "Cap'n Hoggarr":
-                self.capn_hoggarr_count -= 1
-                if self.capn_hoggarr_count == 0:
-                    self.capn_hoggarr = False
-                            
-            if sold_minion.name == "Murloc Tidecaller":
-                self.murloc_tidecaller_count -= 1
-                if self.murloc_tidecaller_count == 0:
-                    self.murloc_tidecaller = False
-
-            if sold_minion.name == "Molten Rock":
-                self.molten_rock_count -= 1
-                if self.molten_rock_count == 0:
-                    self.molten_rock = False
-
-            if sold_minion.name == "Mama Bear":
-                if sold_minion.gold:
-                    self.mama_bear_gold_count -= 1
-                    if self.mama_bear_gold_count == 0:
-                        self.mama_bear_gold = False
-                else:
-                    self.mama_bear_count -= 1
-                    if self.mama_bear_count == 0:
-                        self.mama_bear = False
+            self.boardRemoval(sold_minion)
+            
 
 
     #TODO: refactor most conditionals to functions
@@ -545,9 +443,8 @@ class Player:
                 if curr_minion.name == "King Bagurgle":
                     self.kingBagurgleBC(self.board, curr_minion)
 
-                self.goldCheck(self.board)
 
-    def goldCheck(self, board):
+    def goldCheck(self, board, hand):
         #loop through board looking for triples, when one is found combine the three minions and return 1 gold minion to the hand
         minion_map = {}
         for m in board:
@@ -559,7 +456,17 @@ class Player:
                     minion_list = []
                     minion_list.append(m)
                     minion_map[m.name] = minion_list
-        
+
+        for m in hand:
+            # collect non gold minions into arrays by name, we are looking for sets of 3 or more
+            if not m.gold:
+                if m.name in minion_map:
+                    minion_map[m.name].append(m)
+                else:
+                    minion_list = []
+                    minion_list.append(m)
+                    minion_map[m.name] = minion_list
+
         for i in minion_map:
             if len(minion_map[i]) >= 3: #if we find a set of 3
                 self.makeGold(minion_map[i], self.board, self.hand) #create the gold card and add it to your hand
@@ -575,49 +482,11 @@ class Player:
         if len(hand) < Player.MAX_HAND:
             hand.append(gold)
 
-        board.remove(first)
-        board.remove(second)
-        board.remove(third)
-
-        #adjust minion specific variables, remove 3 copies
-        if first.name == "Khadgar":
-            self.khadgar_count -= 3
-            if self.khadgar_count == 0:
-                self.khadgar = False
-
-        if first.name == "Pack Leader":
-            self.pack_leader_count -= 3
-            if self.pack_leader_count == 0:
-                self.pack_leader = False
-
-        if first.name == "Wrath Weaver":
-            self.wrath_weaver_count -= 3
-            if self.wrath_weaver_count == 0:
-                self.wrath_weaver = False
-
-        if first.name == "Rabid Saurolisk":
-            self.rabid_saurolisk_count -= 3
-            if self.rabid_saurolisk_count == 0:
-                self.rabid_saurolisk = False
-
-        if first.name == "Majordomo Executus":
-            self.majodomo_count -= 3
-            if self.majodomo_count == 0:
-                self.majodomo = False
-                self.majordomo_elemental_counter = 0
-
-        if first.name == "Stasis Elemental":
-            self.stasis_elemental_count -= 3
-            if self.stasis_elemental_count == 0:
-                self.stasis_elemental = False
-
-        if first.name == "Party Elemental":
-            self.party_elemental_count -= 3
-            if self.party_elemental_count == 0:
-                self.party_elemental = False
-
-        if first.name == "Lil' Rag":
-            self.lil_rag_count -= 3
+        #loop through and remove if minion is on the board
+        for m in [first, second, third]:
+            if m in board:
+                board.remove(m)
+                self.boardRemoval(m)
 
     def discover(self, tier, hand):
         #check if there's room in our hand then call pool.discovery and pass in self.tavern.tier
@@ -1051,3 +920,114 @@ class Player:
         self.gold += amount
         if self.gold > Player.MAX_GOLD:
             self.gold = Player.MAX_GOLD
+
+    def boardRemoval(self, removed_minion):
+        # Handling removal of specific minions
+        if removed_minion.minion_type == "Pirate":
+            if self.capn_hoggarr_gold:
+                self.addGold(2)
+            self.addGold(1)
+        if removed_minion.name == "Khadgar":
+            if removed_minion.gold:
+                self.khadgar_gold_count -= 1
+                if self.khadgar_gold_count == 0:
+                    self.khadgar_gold = False
+            else:
+                self.khadgar_count -= 1
+                if self.khadgar_count == 0:
+                    self.khadgar = False
+
+        if removed_minion.name == "Pack Leader":
+            if removed_minion.gold:
+                self.pack_leader_gold_count -= 1
+                if self.pack_leader_gold_count == 0:
+                    self.pack_leader_gold = False
+            else:
+                self.pack_leader_count -= 1
+                if self.pack_leader_count == 0:
+                    self.pack_leader = False
+
+        if removed_minion.name == "Wrath Weaver":
+            self.wrath_weaver_count -= 1
+            if self.wrath_weaver_count == 0:
+                self.wrath_weaver = False
+
+        if removed_minion.name == "Rabid Saurolisk":
+            self.rabid_saurolisk_count -= 1
+            if self.rabid_saurolisk_count == 0:
+                self.rabid_saurolisk = False
+
+        if removed_minion.name == "Majordomo Executus":
+            self.majodomo_count -= 1
+            if self.majodomo_count == 0:
+                self.majodomo = False
+                self.majordomo_elemental_counter = 0
+
+        if removed_minion.name == "Sellemental":
+            #When you sell a sellemental, get a water_droplet in your hand, gold gives you two
+            if len(self.hand) < Player.MAX_HAND:
+                gold_token = False
+                if removed_minion.gold:
+                    gold_token = True
+                    if len(self.hand) < Player.MAX_HAND - 1:
+                        extra_water_droplet = self.pool.summonToken("Water Droplet", gold=gold_token)
+                        self.hand.append(extra_water_droplet)
+                water_droplet = self.pool.summonToken("Water Droplet", gold=gold_token)
+                self.hand.append(water_droplet)
+        '''
+        if removed_minion.name == "Stasis Elemental":
+            self.stasis_elemental_count -= 1
+            if self.stasis_elemental_count == 0:
+                self.stasis_elemental = False
+        '''
+        if removed_minion.name == "Lieutenant Garr":
+            self.lieutenant_garr_count -= 1
+            if self.lieutenant_garr_count == 0:
+                self.lieutenant_garr = False
+
+        if removed_minion.name == "Party Elemental":
+            self.party_elemental_count -= 1
+            if self.party_elemental_count == 0:
+                self.party_elemental = False
+
+        if removed_minion.name == "Lil' Rag":
+            if removed_minion.gold:
+                self.lil_rag_gold_count -= 1
+            else:
+                self.lil_rag_count -= 1
+
+        if removed_minion.name == "Steward of Time":
+            self.stewardOfTimeEffect(self.tavern.roll, removed_minion)
+
+        if removed_minion.name == "Freedealing Gambler":
+            if removed_minion.gold:
+                self.addGold(3)
+            self.addGold(2)#because we already add 1 in the begining 
+
+        if removed_minion.name == "Cap'n Hoggarr":
+            self.capn_hoggarr_count -= 1
+            if self.capn_hoggarr_count == 0:
+                self.capn_hoggarr = False
+                        
+        if removed_minion.name == "Murloc Tidecaller":
+            self.murloc_tidecaller_count -= 1
+            if self.murloc_tidecaller_count == 0:
+                self.murloc_tidecaller = False
+
+        if removed_minion.name == "Molten Rock":
+            self.molten_rock_count -= 1
+            if self.molten_rock_count == 0:
+                self.molten_rock = False
+
+        if removed_minion.name == "Mama Bear":
+            if removed_minion.gold:
+                self.mama_bear_gold_count -= 1
+                if self.mama_bear_gold_count == 0:
+                    self.mama_bear_gold = False
+            else:
+                self.mama_bear_count -= 1
+                if self.mama_bear_count == 0:
+                    self.mama_bear = False
+        
+        if removed_minion.name == "Lil' Rag":
+            self.lil_rag_count -= 1
