@@ -59,8 +59,6 @@ class Player:
         self.anomaly_gold_counter = 2
 
         # Lil' Rag: see lilRagEffect()
-        self.lil_rag = False
-        self.lil_rag_gold = False
         self.lil_rag_count = 0
         self.lil_rag_gold_count = 0
 
@@ -261,12 +259,8 @@ class Player:
             if sold_minion.name == "Lil' Rag":
                 if sold_minion.gold:
                     self.lil_rag_gold_count -= 1
-                    if self.lil_rag_gold_count == 0:
-                        self.lil_rag_gold == False
                 else:
                     self.lil_rag_count -= 1
-                    if self.lil_rag_count == 0:
-                        self.lil_rag == False
 
             if sold_minion.name == "Steward of Time":
                 self.stewardOfTimeEffect(self.tavern.roll, sold_minion)
@@ -393,10 +387,8 @@ class Player:
 
                 if curr_minion.name == "Lil' Rag":
                     if curr_minion.gold:
-                        self.lil_rag_gold == True
                         self.lil_rag_gold_count += 1
                     else:
-                        self.lil_rag == True
                         self.lil_rag_count += 1
                 
                 #If you have a party elemental and play an elemental, buff an elemental
@@ -405,10 +397,10 @@ class Player:
                         self.partyElementalEffect(self.board, curr_minion)
                     if self.majodomo:
                         self.majordomo_elemental_counter += 1
-                    if self.lil_rag:
+                    if self.lil_rag_count > 0:
                         for i in range(self.lil_rag_count-1):
                             self.lilRagEffect(self.board, curr_minion)
-                    if self.lil_rag_gold:
+                    if self.lil_rag_gold_count > 0:
                         for i in range(self.lil_rag_gold_count-1):
                             self.lilRagEffect(self.board, curr_minion)
                             self.lilRagEffect(self.board, curr_minion)
@@ -569,8 +561,6 @@ class Player:
 
         if first.name == "Lil' Rag":
             self.lil_rag_count -= 3
-            if self.lil_rag_count == 0:
-                self.lil_rag == False
 
         if first.name == "Murloc Warleader":
             self.murloc_warleader_count -= 3
