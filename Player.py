@@ -168,6 +168,8 @@ class Player:
                 self.majordomoEffect(self.board, m)
             if m.name == "Lightfang Enforcer":
                 self.lightfangEffect(self.board, m)
+            if m.name == "Razorgore, the Untamed":
+                self.razorgoreEffect(self.board, m)
 
         self.tavern.returnRoll()
 
@@ -459,7 +461,10 @@ class Player:
 
                 if curr_minion.name == "Primalfin Lookout":
                     self.primalfinLookoutBC(self.board, curr_minion)
-                
+
+                if curr_minion.name == "King Bagurgle":
+                    self.kingBagurgleBC(self.board, curr_minion)
+
                 self.goldCheck(self.board)
 
     def goldCheck(self, board):
@@ -881,6 +886,24 @@ class Player:
                 if curr_minion.gold:
                     self.murloc_discover(self.tavern.tier, self.hand)
                 break
+
+    def razorgoreEffect(self, board, curr_minion):
+        if curr_minion.gold:
+            val = 2
+        else:
+            val = 1
+        for m in board:
+            if m.type == "Dragon" and m != curr_minion:
+                curr_minion.buff(val, val)
+
+    def kingBagurgleBC(self, board, curr_minion):
+        if curr_minion.gold:
+            val = 4
+        else:
+            val = 2
+        for m in board:
+            if m.type == "Murloc" and m != curr_minion:
+                m.buff(val, val)
 
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type

@@ -86,6 +86,8 @@ class Pool:
         self.tier4["Security Rover"] = self.addM(Pool.TIER_COUNT[4], 2, 6, "Mech", 4)
         self.tier4["Mechano-Egg"] = self.addM(Pool.TIER_COUNT[4], 0, 5, "Mech", 4, death_rattle=True)
 
+        self.tier6["Foe Reaper 4000"] = self.addM(Pool.TIER_COUNT[6], 6, 9, "Mech", 6)
+
         ### Elemental ###
         self.tokens["Water Droplet"] = self.addM(0, 2, 2, "Elemental", 1, token=True)
 
@@ -132,6 +134,8 @@ class Pool:
         self.tier4["Drakonid Enforcer"] = self.addM(Pool.TIER_COUNT[4], 3, 6, "Dragon", 4)
         self.tier4["Herald of Flame"] = self.addM(Pool.TIER_COUNT[4], 6, 6, "Dragon", 4)
 
+        self.tier5["Razorgore, the Untamed"] = self.addM(Pool.TIER_COUNT[5], 2, 4, "Dragon", 5)
+
         ### Murloc ###
         self.tokens["Murloc Scout"] = self.addM(0, 1, 1, "Murloc", 1)
 
@@ -160,6 +164,8 @@ class Pool:
 
         self.murloc[4]["Toxfin"] = self.addM(0, 1, 2, "Murloc", 4)
         self.murloc[4]["Primalfin Lookout"] = self.addM(0, 1, 2, "Murloc", 4)
+
+        self.tier5["King Bagurgle"] = self.addM(Pool.TIER_COUNT[5], 6, 3, "Murloc", 5)
 
     #for testing
     def dummyRoll(self, tier):
