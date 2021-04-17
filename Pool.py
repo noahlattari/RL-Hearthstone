@@ -199,7 +199,7 @@ class Pool:
 
         rolls = []
         for i in range(Pool.ROLL_SIZE[tier]):
-            rolls.append(random.randint(0,len(all_minions)))
+            rolls.append(random.randint(0, len(all_minions) - 1))
 
         result = []
         for i in rolls:

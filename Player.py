@@ -7,7 +7,7 @@ class Player:
     MAX_GOLD = 10
     MAX_HAND = 10
     MAX_BOARD = 7
-    UPGRADE_COST = {2:5, 3:7, 4:8, 5:9, 6:10}
+    UPGRADE_COST = {2: 5, 3: 7, 4: 8, 5: 9, 6: 10}
     REROLL_COST = 1
 
     def __init__(self, pool):
@@ -91,6 +91,12 @@ class Player:
 
     def getRoll(self):
         return self.tavern.roll
+
+    def getBoard(self):
+        return self.board
+
+    def getHand(self):
+        return self.hand
 
     def getTavernCost(self):
         return Player.UPGRADE_COST[self.tavern.tier + 1] - self.discount
@@ -527,9 +533,9 @@ class Player:
                 self.majordomo_elemental_counter = 0
 
         if first.name == "Stasis Elemental":
-                self.stasis_elemental_count -= 3
-                if self.stasis_elemental_count == 0:
-                    self.stasis_elemental = False
+            self.stasis_elemental_count -= 3
+            if self.stasis_elemental_count == 0:
+                self.stasis_elemental = False
 
         if first.name == "Party Elemental":
             self.party_elemental_count -= 3
@@ -642,7 +648,7 @@ class Player:
             if curr_minion.gold:
                 for m in self.board:
                     if m.minion_type == "Elemental":
-                        m.buff(2, 2)
+                        m.buff(1, 1)
 
     def partyElementalEffect(self, board, curr_minion):
         if curr_minion.gold:
@@ -659,17 +665,17 @@ class Player:
             if m.name == "Wrath Weaver":
                 self.health -= 1
                 if m.gold:
-                    m.buff(4,4)
+                    m.buff(4, 4)
                 else:
-                    m.buff(2,2)
+                    m.buff(2, 2)
 
     def rabidSauroliskEffect(self):
         for m in self.board:
             if m.name == "Rabid Saurolisk":
                 if m.gold:
-                    m.buff(2,4)
+                    m.buff(2, 4)
                 else:
-                    m.buff(1,2)
+                    m.buff(1, 2)
 
     def majordomoEffect(self, board, curr_minion):
         attack_buff = 0
@@ -893,7 +899,7 @@ class Player:
         else:
             val = 1
         for m in board:
-            if m.type == "Dragon" and m != curr_minion:
+            if m.type == "Dragon":
                 curr_minion.buff(val, val)
 
     def kingBagurgleBC(self, board, curr_minion):
