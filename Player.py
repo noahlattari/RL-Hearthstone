@@ -89,6 +89,16 @@ class Player:
         self.capn_hoggarr_gold = False
         self.capn_hoggarr_count = 0
 
+        #Molten Rock
+        self.molten_rock = False
+        self.molten_rock_count = 0
+
+        #Mama Bear 
+        self.mama_bear = False
+        self.mama_bear_count = 0
+        self.mama_bear_gold = False
+        self.mama_bear_gold_count = 0
+
     def getRoll(self):
         return self.tavern.roll
 
@@ -178,6 +188,8 @@ class Player:
                 self.lightfangEffect(self.board, m)
             if m.name == "Razorgore, the Untamed":
                 self.razorgoreEffect(self.board, m)
+            if m.name == "Mythrax the Unraveler":
+                self.mythraxEffect(self.board, m)
 
         self.tavern.returnRoll()
 
@@ -253,12 +265,12 @@ class Player:
                             self.hand.append(extra_water_droplet)
                     water_droplet = self.pool.summonToken("Water Droplet", gold=gold_token)
                     self.hand.append(water_droplet)
-
+            '''
             if sold_minion.name == "Stasis Elemental":
                 self.stasis_elemental_count -= 1
                 if self.stasis_elemental_count == 0:
                     self.stasis_elemental = False
-
+            '''
             if sold_minion.name == "Lieutenant Garr":
                 self.lieutenant_garr_count -= 1
                 if self.lieutenant_garr_count == 0:
@@ -292,6 +304,21 @@ class Player:
                 self.murloc_tidecaller_count -= 1
                 if self.murloc_tidecaller_count == 0:
                     self.murloc_tidecaller = False
+
+            if sold_minion.name == "Molten Rock":
+                self.molten_rock_count -= 1
+                if self.molten_rock_count == 0:
+                    self.molten_rock = False
+
+            if sold_minion.name == "Mama Bear":
+                if sold_minion.gold:
+                    self.mama_bear_gold_count -= 1
+                    if self.mama_bear_gold_count == 0:
+                        self.mama_bear_gold = False
+                else:
+                    self.mama_bear_count -= 1
+                    if self.mama_bear_count == 0:
+                        self.mama_bear = False
 
 
     #TODO: refactor most conditionals to functions
@@ -329,6 +356,26 @@ class Player:
                         curr_minion.buff(4 * self.pack_leader_gold_count, 0)
                     if self.pack_leader:
                         curr_minion.buff(2 * self.pack_leader_count, 0)
+                    if self.mama_bear:
+                        curr_minion.buff(4 * self.mama_bear_count, 4 * self.mama_bear_count)
+                    if self.mama_bear_gold:
+                        curr_minion.buff(8 * self.mama_bear_gold_count, 8 * self.mama_bear_gold_count)
+
+                if curr_minion.name == "Mama Bear":
+                    if curr_minion.gold:
+                        self.mama_bear_gold_count = True
+                        self.mama_bear_gold_count += 1
+                    else:
+                        self.mama_bear = True
+                        self.mama_bear_count += 1
+
+                if curr_minion.name == "Pack Leader":
+                    if curr_minion.gold:
+                        self.pack_leader_gold = True
+                        self.pack_leader_gold_count += 1
+                    else:
+                        self.pack_leader = True
+                        self.pack_leader_count += 1
 
                 ### Demon ###
 
@@ -386,7 +433,14 @@ class Player:
                     self.majodomo = True
                     self.majodomo_count += 1
 
+                if curr_minion.name == "Strongshell Scavenger":
+                    self.strongShellBC(self.board, curr_minion)
+
                 ### Elemental ###
+
+                if curr_minion.name == "Molten Rock":
+                    self.molten_rock = True
+                    self.molten_rock_count += 1
 
                 if curr_minion.name == "Refreshing Anomaly":
                     self.refreshing_anomaly = True
@@ -413,6 +467,9 @@ class Player:
                     if self.lieutenant_garr:
                         self.lieutenant_garr_count += 1
                         self.lieutenantGarrEffect(self.board, curr_minion)
+                    if self.molten_rock:
+                        self.moltenRockEffect(self.board)
+                    
         
                 if curr_minion.name == "Stasis Elemental":
                     self.stasis_elemental = True
@@ -575,6 +632,14 @@ class Player:
         return
 
     ### Battlecries ###
+    def strongShellBC(self, board, curr_minon):
+        for m in board:
+            if m.taunt:
+                if curr_minon.gold:
+                    m.buff(4,4)
+                else:
+                    m.buff(2,2)
+
     def seabreakerGoliathEffect(self, board, curr_minion):
         attack_buff = 1
         health_buff = 1
@@ -807,6 +872,16 @@ class Player:
             random_minion = minion_map[i][random.randint(0,len(i)-1)]
             random_minion.buff(attack_buff, health_buff)
 
+    def mythraxEffect(self, board, curr_minion):
+        type_set = set()
+        for m in board:
+            if m.minion_type != "Neutral":
+                type_set.add(m.minion_type)
+        if curr_minion.gold:
+            curr_minion.buff(2 * len(type_set), 4 * len(type_set))
+        else:
+            curr_minion.buff(1 * len(type_set), 2 * len(type_set))
+        
 
     def screwjankClunkerBC(self, board, curr_minion):
         attack_buff = 2
@@ -918,6 +993,13 @@ class Player:
     def lilRagEffect(self, board, elemental):
         val = elemental.tier
         self.buffFriendly(board, val, val)
+
+    def moltenRockEffect(self, board):
+        for m in board:
+            if m.name == "Molten Rock":
+                if m.gold:
+                    m.buff(0, 1)
+                m.buff(0, 1)
 
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
