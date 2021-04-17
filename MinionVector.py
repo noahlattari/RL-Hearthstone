@@ -19,6 +19,9 @@ class MinionVector:
         for vector in vectors_file:
             vectors.append(vector)
 
+        names_file.close()
+        vectors_file.close()
+
         if len(names) != len(vectors):
             raise Exception('Names and Vectors file are not of same size')
 
