@@ -11,6 +11,17 @@ class Combat:
     def generate_temp_file(self, friendly_board, enemy_board):
         temp = open("temp_combat.txt", "w")
         temp.write("board\n")
+
+        for m in friendly_board:
+            temp.write("* " + m + "\n")
+
+        temp.write("Vs\n")
+
+        for m in enemy_board:
+            temp.write("* " + m + "\n")
+
+        temp.write("show")
+
         return
 
     def run_combat(self, file_path):
