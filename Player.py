@@ -853,7 +853,7 @@ class Player:
         if curr_minion.gold:
             attack_buff += 1
             health_buff += 1
-        self.buffFriendly(board, attack_buff, health_buff, minion_type="Murloc")
+        self.buffFriendly(board, attack_buff, health_buff, minion_type="Murloc", this_minion=curr_minion)
 
     def felfinNavigatorBC(self, board, curr_minion):
         attack_buff = 1
@@ -907,24 +907,24 @@ class Player:
 
     #helper function for "give a friendly minion..." effects
     #randomly buffs a friendly minion, can be specified by type
-    def buffFriendly(self, board, attack, health, minion_type=None, taunt=False, poisonous=False): #add more cases as necessary eg. windfury, divine_shield, etc
+    def buffFriendly(self, board, attack, health, minion_type=None, taunt=False, poisonous=False, this_minion=None): #add more cases as necessary eg. windfury, divine_shield, etc
         if minion_type is not None:
-            type_specific_list = [m for m in board if m.minion_type == minion_type]
+            type_specific_list = [m for m in board if m.minion_type == minion_type and m != this_minion]
         else:
             type_specific_list = board
 
         #fails if type_specific_list is empty
         if type_specific_list:
-            random_friend = type_specific_list[random.randint(0, len(type_specific_list))]
+            random_friend = type_specific_list[random.randint(0, len(type_specific_list) -1)]
             random_friend.buff(attack, health)
             if taunt:
                 random_friend.giveTaunt()
             if poisonous:
                 random_friend.givePoisonous()
 
-    def buffAllFriendly(self, board, attack, health, minion_type=None, taunt=False, poisonous=False): #add more cases as necessary eg. windfury, divine_shield, etc
+    def buffAllFriendly(self, board, attack, health, minion_type=None, taunt=False, poisonous=False, this_minion=None): #add more cases as necessary eg. windfury, divine_shield, etc
         if minion_type is not None:
-            type_specific_list = [m for m in board if m.minion_type == minion_type]
+            type_specific_list = [m for m in board if m.minion_type == minion_type and m != this_minion]
         else:
             type_specific_list = board
 
