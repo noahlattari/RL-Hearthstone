@@ -923,10 +923,10 @@ class Player:
 
     def stewardOfTimeEffect(self, roll, curr_minion):
         attack_buff = 2
-        health_buff = 2
+        health_buff = 1
         if curr_minion.gold:
             attack_buff += 2
-            health_buff += 2
+            health_buff += 1
         for m in roll:
             m.buff(attack_buff, health_buff)
 
