@@ -39,6 +39,13 @@ class Pool:
         self.tier4["Cave Hydra"] = self.addM(Pool.TIER_COUNT[4], 2, 4, "Beast", 1)
         self.tier4["Savannah Highmane"] = self.addM(Pool.TIER_COUNT[4], 6, 5, "Beast", 1, death_rattle=True)
 
+        self.tier5["Mama Bear"] = self.addM(Pool.TIER_COUNT[5], 4, 4, "Beast", 5)
+
+        self.tier6["Ghastcoiler"] = self.addM(Pool.TIER_COUNT[6], 7, 7, "Beast", 6)
+        self.tier6["Goldrinn, the Great Wolf"] = self.addM(Pool.TIER_COUNT[6], 4, 4, "Beast", 6)
+        self.tier6["Maexxna"] = self.addM(Pool.TIER_COUNT, 2, 8, "Beast", 6, poisonous=True)
+
+
         ### Neutral ###
         self.tier1["Wrath Weaver"] = self.addM(Pool.TIER_COUNT[1], 1, 3, "Neutral", 1)
         self.tier1["Acolyte of C'Thun"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Neutral", 1, taunt=True, reborn=True)
@@ -63,6 +70,15 @@ class Pool:
         self.tier4["Defender of Argus"] = self.addM(Pool.TIER_COUNT[4], 2, 3, "Neutral", 4)
 
         self.tier5["Lightfang Enforcer"] = self.addM(Pool.TIER_COUNT[5], 2, 2, "Neutral", 5)
+        self.tier5["Baron Rivendare"] = self.addM(Pool.TIER_COUNT[5], 1, 7, "Neutral", 5)
+        self.tier5["Deadly Spore"] = self.addM(Pool.TIER_COUNT, 1, 1, "Neutral", 5, poisonous=True)
+        self.tier5["Mythrax the Unraveler"] = self.addM(Pool.TIER_COUNT, 4, 4, "Neutral", 5)
+        self.tier5["Strongshell Scavenger"] = self.addM(Pool.TIER_COUNT, 2, 3, "Neutral", 5)
+
+        self.tier6["Kangor's Apprentice"] = self.addM(Pool.TIER_COUNT, 4, 8, "Neutral", 6)
+        self.tier6["Nadina the Red"] = self.addM(Pool.TIER_COUNT, 7, 4, "Neutral", 6)
+        self.tier6["The Tide Razor"] = self.addM(Pool.TIER_COUNT[6], 6, 4, "Neutral", 6)
+        self.tier6["Zapp Slywick"] = self.addM(Pool.TIER_COUNT[6], 7, 10, "Neutral", 6)
 
         ### Mech ###
         self.tokens["Guard Bot"] = self.addM(0, 2, 3, "Mech", 1, taunt=True)
