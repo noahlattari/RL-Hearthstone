@@ -911,7 +911,7 @@ class Player:
         if minion_type is not None:
             type_specific_list = [m for m in board if m.minion_type == minion_type and m != this_minion]
         else:
-            type_specific_list = board
+            type_specific_list = [m for m in board if m != this_minion]
 
         #fails if type_specific_list is empty
         if type_specific_list:
@@ -926,7 +926,7 @@ class Player:
         if minion_type is not None:
             type_specific_list = [m for m in board if m.minion_type == minion_type and m != this_minion]
         else:
-            type_specific_list = board
+            type_specific_list = [m for m in board if m != this_minion]
 
         #fails if type_specific_list is empty
         if type_specific_list:
