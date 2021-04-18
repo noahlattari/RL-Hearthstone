@@ -38,19 +38,25 @@ for i in range(0, EPOCHS):
         players.append(Player.Player(pool))
 
     combat = {}
+    players_dead = set()
 
     # Run simulation until only one person is left
     while True:
         player_count = 0
 
-        for player in players:
+        for index, player in enumerate(players):
             if player.health > 0:
                 player_count += 1
+            else:
+                players_dead.add(index)
 
         if player_count % 2 != 0:
             player_count += 1
 
-        combat = agent_helper.gen_combat_pairs(0, player_count - 1, int(player_count / 2), combat)
+        combat = agent_helper.gen_combat_pairs(0, 7, int(player_count / 2), combat, players_dead)
+
+        for player in players:
+            print(player.getHealth())
 
         # Run current recruitment round
         for index, player in enumerate(players):
@@ -58,14 +64,6 @@ for i in range(0, EPOCHS):
                 continue
 
             player.roundStart()
-
-            roll = player.getRoll()
-            board = player.getBoard()
-            hand = player.getHand()
-            tavern_cost = player.getTavernCost()
-            gold_avail = player.getGold()
-            health = player.getHealth()
-            curr_round = player.getRound()
 
             if index in combat:
                 enemy_index = combat[index]
@@ -75,13 +73,20 @@ for i in range(0, EPOCHS):
             prev_reward = 0
 
             while True:
+                roll = player.getRoll()
+                board = player.getBoard()
+                hand = player.getHand()
+                tavern_cost = player.getTavernCost()
+                gold_avail = player.getGold()
+                health = player.getHealth()
+                curr_round = player.getRound()
+
                 obs = agent_helper.setup_observation(minion_vectors, roll, board, hand, tavern_cost, gold_avail,
                                                      health, curr_round, players[enemy_index].health,
                                                      players[enemy_index].tavern.tier)
 
                 step_type = StepType.FIRST if prev_reward == 0 else StepType.MID
-                policy_step = agents[index].get_action_policy(step_type, prev_reward, DISCOUNT_FACTOR, obs)
-                actions = policy_step.action
+                actions = agents[index].get_action_policy(step_type, prev_reward, DISCOUNT_FACTOR, obs).action
 
                 curr_action = -1
                 largest_index = 0
@@ -97,11 +102,22 @@ for i in range(0, EPOCHS):
                     # Action for ending turn
                     break
 
+                # print(obs.shape)
+                # print(tf.reshape(tf.convert_to_tensor(obs, dtype=tf.float32), [1, 1, 246]).shape)
+                # print(tf.reshape(tf.convert_to_tensor(obs, dtype=tf.float32), [1, 1, 246]))
+                # exit()
+
                 if largest_index > 0:
                     curr_reward = agent_helper.calculate_action_reward(curr_round)
                     total_rewards[index].append(curr_reward)
-                    experience[index].append(agent_helper.create_trajectory(step_type, obs, actions, policy_step.info,
-                                                                            StepType.MID, curr_reward, DISCOUNT_FACTOR))
+                    experience[index].append(
+                        agent_helper.create_trajectory(
+                            tf.convert_to_tensor(step_type),
+                            tf.convert_to_tensor(obs, dtype=tf.float32), actions,
+                            agents[index].get_policy_info(),
+                            tf.convert_to_tensor(StepType.MID),
+                            tf.convert_to_tensor(curr_reward, dtype=tf.float32),
+                            tf.convert_to_tensor(DISCOUNT_FACTOR)))
                     prev_reward = curr_reward
 
                 if not agent_helper.do_move(player, curr_action):
@@ -144,11 +160,11 @@ for i in range(0, EPOCHS):
                 damage_dealt = 0.0
 
             if not do_not_run:
-                combat = Combat.Combat(players[friendly].getBoard(), players[enemy].getBoard())
-                win_probability = combat.win_probability
-                lose_probability = combat.lose_probability
-                damage_taken = combat.mean_damage_taken
-                damage_dealt = combat.mean_damage_dealt
+                combat_simulation = Combat.Combat(players[friendly].getBoard(), players[enemy].getBoard())
+                win_probability = combat_simulation.win_probability
+                lose_probability = combat_simulation.lose_probability
+                damage_taken = combat_simulation.mean_damage_taken
+                damage_dealt = combat_simulation.mean_damage_dealt
 
             prev_reward_friendly = float(experience[friendly][len(experience[friendly]) - 1].reward) \
                 if len(experience[friendly]) > 0 else 0.0
@@ -165,17 +181,31 @@ for i in range(0, EPOCHS):
                 win_probability, damage_dealt, damage_taken)
             total_rewards[enemy].append(reward_enemy)
 
-            experience[friendly].append(
-                agent_helper.generate_combat_experience(
-                    minion_vectors, players, agents, reward_friendly,
-                    damage_taken, friendly, enemy,
-                    prev_reward_friendly, DISCOUNT_FACTOR))
+            # If they died in a previous round, don't add more experience
+            # They could be in combat as a "Ghost"
+            if not players[friendly].getHealth() == 0:
+                experience[friendly].append(
+                    agent_helper.generate_combat_experience(
+                        minion_vectors, players, agents, reward_friendly,
+                        damage_taken, friendly, enemy,
+                        prev_reward_friendly, DISCOUNT_FACTOR))
 
-            experience[enemy].append(
-                agent_helper.generate_combat_experience(
-                    minion_vectors, players, agents, reward_enemy,
-                    damage_dealt, enemy, friendly,
-                    prev_reward_enemy, DISCOUNT_FACTOR))
+                if players[friendly].getHealth() == 0:
+                    experience[friendly][len(experience[friendly]) - 2] = \
+                        experience[friendly][len(experience[friendly]) - 2].replace(next_step_type=StepType.LAST)
+
+            if not players[enemy].getHealth() == 0:
+                experience[enemy].append(
+                    agent_helper.generate_combat_experience(
+                        minion_vectors, players, agents, reward_enemy,
+                        damage_dealt, enemy, friendly,
+                        prev_reward_enemy, DISCOUNT_FACTOR))
+
+                if players[enemy].getHealth() == 0:
+                    experience[enemy][len(experience[enemy]) - 2] = \
+                        experience[enemy][len(experience[enemy]) - 2].replace(next_step_type=StepType.LAST)
+
+        print("Player Round Done: " + str(players[0].getRound()))
 
         if len([x for x in players if x.getHealth() > 0]) <= 1:
             break
@@ -188,12 +218,14 @@ for i in range(0, EPOCHS):
             experience[j] = []
 
     # Output Average Rewards
-    if i % AVERAGE_RETURN_EPOCHS == 0:
+    if i + 1 % AVERAGE_RETURN_EPOCHS == 0:
         for j in range(0, AMOUNT_OF_PLAYERS):
             average_return = sum(total_rewards[j]) / len(total_rewards)
             print("Average Return (Player: " + str(j) + ", Epochs: " +
                   str(AVERAGE_RETURN_EPOCHS) + "): " + str(average_return))
             total_rewards[j] = []
+
+    print("Epoch done: " + str(i))
 
 # Pass all the information to RL algo to get a decision/make random decision or something
 

@@ -36,14 +36,14 @@ class Pool:
         self.tier3["Infested Wolf"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Beast", 3, death_rattle=True)
         self.tier3["Rat Pack"] = self.addM(Pool.TIER_COUNT[3], 2, 2, "Beast", 3, death_rattle=True)
 
-        self.tier4["Cave Hydra"] = self.addM(Pool.TIER_COUNT[4], 2, 4, "Beast", 1)
-        self.tier4["Savannah Highmane"] = self.addM(Pool.TIER_COUNT[4], 6, 5, "Beast", 1, death_rattle=True)
+        self.tier4["Cave Hydra"] = self.addM(Pool.TIER_COUNT[4], 2, 4, "Beast", 4)
+        self.tier4["Savannah Highmane"] = self.addM(Pool.TIER_COUNT[4], 6, 5, "Beast", 4, death_rattle=True)
 
         self.tier5["Mama Bear"] = self.addM(Pool.TIER_COUNT[5], 4, 4, "Beast", 5)
 
         self.tier6["Ghastcoiler"] = self.addM(Pool.TIER_COUNT[6], 7, 7, "Beast", 6)
         self.tier6["Goldrinn, the Great Wolf"] = self.addM(Pool.TIER_COUNT[6], 4, 4, "Beast", 6)
-        self.tier6["Maexxna"] = self.addM(Pool.TIER_COUNT, 2, 8, "Beast", 6, poisonous=True)
+        self.tier6["Maexxna"] = self.addM(Pool.TIER_COUNT[6], 2, 8, "Beast", 6, poisonous=True)
 
 
         ### Neutral ###
@@ -52,7 +52,7 @@ class Pool:
 
         self.tier2["Spawn of N'Zoth"] = self.addM(Pool.TIER_COUNT[2], 2, 2, "Neutral", 2, death_rattle=True)
         self.tier2["Pack Leader"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Neutral", 2)
-        self.tier2["Selfless Hero"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Neutral", 2, death_rattle=True)
+        self.tier2["Selfless Hero"] = self.addM(Pool.TIER_COUNT[2], 2, 1, "Neutral", 2, death_rattle=True)
         self.tier2["Waxrider Togwaggle"] = self.addM(Pool.TIER_COUNT[2], 1, 5, "Neutral", 2)
         self.tier2["Tormented Ritualist"] = self.addM(Pool.TIER_COUNT[2], 2, 3, "Neutral", 2, taunt=True)
         self.tier2["Unstable Ghoul"] = self.addM(Pool.TIER_COUNT[2], 1, 3, "Neutral", 2, taunt=True, death_rattle=True)
@@ -71,12 +71,12 @@ class Pool:
 
         self.tier5["Lightfang Enforcer"] = self.addM(Pool.TIER_COUNT[5], 2, 2, "Neutral", 5)
         self.tier5["Baron Rivendare"] = self.addM(Pool.TIER_COUNT[5], 1, 7, "Neutral", 5)
-        self.tier5["Deadly Spore"] = self.addM(Pool.TIER_COUNT, 1, 1, "Neutral", 5, poisonous=True)
-        self.tier5["Mythrax the Unraveler"] = self.addM(Pool.TIER_COUNT, 4, 4, "Neutral", 5)
-        self.tier5["Strongshell Scavenger"] = self.addM(Pool.TIER_COUNT, 2, 3, "Neutral", 5)
+        self.tier5["Deadly Spore"] = self.addM(Pool.TIER_COUNT[5], 1, 1, "Neutral", 5, poisonous=True)
+        self.tier5["Mythrax the Unraveler"] = self.addM(Pool.TIER_COUNT[5], 4, 4, "Neutral", 5)
+        self.tier5["Strongshell Scavenger"] = self.addM(Pool.TIER_COUNT[5], 2, 3, "Neutral", 5)
 
-        self.tier6["Kangor's Apprentice"] = self.addM(Pool.TIER_COUNT, 4, 8, "Neutral", 6)
-        self.tier6["Nadina the Red"] = self.addM(Pool.TIER_COUNT, 7, 4, "Neutral", 6)
+        self.tier6["Kangor's Apprentice"] = self.addM(Pool.TIER_COUNT[6], 4, 8, "Neutral", 6)
+        self.tier6["Nadina the Red"] = self.addM(Pool.TIER_COUNT[6], 7, 4, "Neutral", 6)
         self.tier6["The Tide Razor"] = self.addM(Pool.TIER_COUNT[6], 6, 4, "Neutral", 6)
         self.tier6["Zapp Slywick"] = self.addM(Pool.TIER_COUNT[6], 7, 10, "Neutral", 6)
 
@@ -125,7 +125,7 @@ class Pool:
         self.tier1["Vulgar Homunculus"] = self.addM(Pool.TIER_COUNT[1], 2, 4, "Demon", 1, taunt=True)
         self.tier2["Nathrezim Overseer"] = self.addM(Pool.TIER_COUNT[2], 2, 3, "Demon", 2)
         self.tier2["Imprisoner"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Demon", 2, taunt=True, death_rattle=True)
-        self.tier3["Imp Gang Boss"] = self.addM(Pool.TIER_COUNT[1], 1, 1, "Demon", 1)
+        self.tier3["Imp Gang Boss"] = self.addM(Pool.TIER_COUNT[3], 2, 4, "Demon", 3)
         self.tier3["Soul Devourer"] = self.addM(Pool.TIER_COUNT[3], 3, 3, "Demon", 3)
         self.tier4["Ring Matron"] = self.addM(Pool.TIER_COUNT[4], 6, 4, "Demon", 4, taunt=True, death_rattle=True)
         self.tier4["Siegebreaker"] = self.addM(Pool.TIER_COUNT[4], 5, 8, "Demon", 4, taunt=True)

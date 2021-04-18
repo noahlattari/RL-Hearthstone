@@ -109,7 +109,13 @@ class Player:
         return self.hand
 
     def getTavernCost(self):
-        return Player.UPGRADE_COST[self.tavern.tier + 1] - self.discount
+        if self.tavern.tier != 6:
+            cost = Player.UPGRADE_COST[self.tavern.tier + 1] - self.discount
+            if cost <= 0:
+                cost = 0
+            return cost
+        else:
+            return -1
 
     def getGold(self):
         return self.gold
@@ -155,6 +161,9 @@ class Player:
         return False
 
     def upgradeTavern(self):
+        if self.tavern.tier == 6:
+            return False
+
         #check if we have enough money see upgrade_cost constant
         #if we do then we need to invoke the tavern's upgrade function
         cost = Player.UPGRADE_COST[self.tavern.tier + 1] - self.discount
@@ -660,17 +669,27 @@ class Player:
         self.majordomo_elemental_counter = 0
 
     def defenderOfArgusBC(self, board, minion_index, curr_minion):
+        if len(board) == 1:
+            return
+
         attack_buff = 1
         health_buff = 1
         if curr_minion.gold:
             attack_buff += 1
             health_buff += 1
         if minion_index > 0:
-            board[minion_index-1].giveTaunt()
-            board[minion_index-1].buff(attack_buff, health_buff)
-        if minion_index < len(self.hand) - 1:
-            board[minion_index+1].giveTaunt()
-            board[minion_index+1].buff(attack_buff, health_buff)
+            if minion_index == len(board):
+                board[minion_index - 2].giveTaunt()
+                board[minion_index - 2].buff(attack_buff, health_buff)
+            elif minion_index > len(board):
+                board[len(board) - 2].giveTaunt()
+                board[len(board) - 2].buff(attack_buff, health_buff)
+            else:
+                board[minion_index - 1].giveTaunt()
+                board[minion_index - 1].buff(attack_buff, health_buff)
+        if minion_index < len(self.board) - 1:
+            board[minion_index + 1].giveTaunt()
+            board[minion_index + 1].buff(attack_buff, health_buff)
     
     def crystalweaverBC(self, board, curr_minion):
         attack_buff = 1
@@ -865,7 +884,7 @@ class Player:
         else:
             val = 1
         for m in board:
-            if m.type == "Dragon":
+            if m.minion_type == "Dragon":
                 curr_minion.buff(val, val)
 
     def kingBagurgleBC(self, board, curr_minion):

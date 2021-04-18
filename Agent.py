@@ -65,12 +65,17 @@ class Agent:
             observation=tf.convert_to_tensor(obs, dtype=tf.float32)
         )
 
-        policy_step = self.agent.policy.action(time_step)
+        policy_step = self.agent.policy.action(time_step, self.policy.get_initial_state(batch_size=None))
+        self.policy = self.agent.policy
 
         return policy_step
 
+    def get_policy_info(self):
+        return self.agent.collect_data_spec.policy_info
+
     def train(self, experience):
-        self.agent.train(experience)
+        for curr_experience in experience:
+            self.agent.train(curr_experience)
 
     def load_policy(self, agent_number, load_prev):
         if load_prev:

@@ -1,7 +1,7 @@
 import os
 
+import tensorflow as tf
 import numpy as np
-
 from os import path
 from random import randint
 
@@ -117,19 +117,43 @@ class AgentHelper:
         return True
 
     @staticmethod
-    def gen_combat_pairs(min_pair, max_pair, pair_amount, prev_combat):
+    def gen_combat_pairs(min_pair, max_pair, pair_amount, prev_combat, players_dead):
         combat = dict()
+        players_alive = set()
 
-        for amount in range(0, pair_amount):
-            while True:
-                x, y = randint(min_pair, max_pair), randint(min_pair, max_pair)
+        for i in range(min_pair, max_pair + 1):
+            if i not in players_dead:
+                players_alive.add(i)
 
-                if x != y and x not in combat.keys() and y not in combat.keys() \
-                        and x not in combat.values() and y not in combat.values() \
-                        and not (x in prev_combat and prev_combat[x] == y) \
-                        and not (y in prev_combat and prev_combat[y] == x):
-                    combat[x] = y
-                    break
+        print(players_alive)
+
+        if len(players_alive) % 2 != 0:
+            players_alive.add(next(iter(players_dead)))
+
+        while len(combat.keys()) != pair_amount:
+            if len(combat.keys()) == pair_amount - 1:
+                temp = -1
+                for i in players_alive:
+                    if i not in combat and i not in combat.values():
+                        if temp != -1:
+                            combat[temp] = i
+                            break
+                        else:
+                            temp = i
+
+            if len(combat.keys()) != pair_amount:
+                while True:
+                    x, y = randint(min_pair, max_pair), randint(min_pair, max_pair)
+
+                    if x != y and x not in combat.keys() and y not in combat.keys() \
+                            and x not in combat.values() and y not in combat.values() \
+                            and not (x in prev_combat and prev_combat[x] == y) \
+                            and not (y in prev_combat and prev_combat[y] == x) \
+                            and x in players_alive and y in players_alive:
+                        combat[x] = y
+                        break
+
+        print(combat)
 
         return combat
 
@@ -140,7 +164,7 @@ class AgentHelper:
     @staticmethod
     def is_move_possible(player, move_index):
         if move_index == 0:
-            if player.getGold() >= player.getTavernCost():
+            if player.tavern.tier != 6 and player.getGold() >= player.getTavernCost():
                 return True
         elif move_index == 1:
             if player.getGold() >= player.REROLL_COST:
@@ -150,7 +174,7 @@ class AgentHelper:
                 return True
         elif 2 < move_index <= 9:
             buy_index = move_index - 3
-            if player.getGold() >= 3 and buy_index < len(player.getRoll()):
+            if player.getGold() >= 3 and buy_index < len(player.getRoll()) and len(player.getHand()) < MAX_HAND_SIZE:
                 return True
         elif 9 < move_index <= 16:
             sell_index = move_index - 10
@@ -215,13 +239,18 @@ class AgentHelper:
         curr_round = player.getRound()
 
         step_type = StepType.LAST if player.getHealth() == 0 else StepType.MID
+        next_step_type = StepType.FIRST if step_type == StepType.LAST else StepType.MID
 
         obs = AgentHelper.setup_observation(minion_vectors, roll, board, hand,
                                             tavern_cost, gold_avail,
                                             health, curr_round, players[enemy].health,
                                             players[enemy].tavern.tier)
 
-        policy_step = agents[friendly].get_action_policy(step_type, prev_reward, discount_factor, obs)
+        actions = agents[friendly].get_action_policy(step_type, prev_reward, discount_factor, obs).action
 
-        return AgentHelper.create_trajectory(step_type, obs, policy_step.action, policy_step.info,
-                                             step_type, reward, discount_factor)
+        return AgentHelper.create_trajectory(tf.convert_to_tensor(step_type),
+                                             tf.convert_to_tensor(obs, dtype=tf.float32), actions,
+                                             agents[friendly].get_policy_info(),
+                                             tf.convert_to_tensor(next_step_type),
+                                             tf.convert_to_tensor(reward, dtype=tf.float32),
+                                             tf.convert_to_tensor(discount_factor))
