@@ -429,6 +429,9 @@ class Pool:
         currTier[minion_name] = minion_stats
 
     def returnToPool(self, minion_name, tier):
+        if minion_name in self.tokens:
+            return
+
         currTier = None
         if tier == 1:
             currTier = self.tier1

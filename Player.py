@@ -111,34 +111,48 @@ class Player:
     def getTavernCost(self):
         return Player.UPGRADE_COST[self.tavern.tier + 1] - self.discount
 
+    def getGold(self):
+        return self.gold
+
+    def getHealth(self):
+        return self.health
+
+    def getRound(self):
+        return self.round
+
     def freezeTavern(self):
+        if self.freeze:
+            return False
+
         self.freeze = True
+        return True
+
+    def isTavernFrozen(self):
+        return self.freeze
 
     def reroll(self):
         #refreshing anomaly gives a free reroll, refreshing anomoly gold gives two rerolls
-        
-        #if normal anomoly has been plaued
+
         if self.refreshing_anomaly:
             Player.REROLL_COST = 0
             self.refreshing_anomaly = False
-            if self.gold >= Player.REROLL_COST:
-                self.gold -= Player.REROLL_COST #- reroll discount
-                self.tavern.getRoll(stasis_elemental=False)
-            Player.REROLL_COST = 1
+
         if self.refreshing_anomaly_gold:
             if self.anomaly_gold_counter != 0:
                 Player.REROLL_COST = 0
-                if self.gold >= Player.REROLL_COST:
-                    self.gold -= Player.REROLL_COST
-                    self.tavern.getRoll(stasis_elemental=False)
                 self.anomaly_gold_counter -= 1
             else:
                 Player.REROLL_COST = 1
                 self.refreshing_anomaly_gold = False
-        else:
-            if self.gold >= Player.REROLL_COST:
-                self.gold -= Player.REROLL_COST
-                self.tavern.getRoll(stasis_elemental=False)
+
+        if self.gold >= Player.REROLL_COST:
+            self.gold -= Player.REROLL_COST
+            self.tavern.getRoll(stasis_elemental=False)
+            Player.REROLL_COST = 1
+            return True
+
+        Player.REROLL_COST = 1
+        return False
 
     def upgradeTavern(self):
         #check if we have enough money see upgrade_cost constant
@@ -150,6 +164,8 @@ class Player:
             self.tavern.tierUp()
             self.gold -= cost
             self.calcDiscount(True)
+            return True
+        return False
 
     def buy(self, minion_index):
         #check if we can fit it in our hand

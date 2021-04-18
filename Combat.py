@@ -1,3 +1,9 @@
+"""
+This class uses a simulator of the combat phase in Hearthstone Battlegrounds.
+The simulator requires gcc g++ to be installed and can only be ran on windows as it's an executable file.
+More information can be found in the README.
+"""
+
 import subprocess
 import re
 import os
@@ -44,7 +50,7 @@ class Combat:
 
         return stdout
 
-    def get_field(self, name, value_suffix = ''):
+    def get_field(self, name, value_suffix=''):
         pattern = r'(?<={}:\s)-?\d+.?\d*{}'.format(name, value_suffix)
         match = re.search(pattern, self.combat)
         if match is None:
