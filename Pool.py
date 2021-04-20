@@ -136,7 +136,7 @@ class Pool:
         self.tier1["Scallywag"] = self.addM(Pool.TIER_COUNT[1], 2, 1, "Pirate", 1, death_rattle=True)
         self.tier1["Deck Swabbie"] = self.addM(Pool.TIER_COUNT[1], 2, 2, "Pirate", 1)
         self.tier2["Freedealing Gambler"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Pirate", 2)
-        self.tier2["Yo-Ho-Ogre"] = self.addM(Pool.TIER_COUNT[2], 3, 6, "Pirate", 2, taunt=True)
+        self.tier2["Yo-Ho-Ogre"] = self.addM(Pool.TIER_COUNT[2], 2, 6, "Pirate", 2, taunt=True)
         self.tier2["Southsea Captain"] = self.addM(Pool.TIER_COUNT[2], 3, 3, "Pirate", 2)
         self.tier3["Bloodsail Cannoneer"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Pirate", 3)
         self.tier3["Southsea Strongarm"] = self.addM(Pool.TIER_COUNT[3], 4, 3, "Pirate", 3)
@@ -383,15 +383,15 @@ class Pool:
         for i in range(1, tier):
             for m in self.murloc[i]:
                 if i == 1:
-                    currTier = self.tier2
+                    currTier = self.tier1
                 if i == 2:
-                    currTier = self.tier3
+                    currTier = self.tier2
                 if i == 3:
-                    currTier = self.tier4
+                    currTier = self.tier3
                 if i == 4:
-                    currTier = self.tier5
+                    currTier = self.tier4
                 if i >= 5:
-                    currTier = self.tier6
+                    currTier = self.tier5
 
                 count = currTier[m]["count"]
 

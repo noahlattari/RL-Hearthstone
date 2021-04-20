@@ -7,6 +7,7 @@
 
 import AgentHelper
 import numpy as np
+from datetime import datetime
 
 import tensorflow as tf
 from tf_agents.agents.ppo import ppo_agent
@@ -19,6 +20,7 @@ from tf_agents.networks.actor_distribution_network import ActorDistributionNetwo
 from tf_agents.networks.value_network import ValueNetwork
 from tf_agents.policies import random_py_policy
 from tf_agents.policies.policy_saver import PolicySaver
+from tf_agents.trajectories.trajectory import Trajectory
 
 
 class Agent:
@@ -32,7 +34,7 @@ class Agent:
 
     def initialize_agent(
             self,
-            learning_rate=0.1,
+            learning_rate=0.00001,
             lambda_value=0.95,
             discount_factor=0.99,
             num_epochs=25,
@@ -65,8 +67,8 @@ class Agent:
             observation=tf.convert_to_tensor(obs, dtype=tf.float32)
         )
 
-        policy_step = self.agent.policy.action(time_step, self.policy.get_initial_state(batch_size=None))
-        self.policy = self.agent.policy
+        policy_step = self.agent.collect_policy.action(time_step, self.policy.get_initial_state(batch_size=1))
+        self.policy = self.agent.collect_policy
 
         return policy_step
 
@@ -74,8 +76,17 @@ class Agent:
         return self.agent.collect_data_spec.policy_info
 
     def train(self, experience):
-        for curr_experience in experience:
-            self.agent.train(curr_experience)
+        trajectory = Trajectory(
+            action=tf.expand_dims(tf.stack([x.action for x in experience]), axis=0),
+            discount=tf.expand_dims(tf.stack([x.discount for x in experience]), axis=0),
+            next_step_type=tf.expand_dims(tf.stack([x.next_step_type for x in experience]), axis=0),
+            observation=tf.expand_dims(tf.stack([x.observation for x in experience]), axis=0),
+            policy_info=self.agent_helper.generate_policy_info(experience),
+            reward=tf.expand_dims(tf.stack([x.reward for x in experience]), axis=0),
+            step_type=tf.expand_dims(tf.stack([x.step_type for x in experience]), axis=0)
+        )
+
+        return self.agent.train(trajectory)
 
     def load_policy(self, agent_number, load_prev):
         if load_prev:
@@ -89,7 +100,8 @@ class Agent:
     def store_network_policy(self, agent_number):
         saver = PolicySaver(self.agent.policy, batch_size=None)
 
-        saver.save("results/agent" + agent_number + "/policy")
+        current_time = datetime.now().strftime('%m-%d-%Y-%H-%M-%S')
+        saver.save(f"results/agent{agent_number}/policy_{current_time}")
 
         return
 
@@ -110,7 +122,8 @@ class Agent:
     def generate_actor_net(self):
         return ActorDistributionNetwork(
             input_tensor_spec=(self.generate_obs_spec()),
-            output_tensor_spec=(self.generate_action_spec())
+            output_tensor_spec=(self.generate_action_spec()),
+            kernel_initializer=tf.initializers.glorot_normal()
         )
 
     def generate_value_net(self):

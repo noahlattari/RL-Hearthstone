@@ -462,8 +462,8 @@ class Player:
                 if curr_minion.name == "Murloc Tidecaller":
                     self.murloc_tidecaller = True
 
-                if curr_minion.name == "Primalfin Lookout":
-                    self.primalfinLookoutBC(self.board, curr_minion)
+                # if curr_minion.name == "Primalfin Lookout":
+                #     self.primalfinLookoutBC(self.board, curr_minion)
 
                 if curr_minion.name == "King Bagurgle":
                     self.kingBagurgleBC(self.board, curr_minion)
@@ -548,7 +548,7 @@ class Player:
         damage_taken = 40 - self.health
         if curr_minion.gold:
             curr_minion.buff(0, damage_taken*2)
-        curr_minion.buff(0, damage_taken)
+        curr_minion.buff(0, round(damage_taken))
 
     def lieutenantGarrEffect(self, board, curr_minion):
         health_buff = 0
@@ -773,7 +773,7 @@ class Player:
                 minion_map[m.minion_type] = minion_type_list
         
         for i in minion_map:
-            random_minion = minion_map[i][random.randint(0,len(i)-1)]
+            random_minion = minion_map[i][random.randint(0, len(minion_map[i]) - 1)]
             random_minion.buff(attack_buff, health_buff)
 
     def mythraxEffect(self, board, curr_minion):

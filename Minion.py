@@ -19,13 +19,9 @@ class Minion:
         self.death_rattle = death_rattle
         self.gold = gold
         self.token = token
-        
 
     def __repr__(self):
-        if self.magnetic:
-            out = f"{self.attack}/{self.health} <{self.name}>"
-        else:
-            out = f"{self.attack}/{self.health} {self.name}"
+        out = f"{self.attack}/{self.health} {self.name}"
         if self.taunt:
             out += ", taunt"
         if self.divine_shield:
@@ -43,10 +39,7 @@ class Minion:
         return out
 
     def __str__(self):
-        if self.magnetic:
-            out = f"{self.attack}/{self.health} <{self.name}>"
-        else:
-            out = f"{self.attack}/{self.health} {self.name}"
+        out = f"{self.attack}/{self.health} {self.name}"
         if self.taunt:
             out += ", taunt"
         if self.divine_shield:
@@ -59,6 +52,8 @@ class Minion:
             out += ", microbots"
         if self.golden_microbots:
             out += ", golden microbots"
+        if self.reborn:
+            out += ", reborn"
         return out
     
     def giveMagnetic(self):

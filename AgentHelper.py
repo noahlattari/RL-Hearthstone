@@ -8,10 +8,6 @@ from random import randint
 from tf_agents.trajectories.time_step import StepType
 from tf_agents.trajectories.trajectory import Trajectory
 
-# Average game length is the round in which the average player will die
-# Making it past this round is generally someone who wins the game (top 4)
-AVERAGE_GAME_LENGTH = 10
-
 ZEROS_VECTOR = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 MAX_ROLL_SIZE = 7
 MAX_BOARD_SIZE = 7
@@ -25,14 +21,10 @@ class AgentHelper:
         # Reward is calculated based on the change of you dealing damage and the change of taking damage
         # and then scaled based on the turn you're on to have late game turns be more important then early
         # Current round is also 0 based, +1 to make 1 based
-        reward = (win_probability * damage_dealt) - (lose_probability * damage_taken) * \
-                 (curr_round / AVERAGE_GAME_LENGTH)
+        weight = 1 - 1 / (curr_round + 1)
+        reward = ((win_probability * damage_dealt) - (lose_probability * damage_taken)) * weight
 
         return float(reward)
-
-    @staticmethod
-    def calculate_action_reward(curr_round):
-        return -1 * (curr_round / AVERAGE_GAME_LENGTH)
 
     @staticmethod
     def setup_observation(minion_vectors, roll, board, hand, tavern_cost,
@@ -125,7 +117,7 @@ class AgentHelper:
             if i not in players_dead:
                 players_alive.add(i)
 
-        print(players_alive)
+        #print(players_alive)
 
         if len(players_alive) % 2 != 0:
             players_alive.add(next(iter(players_dead)))
@@ -153,13 +145,23 @@ class AgentHelper:
                         combat[x] = y
                         break
 
-        print(combat)
+        #print(combat)
 
         return combat
 
     @staticmethod
     def create_trajectory(step_type, obs, action, policy_info, next_step_type, reward, discount):
         return Trajectory(step_type, obs, action, policy_info, next_step_type, reward, discount)
+
+    @staticmethod
+    def generate_policy_info(experiences):
+        all_dist_params = [x.policy_info['dist_params'] for x in experiences]
+        return {
+            'dist_params': {
+                'loc': tf.expand_dims(tf.stack([dist_param['loc'] for dist_param in all_dist_params]), axis=0),
+                'scale': tf.expand_dims(tf.stack([dist_param['scale'] for dist_param in all_dist_params]), axis=0)
+            }
+        }
 
     @staticmethod
     def is_move_possible(player, move_index):
@@ -246,11 +248,15 @@ class AgentHelper:
                                             health, curr_round, players[enemy].health,
                                             players[enemy].tavern.tier)
 
-        actions = agents[friendly].get_action_policy(step_type, prev_reward, discount_factor, obs).action
+        policy_info = agents[friendly].get_action_policy(step_type, prev_reward, discount_factor, obs)
+        actions = policy_info.action
+        info = policy_info.info
 
-        return AgentHelper.create_trajectory(tf.convert_to_tensor(step_type),
-                                             tf.convert_to_tensor(obs, dtype=tf.float32), actions,
-                                             agents[friendly].get_policy_info(),
-                                             tf.convert_to_tensor(next_step_type),
-                                             tf.convert_to_tensor(reward, dtype=tf.float32),
-                                             tf.convert_to_tensor(discount_factor))
+        trajectory = Trajectory(tf.convert_to_tensor(step_type),
+                                tf.convert_to_tensor(obs, dtype=tf.float32),
+                                actions, info,
+                                tf.convert_to_tensor(next_step_type),
+                                tf.convert_to_tensor(reward, dtype=tf.float32),
+                                tf.convert_to_tensor(discount_factor))
+
+        return trajectory
